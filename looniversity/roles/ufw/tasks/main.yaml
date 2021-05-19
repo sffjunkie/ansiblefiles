@@ -1,0 +1,35 @@
+---
+- name: Ensure ufw is installed.
+  package:
+    name: ufw
+    state: present
+
+- name: Ensure ufw service is started
+  service:
+    name: ufw
+    enabled: yes
+    state: started
+
+- name: Default firewall rules
+  community.general.ufw:
+    policy: {{ item.policy }}
+    direction: {{ item.direction }}
+  with_items:
+    - direction: outgoing
+      policy: allow
+    - direction: incoming
+      policy: deny
+
+- name: Firewall rules
+  community.general.ufw:
+    rule: {{ item.rule }}
+    port: {{ item.port }}
+    proto: {{ item.proto }}
+  with_items:
+    - { rule: allow, port: {{ ssh_port }}, proto: tcp }
+    - { rule: allow, port: 80, proto: tcp }
+    - { rule: allow, port: 443, proto: tcp }
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled

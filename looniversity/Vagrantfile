@@ -1,0 +1,13 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "geerlingguy/ubuntu2004"
+  config.vm.hostname = "https-proxy.test"
+  config.vm.network :private_network, ip: ENV.fetch("VM_IP", "10.0.0.100")
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "qemu.yaml"
+    ansible.become = true
+  end
+end

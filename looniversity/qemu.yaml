@@ -1,0 +1,8 @@
+---
+- hosts: qemu
+  become: true
+  tasks:
+    - name: Install QEMU Guest Agent
+      package:
+        name: qemu-guest-agent
+        state: present

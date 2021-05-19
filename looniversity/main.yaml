@@ -5,6 +5,9 @@
   vars:
     ssh_port: 22
 
+  vars_files:
+    - files/secrets.yaml
+
   tasks:
     - name: Configure ssh server.
       import_role:
@@ -15,13 +18,13 @@
     - name: Add user.
       import_role:
         name: user_add
-      loop: [ sdk, looniversity ]
+      loop: {{ usernames }}
       loop_control: "userid"
 
     - name: Configure ssh for user.
       import_role:
         name: user_ssh
-      loop: [ sdk, looniversity ]
+      loop: {{ usernames }}
       loop_control: "userid"
 
     - import_role:

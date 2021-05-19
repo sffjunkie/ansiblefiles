@@ -15,6 +15,11 @@
         vars:
           ssh_port: {{ ssh_port }}
 
+    - import_role:
+        name: ufw
+        vars:
+          ssh_port: {{ ssh_port }}
+
     - name: Add user.
       import_role:
         name: user_add
@@ -26,11 +31,6 @@
         name: user_ssh
       loop: {{ usernames }}
       loop_control: "userid"
-
-    - import_role:
-        name: ufw
-        vars:
-          ssh_port: {{ ssh_port }}
 
     - import_role:
         name: selinux

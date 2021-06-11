@@ -35,7 +35,6 @@
   when: goavailable.failed == false
 
 - name: Download and extract the archive {{ archive_name }}
-  become: true
   ansible.builtin.unarchive:
       src: "{{ download_url }}"
       dest: "{{ install_path }}"

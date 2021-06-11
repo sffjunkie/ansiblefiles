@@ -4,5 +4,5 @@
     name: "{{ item }}"
     state: present
   loop:
-    "{{ package_list | default([]) }}"
+    "{{ package_list | default([], True) }}"
   when: package_list | default([], True) | length > 0

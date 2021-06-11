@@ -1,7 +1,7 @@
 ---
 - hosts: all
   become: true
-  become_user: sdk
+  become_method: sudo
   vars_files:
     - ../common/vars/main.yaml
     # - ./vars/main.yaml
@@ -17,10 +17,6 @@
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
           - "  Architecture: {{ ansible_architecture }}"
-
-    - name: Update system
-      include_role:
-        name: update
 
   tasks:
     - name: Install packages
@@ -39,3 +35,9 @@
         repo: https://github.com/sffjunkie/ansiblefiles
         dest: ~/ansible/
         version: develop
+
+    - name: "Disable pi user"
+      ansible.builtin.user:
+        name: pi
+        expires: 1
+        password_lock: true

@@ -1,43 +1,40 @@
 ---
-- hosts: localhost
+- hosts: all
   become: true
-  become_user: "{{ username }}"
-  vars_files: vars/main.yaml
+  vars_files:
+    - ../common/vars/main.yaml
 
   pre_tasks:
     - name: Debug
       ansible.builtin.debug:
         msg:
-          - "Configuration file home directory: {{ config_home }}"
-          - "Shell: {{ shell }}"
+          - "Computed stats"
+          - "  Configuration file home directory: {{ config_home }}"
+          - "  Shell: {{ shell }}"
+          - "  Distribution: {{ distribution }}"
+          - "  OS Family: {{ os_family }}"
 
     - name: Install git.
       package:
         name: git
         state: latest
 
-    - name: Configure development directories
-      include_role:
-        name: dev
-    
-    - name: Compute Linux distribution
-      set_fact:
-        distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
-        os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
-
   roles:
-    - role: xdg_user_dirs
-      vars:
-        custom_xdg_user_dirs:
-          XDG_PUBLICSHARE_DIR:
+    - dev
+  #   - role: xdg_user_dirs
+  #     vars:
+  #       custom_xdg_user_dirs:
+  #         XDG_PUBLICSHARE_DIR:
 
-  #   - go_dev
+    - ohmyzsh
+    - go_dev
   #   - node_dev
   #   - python_dev
   #   - rust_dev
   #   - docker
   #   - telegraf
   #   - update
+    - docker
 
   # tasks:
   #   - name: Install config files

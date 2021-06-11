@@ -1,25 +1,25 @@
 ---
 - name: Create and set permissions for .ssh directory
   file:
-    path: "/home/{{ userid }}/.ssh"
+    path: "/home/{{ username }}/.ssh"
     mode: 0700
 
 - name: create authorized_keys file
   file:
-    path: "/home/{{ userid }}/.ssh/authorized_keys"
+    path: "/home/{{ username }}/.ssh/authorized_keys"
     state: touch
     mode: 0644
 
 # - name: Copy ssh id file to host
 #   copy:
-#     src: files/ssh/{{ userid }}.pub
-#     dest: /home/{{ userid }}/.ssh/{{ userid }}.pub
+#     src: files/ssh/{{ username }}.pub
+#     dest: /home/{{ username }}/.ssh/{{ username }}.pub
 
 - name: Add id to authorized_keys
   vars:
-    pub_content: "{{ lookup('file', 'files/ssh/{{ userid }}.pub') }}"
+    pub_content: "{{ lookup('file', 'files/ssh/{{ username }}.pub') }}"
   lineinfile:
-    dest: /home/{{ userid }}/.ssh/authorized_keys
+    dest: /home/{{ username }}/.ssh/authorized_keys
     regexp: "^{{ pub_content }}"
     line: "{{ pub_content }}"
     state: present

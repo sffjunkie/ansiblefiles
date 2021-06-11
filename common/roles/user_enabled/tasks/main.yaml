@@ -1,0 +1,8 @@
+---
+- name: Disable user {{ username }}
+  ansible.builtin.shell: usermod --lock --expiredate=1
+  when: not enabled and username | length > 0
+
+- name: Eanble user {{ username }}
+  ansible.builtin.shell: usermod --unlock --expiredate=
+  when: not enabled and username | length > 0

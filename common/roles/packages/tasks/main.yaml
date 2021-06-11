@@ -1,0 +1,8 @@
+---
+- name: Install package
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    "{{ package_list | default([]) }}"
+  when: package_list | default([], True) | length > 0

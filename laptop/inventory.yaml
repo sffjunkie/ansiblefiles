@@ -1,10 +1,20 @@
 ---
-local:
+all:
   hosts:
-    localhost:
-      ansible_connection: local
-      reboot: false
+    # localhost:
+    #   vars:
+    #     ansible_connection: local
     laptop:
-      ansible_host: 10.45.0.100
-    ansible_controller:
-      ansible_host: 10.44.0.189
+      ansible_port: 22
+      ansible_host: 10.44.0.122
+      vars:
+        reboot: false
+    
+    ansible:
+      ansible_host: 10.44.0.121
+
+  children:
+    vmhosts:
+      hosts:
+        mary:
+          ansible_host: 10.44.0.201

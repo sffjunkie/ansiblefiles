@@ -1,0 +1,41 @@
+---
+- hosts: all
+  become: true
+  become_user: sdk
+  vars_files:
+    - ../common/vars/main.yaml
+    # - ./vars/main.yaml
+
+  pre_tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Computed stats"
+          - "  Username: {{ username }}"
+          - "  Configuration file home directory: {{ config_home }}"
+          - "  Shell: {{ shell }}"
+          - "  Distribution: {{ distribution }}"
+          - "  OS Family: {{ os_family }}"
+          - "  Architecture: {{ ansible_architecture }}"
+
+    - name: Update system
+      include_role:
+        name: update
+
+  tasks:
+    - name: Install packages
+      include_role:
+        name: packages
+      vars:
+        package_list:
+          - ansible
+          - git
+          - python3-apt
+          - sshpass
+          - unattended-upgrades
+
+    - name: Copy playbooks
+      git:
+        repo: https://github.com/sffjunkie/ansiblefiles
+        dest: ~/ansible/
+        version: develop

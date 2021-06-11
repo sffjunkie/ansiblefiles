@@ -1,0 +1,19 @@
+---
+- name: yum updgrade all
+  yum:
+    name: "*"
+    state: latest
+    update_cache: true
+  when: os_family == "centos"
+
+- name: dnf updgrade all
+  dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+  when: os_family == "fedora"
+
+- name: pacman update all
+  community.general.pacman:
+    upgrade: true
+  when: os_family == "archlinux"

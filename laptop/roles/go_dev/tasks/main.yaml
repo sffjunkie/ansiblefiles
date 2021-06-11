@@ -1,1 +1,49 @@
 ---
+- name: Get filename prefix with latest version
+  ansible.builtin.set_fact:
+    available_version: "{{ lookup('url', version_url, split_lines=False) }}"
+  when: version == "latest"
+
+- name: Get filename prefix with fixed version
+  ansible.builtin.set_fact:
+    available_version: go{{ version }}
+  when: version != "latest"
+
+- name: Check go is available
+  ansible.builtin.command: which go
+  changed_when: false
+  register: goavailable
+
+- name: Try to get current go version installed
+  ansible.builtin.command: go version
+  register: goversion
+  changed_when: false
+  when: goavailable.failed == false
+
+- name: Set current_version var to the current
+  ansible.builtin.set_fact:
+    current_version: "{{ goversion.stdout.split(' ')[2] }}"
+  when: goavailable.failed == false and goversion.failed == false
+
+- name: Set current_version var to none
+  ansible.builtin.set_fact:
+    current_version: "none"
+  when: goavailable.failed == false and goversion.failed == true
+
+- ansible.builtin.debug:
+    msg: "Go current version: {{ current_version }}"
+  when: goavailable.failed == false
+
+- name: Download and extract the archive {{ archive_name }}
+  become: true
+  ansible.builtin.unarchive:
+      src: "{{ download_url }}"
+      dest: "{{ install_path }}"
+      remote_src: yes
+  when: current_version != available_version
+
+- name: Create Go shell config file
+  ansible.builtin.template:
+    src: templates/go.sh
+    dest: "{{ config_home }}/sh/go.sh"
+    mode: 0700

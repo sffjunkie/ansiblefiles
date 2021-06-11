@@ -1,0 +1,12 @@
+---
+- name: Install Python packages
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ lookup('file', 'files/' + os_family + '.txt').splitlines() }}"
+
+- name: Install pypi packages
+  pip:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ lookup('file', 'files/pypi.txt').splitlines() }}"

@@ -1,0 +1,10 @@
+---
+local:
+  hosts:
+    localhost:
+      ansible_connection: local
+      reboot: false
+    laptop:
+      ansible_host: 10.45.0.100
+    ansible_controller:
+      ansible_host: 10.44.0.189

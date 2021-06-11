@@ -1,0 +1,12 @@
+---
+- name: Install Oh-My-ZSH.
+  shell:
+    cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  environment:
+    ZSH: "{{ ohmyzsh_path }}"
+
+- name: Install plugins.
+  git:
+    repo: "https://github.com/zsh-users/{{ item }}.git"
+  loop:
+    "{{ ohmyzsh_plugins }}"

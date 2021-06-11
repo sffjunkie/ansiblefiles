@@ -1,0 +1,5 @@
+---
+username: sdk
+shell: zsh
+_default_config_home: "{{ lookup('env','HOME') + '/.config' }}"
+config_home: "{{ lookup('env', 'XDG_CONFIG_HOME') | default(_default_config_home, True) }}"

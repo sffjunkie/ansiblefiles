@@ -1,0 +1,32 @@
+---
+- name: Update xdg_user_dirs with custom values
+  set_fact:
+    xdg_user_dirs: "{{ xdg_user_dirs | default('') | combine({ item.key : item.value }) }}"
+  loop: "{{ custom_xdg_user_dirs | dict2items }}"
+
+- name: Create XDG user directories
+  ansible.builtin.file:
+    path: "/home/{{ username }}/{{ item.value }}"
+    state: directory
+    mode: 0755
+    access_time: preserve
+    modification_time: preserve
+  loop: "{{ xdg_user_dirs | dict2items }}"
+  when: item.value | default("", True) != ""
+
+# - name: Delete unused XDG user directories
+#   ansible.builtin.file:
+#     path: "/home/{{ username }}/{{ item.value }}"
+#     state: absent
+#   loop: "{{ xdg_user_dirs | dict2items }}"
+#   when: item.value | default("", True) == ""
+
+- name: Create user-dirs.dirs files
+  ansible.builtin.template:
+    src: "templates/user-dirs.dirs"
+    dest: "/home/{{ username }}/.config/user-dirs.dirs"
+    mode: 0600
+
+# - name: Update XDG directories
+#   ansible.builtin.shell:
+#     cmd: xdg-user-dirs-update

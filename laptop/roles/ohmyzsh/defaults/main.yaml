@@ -1,0 +1,5 @@
+---
+ohmyzsh_path: ~/.local/oh-my-zsh/
+ohmyzsh_plugins:
+  - zsh-completions
+  - zsh-syntax_highlighting

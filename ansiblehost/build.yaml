@@ -19,6 +19,10 @@
           - "  Architecture: {{ ansible_architecture }}"
 
   tasks:
+    - name: Install git
+      ansible.builtin.include_role:
+        name: git
+
     - name: Load os package list
       ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
       vars:
@@ -33,7 +37,7 @@
       ansible.builtin.include_role:
         name: os_package
       vars:
-        package_list: "{{ os_packages }}"
+        custom_package_list: "{{ os_packages }}"
 
     - name: Install Pypi packages
       ansible.builtin.include_role:

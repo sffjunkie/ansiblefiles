@@ -9,3 +9,7 @@ config_home: "{{ lookup('env', 'XDG_CONFIG_HOME') | default(_default_config_home
 
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
+
+git:
+  user_email: "sffjunkie+code@gmail.com"
+  user_name: "Simon Kennedy"

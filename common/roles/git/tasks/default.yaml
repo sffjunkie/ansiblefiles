@@ -1,0 +1,5 @@
+---
+- name: Install OS git
+  package:
+    name: git
+    state: latest

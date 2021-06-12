@@ -1,17 +1,4 @@
 # https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04
-- name: Install required system packages
-  ansible.builtin.include_role:
-    name: os_package
-  vars:
-    package_list:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - python3-pip
-      - python3-setuptools
-      - software-properties-common
-      - virtualenv
-
 - name: Add Docker GPG apt Key
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg

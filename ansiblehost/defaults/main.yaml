@@ -1,3 +1,3 @@
 ---
-os_packages:
-pypi_packages:
+custom_os_packages:
+custom_pypi_packages:

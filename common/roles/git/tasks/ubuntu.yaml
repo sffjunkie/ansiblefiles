@@ -1,0 +1,10 @@
+- name: Add Git PPA
+  ansible.builtin.apt_repository:
+    repo: ppa:git-core/ppa
+    state: present
+
+- name: Install git
+  ansible.builtin.apt:
+    update_cache: yes
+    name: git
+    state: latest

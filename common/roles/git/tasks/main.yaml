@@ -1,0 +1,29 @@
+---
+- name: Install git
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
+      - "default.yaml"
+
+- name: Configure git email
+  community.general.git_config:
+    name: "user.email"
+    scope: global
+    value: "{{ git.user_email }}"
+  when: git.user_email | length > 0
+
+- name: Configure git name
+  community.general.git_config:
+    name: "user.name"
+    scope: global
+    value: "{{ git.user_name }}"
+  when: git.user_name | length > 0
+
+- name: Configure git PGP Key
+  community.general.git_config:
+    name: "user.signingKey"
+    scope: global
+    value: "{{ git.pgp_key }}"
+  when: git.pgp_key | length > 0

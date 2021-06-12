@@ -37,13 +37,13 @@
       ansible.builtin.include_role:
         name: os_package
       vars:
-        custom_package_list: "{{ os_packages }}"
+        custom_os_packages: "{{ os_packages }}"
 
     - name: Install Pypi packages
       ansible.builtin.include_role:
         name: pypi_package
       vars:
-        package_list: "{{ pypi_packages }}"
+        custom_pypi_packages: "{{ pypi_packages }}"
 
     - name: Copy playbooks
       ansible.builtin.git:

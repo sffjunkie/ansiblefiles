@@ -1,0 +1,11 @@
+---
+- name: Install git - os specific method
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
+      - "default.yaml"
+
+- name: Copy config file.
+  debug: TODO

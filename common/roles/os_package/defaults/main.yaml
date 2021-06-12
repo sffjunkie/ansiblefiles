@@ -1,4 +1,5 @@
 ---
+state: present
 package_list:
-os_package_list:
-custom_package_list:
+os_packages:
+custom_os_packages:

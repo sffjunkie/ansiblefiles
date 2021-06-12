@@ -1,0 +1,5 @@
+---
+- name: Install zsh - Void Linux
+  community.general.xbps:
+    name: zsh
+    state: latest

@@ -15,12 +15,13 @@
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
 
-    - name: Install git.
-      package:
-        name: git
-        state: latest
+    - name: Install zsh.
+      include_role:
+        name: zsh
+      when: {{ shell == 'zsh' }}
 
   roles:
+    - git
     - dev
   #   - role: xdg_user_dirs
   #     vars:
@@ -37,7 +38,7 @@
   #   - update
     - docker
 
-  # tasks:
+  tasks:
   #   - name: Install config files
   #     ansible.builtin.git:
   #       repo: 'https://github.com/sffjunkie/configfiles'

@@ -13,3 +13,5 @@ os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
 git:
   user_email: "sffjunkie+code@gmail.com"
   user_name: "Simon Kennedy"
+
+zdotdir: "~/.config/zsh"

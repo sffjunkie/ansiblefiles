@@ -1,5 +1,5 @@
 ---
-custom_os_packages:
+os_packages:
   - ansible
   - sshpass
   - unattended-upgrades

@@ -1,0 +1,6 @@
+---
+# fallback install task for unknown os family/distributuin
+- name: Install zsh - Builtin
+  ansible.builtins.package:
+    name: zsh
+    state: latest

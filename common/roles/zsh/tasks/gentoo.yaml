@@ -1,0 +1,5 @@
+---
+- name: Install zsh - Alpine Linux
+  community.general.portage:
+    package: zsh
+    state: latest

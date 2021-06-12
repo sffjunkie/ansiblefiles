@@ -11,12 +11,12 @@
 
 - name: Add to package_list.
   set_fact:
-    package_list: "{{ package_list + os_package_list + custom_package_list | unique }}"
+    package_list: "{{ os_packages + custom_os_packages | unique }}"
 
 - name: Install package
   package:
     name: "{{ item }}"
-    state: present
+    state: "{{ present }}"
   loop:
     "{{ package_list | default([], True) }}"
   when: package_list | default([], True) | length > 0

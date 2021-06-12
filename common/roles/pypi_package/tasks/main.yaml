@@ -1,8 +1,9 @@
 ---
 - name: Install package
   pip:
-    name: "{{ item }}"
+    name: "{{ item.name }}{{ ';' + item.env if item.env }}"
+    version: "{{ item.version | default('', True) }}"
     state: present
   loop:
-    "{{ package_list | default([], True) }}"
-  when: package_list | default([], True) | length > 0
+    "{{ package_list }}"
+  when: package_list | length > 0

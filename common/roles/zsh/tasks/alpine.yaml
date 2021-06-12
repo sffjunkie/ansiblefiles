@@ -1,0 +1,5 @@
+---
+- name: Install zsh - Alpine Linux
+  community.general.apk:
+    name: zsh
+    state: latest

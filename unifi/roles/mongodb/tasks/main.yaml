@@ -1,0 +1,21 @@
+---
+- name: Add Mongo apt key
+  ansible.builtin.apt_key:
+    url: "https://www.mongodb.org/static/pgp/server-4.4.asc"
+    state: present
+
+- name: Add MongoDB repository
+  ansible.builtin.apt_repository:
+    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse"
+    state: present
+
+- name: Install MongoDB
+  ansible.builtin.apt:
+    name: "mongodb-org"
+    state: present
+
+- name: Start MongoDB
+  ansible.builtin.syatemd:
+    name: mongodb
+    state: started
+    enabled: true

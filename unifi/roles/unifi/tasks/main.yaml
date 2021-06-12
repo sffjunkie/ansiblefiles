@@ -1,0 +1,21 @@
+---
+- name: Add repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse"
+    state: present
+
+- name: Add Unifi apt Key
+  ansible.builtin.apt_key:
+    url: "https://dl.ui.com/unifi/unifi-repo.gpg"
+    state: present
+
+- name: Install
+  apt:
+    name: unifi
+    update_cache: True
+
+- name: Start Unifi controller
+  systemd:
+    name: unifi
+    state: started
+    enabled: yes

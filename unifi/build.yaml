@@ -1,0 +1,7 @@
+---
+- hosts: unifi
+  become: true
+  roles:
+    - os_package
+    - mongodb
+    - unifi

@@ -1,13 +1,13 @@
 ---
 - name: yum updgrade all
-  yum:
+  ansible.builtin.yum:
     name: "*"
     state: latest
     update_cache: true
   when: os_family == "centos"
 
 - name: dnf updgrade all
-  dnf:
+  ansible.builtin.dnf:
     name: "*"
     state: latest
     update_cache: true

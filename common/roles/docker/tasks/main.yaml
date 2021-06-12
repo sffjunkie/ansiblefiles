@@ -1,8 +1,7 @@
 ---
 - name: Install docker
-  include_tasks: "{{ lookup('first_found', subtasks) }}"
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:
       - "{{ distribution }}.yaml"
       - "{{ os_family }}.yaml"
-      - default.yaml

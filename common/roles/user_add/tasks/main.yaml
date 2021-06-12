@@ -1,11 +1,11 @@
 ---
 - name: Add user.
-  user:
+  ansible.builtin.user:
     name: "{{ userid }}"
     state: present
 
 - name: Add sudo rights for user.
-  copy:
+  ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ userid }}"
     content: "{{ userid }} ALL=(ALL) NOPASSWD: ALL"
     mode: 0644

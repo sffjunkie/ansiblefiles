@@ -1,10 +1,10 @@
 ---
-- hosts: all
+- hosts: ansible
   become: true
   become_method: sudo
   vars_files:
     - ../common/vars/main.yaml
-    # - ./vars/main.yaml
+    - ./vars/pypi.yaml
 
   pre_tasks:
     - name: Debug
@@ -19,19 +19,30 @@
           - "  Architecture: {{ ansible_architecture }}"
 
   tasks:
-    - name: Install packages
-      include_role:
-        name: packages
+    - name: Load os package list
+      ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
       vars:
-        package_list:
-          - ansible
-          - git
-          - python3-apt
-          - sshpass
-          - unattended-upgrades
+        params:
+          files:
+            - '{{distribution}}.yaml'
+            - '{{os_family}}.yaml'
+          paths:
+            - 'vars'
+
+    - name: Install OS packages
+      ansible.builtin.include_role:
+        name: os_package
+      vars:
+        package_list: "{{ os_packages }}"
+
+    - name: Install Pypi packages
+      ansible.builtin.include_role:
+        name: pypi_package
+      vars:
+        package_list: "{{ pypi_packages }}"
 
     - name: Copy playbooks
-      git:
+      ansible.builtin.git:
         repo: https://github.com/sffjunkie/ansiblefiles
         dest: ~/ansible/
         version: develop
@@ -41,3 +52,4 @@
         name: pi
         expires: 1
         password_lock: true
+      when: distribution == 'raspbian'

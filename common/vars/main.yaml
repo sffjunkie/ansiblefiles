@@ -1,10 +1,11 @@
 ---
+# Variables used by configfiles, laptop playbooks and common roles
 os: linux
 arch: "x86-64"
 shell: zsh
-username: sdk
 
-_default_config_home: "{{ lookup('env','HOME') + '/.config' }}"
+_config_dir: ".config"
+_default_config_home: "{{ lookup('env','HOME') + '/' + _config_dir }}"
 config_home: "{{ lookup('env', 'XDG_CONFIG_HOME') | default(_default_config_home, True) }}"
 
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
@@ -14,4 +15,25 @@ git:
   user_email: "sffjunkie+code@gmail.com"
   user_name: "Simon Kennedy"
 
-zdotdir: "~/.config/zsh"
+zsh:
+  zdotdir: "{{ _config_dir }}/zsh"
+  ohmyzsh:
+    path: .local/oh-my-zsh/
+    plugins:
+      - zsh-completions
+      - zsh-syntax-highlighting
+
+go:
+  install_path: "$HOME/.local"
+
+python:
+  pyenv: true
+  virtualenvwrapper: true
+
+dev_roles:
+  - go
+  - node
+  - python
+  - rust
+
+config_roles: "{{ dev_roles + ['zsh', 'ohmyzsh'] }}"

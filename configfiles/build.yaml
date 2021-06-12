@@ -1,7 +1,33 @@
 ---
 - hosts: localhost
   connection: local
+  gather_facts: false
   vars_files:
     - ../common/vars/main.yaml
 
   tasks:
+    - name: Display info
+      debug:
+        msg:
+          - "Config home: {{ config_home }}"
+          - "Config roles: {{ config_roles | join(', ') }}"
+
+    - name: Go config
+      include_tasks: includes/task/go.yaml
+      when: '"go" in config_roles'
+
+    - name: Node config
+      include_tasks: includes/task/node.yaml
+      when: '"node" in config_roles'
+
+    - name: Python config
+      include_tasks: includes/task/python.yaml
+      when: '"python" in config_roles'
+
+    - name: Rust config
+      include_tasks: includes/task/rust.yaml
+      when: '"rust" in config_roles'
+
+    - name: Zsh config
+      include_tasks: includes/task/zsh.yaml
+      when: '"zsh" in config_roles'

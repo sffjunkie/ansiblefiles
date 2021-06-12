@@ -1,7 +1,7 @@
 ---
 - hosts: all
   become: true
-  become_user: sdk
+  become_user: "{{ username }}"
   vars_files:
     - ../common/vars/main.yaml
 
@@ -14,11 +14,7 @@
           - "  Shell: {{ shell }}"
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
-
-    - name: Install zsh.
-      include_role:
-        name: zsh
-      when: {{ shell == 'zsh' }}
+          - "  Development Environments: {{ dev_roles | join(', ') }}"
 
   roles:
     - git
@@ -27,18 +23,39 @@
   #     vars:
   #       custom_xdg_user_dirs:
   #         XDG_PUBLICSHARE_DIR:
-
-    - ohmyzsh
-    - go_dev
-  #   - node_dev
-  #   - python_dev
-  #   - rust_dev
-  #   - docker
-  #   - telegraf
-  #   - update
     - docker
 
   tasks:
+    - name: Install zsh.
+      include_role:
+        name: zsh
+      when: shell == 'zsh'
+
+    - name: Install oh-my-zsh.
+      include_role:
+        name: ohmyzsh
+      when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
+
+    - name: Install Go dev environment.
+      include_role:
+        name: go_dev
+      when: '"go" in dev_roles'
+
+    - name: Install Node dev environment.
+      include_role:
+        name: node_dev
+      when: '"node" in dev_roles'
+
+    - name: Install Python dev environment.
+      include_role:
+        name: python_dev
+      when: '"python" in dev_roles'
+
+    - name: Install Rust dev environment.
+      include_role:
+        name: rust_dev
+      when: '"rust" in dev_roles'
+
   #   - name: Install config files
   #     ansible.builtin.git:
   #       repo: 'https://github.com/sffjunkie/configfiles'

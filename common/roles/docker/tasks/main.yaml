@@ -5,3 +5,4 @@
     subtasks:
       - "{{ distribution }}.yaml"
       - "{{ os_family }}.yaml"
+      - "default.yaml"

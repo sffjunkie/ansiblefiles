@@ -40,9 +40,3 @@
       dest: "{{ install_path }}"
       remote_src: yes
   when: current_version != available_version
-
-- name: Create Go shell config file
-  ansible.builtin.template:
-    src: templates/go.sh
-    dest: "{{ config_home }}/sh/go.sh"
-    mode: 0700

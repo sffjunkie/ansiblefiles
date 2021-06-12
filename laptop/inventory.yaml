@@ -1,20 +1,22 @@
 ---
 all:
   hosts:
-    # localhost:
-    #   vars:
-    #     ansible_connection: local
     laptop:
       ansible_port: 22
       ansible_host: 10.44.0.122
       vars:
+        username: sdk
         reboot: false
-    
+
     ansible:
       ansible_host: 10.44.0.121
+      vars:
+        username: sdk
 
   children:
     vmhosts:
       hosts:
         mary:
           ansible_host: 10.44.0.201
+        dizzy:
+          ansible_host: 10.44.0.202

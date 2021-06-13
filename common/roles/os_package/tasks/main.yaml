@@ -1,5 +1,5 @@
 ---
-- name: Load default package list
+- name: Load default package_list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
@@ -16,7 +16,7 @@
 - name: Install package
   package:
     name: "{{ item }}"
-    state: "{{ present }}"
+    state: present
   loop:
     "{{ package_list | default([], True) }}"
   when: package_list | default([], True) | length > 0

@@ -1,6 +1,9 @@
 ---
 - hosts: unifi
   become: true
+  vars_files:
+    - ../vars/secrets.yaml
+
   roles:
     - os_package
     - mongodb

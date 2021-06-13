@@ -4,6 +4,7 @@
   become_method: sudo
   vars_files:
     - ../common/vars/main.yaml
+    - ../vars/secrets.yaml
     - ./vars/pypi.yaml
 
   pre_tasks:
@@ -11,7 +12,7 @@
       ansible.builtin.debug:
         msg:
           - "Computed stats"
-          - "  Username: {{ username }}"
+          - "  Username: {{ remote_user }}"
           - "  Configuration file home directory: {{ config_home }}"
           - "  Shell: {{ shell }}"
           - "  Distribution: {{ distribution }}"

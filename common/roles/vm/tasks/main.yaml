@@ -1,0 +1,26 @@
+---
+- name: Configure ssh server.
+  import_role:
+    name: ssh
+    vars:
+      ssh_port: {{ ssh_port }}
+
+- import_role:
+    name: ufw
+    vars:
+      ssh_port: {{ ssh_port }}
+
+- name: Add user.
+  import_role:
+    name: user_add
+  loop: {{ usernames }}
+  loop_control: "userid"
+
+- name: Configure ssh for user.
+  import_role:
+    name: user_ssh
+  loop: {{ usernames }}
+  loop_control: "userid"
+
+- import_role:
+    name: selinux

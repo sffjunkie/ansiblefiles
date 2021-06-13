@@ -26,4 +26,4 @@
     name: "user.signingKey"
     scope: global
     value: "{{ git.pgp_key }}"
-  when: git.pgp_key | length > 0
+  when: git.pgp_key | default("", True) | length > 0

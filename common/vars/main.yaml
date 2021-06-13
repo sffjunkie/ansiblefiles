@@ -11,10 +11,6 @@ config_home: "{{ lookup('env', 'XDG_CONFIG_HOME') | default(_default_config_home
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
 
-git:
-  user_email: "sffjunkie+code@gmail.com"
-  user_name: "Simon Kennedy"
-
 zsh:
   zdotdir: "{{ _config_dir }}/zsh"
   ohmyzsh:
@@ -37,3 +33,15 @@ dev_roles:
   - rust
 
 config_roles: "{{ dev_roles + ['zsh', 'ohmyzsh'] }}"
+
+standard_os_packages:
+  debian:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - python3
+    - python3-apt
+    - python3-pip
+    - python3-setuptools
+    - software-properties-common
+    - virtualenv

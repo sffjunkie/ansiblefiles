@@ -1,4 +1,4 @@
 .vagrant
 files/ssh
-files/secrets.yaml
+vars/secrets.yaml
 inventory.yaml

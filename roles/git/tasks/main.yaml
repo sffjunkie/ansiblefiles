@@ -9,21 +9,24 @@
 
 - name: Configure git email
   community.general.git_config:
-    name: "user.email"
+    name: user.email
     scope: global
     value: "{{ git.user_email }}"
+    state: present
   when: git.user_email | length > 0
 
 - name: Configure git name
   community.general.git_config:
-    name: "user.name"
+    name: user.name
     scope: global
     value: "{{ git.user_name }}"
+    state: present
   when: git.user_name | length > 0
 
-- name: Configure git PGP Key
+- name: Configure git GPG Key
   community.general.git_config:
-    name: "user.signingKey"
+    name: user.signingKey
     scope: global
-    value: "{{ git.pgp_key }}"
+    value: "{{ git.gpg_key }}"
+    state: present
   when: git.pgp_key | default("", True) | length > 0

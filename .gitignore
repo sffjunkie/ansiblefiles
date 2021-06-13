@@ -2,3 +2,4 @@
 files/ssh
 vars/secrets.yaml
 inventory.yaml
+configfiles/templates

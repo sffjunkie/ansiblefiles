@@ -1,6 +1,6 @@
 ---
 - name: python.sh
   ansible.builtin.template:
-    src: templates/sh/python.sh.j2
+    src: templates/.config/sh/python.sh.j2
     dest: output/.config/sh/python.sh
     mode: 0700

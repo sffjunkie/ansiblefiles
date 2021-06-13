@@ -11,7 +11,7 @@
 
 - name: Add to package_list.
   set_fact:
-    package_list: "{{ os_packages + custom_os_packages | unique }}"
+    package_list: "{{ (os_packages + custom_os_packages) | unique }}"
 
 - name: Install package
   package:

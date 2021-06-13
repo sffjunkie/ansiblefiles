@@ -1,5 +1,5 @@
 ---
-- hosts: ansible_vbox
+- hosts: ansible
   become: true
   become_method: sudo
   vars_files:
@@ -12,18 +12,16 @@
       ansible.builtin.debug:
         msg:
           - "Computed stats"
-          - "  Username: {{ remote_user }}"
           - "  Configuration file home directory: {{ config_home }}"
           - "  Shell: {{ shell }}"
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
           - "  Architecture: {{ ansible_architecture }}"
 
-  tasks:
-    - name: Install git
-      ansible.builtin.include_role:
-        name: git
+  roles:
+    - git
 
+  tasks:
     - name: Load os package list
       ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
       vars:
@@ -44,13 +42,13 @@
       ansible.builtin.include_role:
         name: pypi_package
       vars:
-        custom_pypi_packages: "{{ pypi_packages }}"
+        package_list: "{{ pypi_packages }}"
 
-    - name: Copy playbooks
-      ansible.builtin.git:
-        repo: https://github.com/sffjunkie/ansiblefiles
-        dest: ~/ansible/
-        version: develop
+    # - name: Copy playbooks
+    #   ansible.builtin.git:
+    #     repo: https://github.com/sffjunkie/ansiblefiles
+    #     dest: ~/ansible/
+    #     version: develop
 
     - name: "Disable pi user"
       ansible.builtin.user:

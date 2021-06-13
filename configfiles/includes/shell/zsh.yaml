@@ -7,13 +7,13 @@
 
 - name: .zshrc
   ansible.builtin.template:
-    src: templates/zsh/.zshrc.j2
+    src: templates/.config/zsh/.zshrc.j2
     dest: "output/{{ zsh.zdotdir }}/.zshrc"
     mode: 0700
 
 - name: ohmyzsh
   ansible.builtin.template:
-    src: templates/zsh/ohmyzsh.sh.j2
+    src: templates/.config/zsh/ohmyzsh.sh.j2
     dest: "output/{{ zsh.zdotdir }}/ohmyzsh.sh"
     mode: 0700
   when: zsh.ohmyzsh.path | length > 0

@@ -1,3 +1,4 @@
 ---
 pypi_packages:
   - { name: flask }
+  - { name: tox, version: ">3.22.0" }

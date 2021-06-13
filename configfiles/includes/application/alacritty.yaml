@@ -16,6 +16,6 @@
 
 - name: Alacritty
   ansible.builtin.template:
-    src: templates/alacritty/alacritty.yml.j2
+    src: templates/.config/alacritty/alacritty.yml.j2
     dest: output/.config/alacritty/alacritty.yml
     mode: 0700

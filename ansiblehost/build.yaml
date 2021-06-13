@@ -1,9 +1,9 @@
 ---
-- hosts: ansible
+- hosts: ansible_vbox
   become: true
   become_method: sudo
   vars_files:
-    - ../common/vars/main.yaml
+    - ../vars/main.yaml
     - ../vars/secrets.yaml
     - ./vars/pypi.yaml
 

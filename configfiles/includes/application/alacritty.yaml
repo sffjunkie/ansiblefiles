@@ -1,0 +1,21 @@
+---
+- name: Calc scheme file name
+  set_fact:
+    _scheme_file: "{{ 'base16-' ~ base16.color_scheme ~ (('-' ~ color_count) if color_count == 256 else '') ~ '.yml' }}"
+
+- name: Get color definitions
+  set_fact:
+    alacritty_colors: "{{ base16_schemes['schemes'][base16.color_scheme]['alacritty']['colors'][_scheme_file] }}"
+
+- name: Make alacritty directory
+  file:
+    name: output/.config/alacritty
+    state: directory
+    access_time: preserve
+    modification_time: preserve
+
+- name: Alacritty
+  ansible.builtin.template:
+    src: templates/alacritty/alacritty.yml.j2
+    dest: output/.config/alacritty/alacritty.yml
+    mode: 0700

@@ -2,7 +2,7 @@
 - name: .zshenv
   ansible.builtin.template:
     src: templates/.zshenv.j2
-    dest: output/.config/.zshenv
+    dest: output/.zshenv
     mode: 0700
 
 - name: .zshrc

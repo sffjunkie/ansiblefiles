@@ -1,0 +1,14 @@
+---
+config_roles: "{{ dev_roles + ['zsh', 'ohmyzsh'] }}"
+
+font:
+  family: Hack
+  size: 10
+
+applications:
+  - alacritty
+
+color_count: 256
+base16:
+  color_scheme: "apprentice"
+  templates: "{{ applications }}"

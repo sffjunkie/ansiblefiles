@@ -1,0 +1,58 @@
+font:
+  normal:
+    family: Hack
+
+  # Point size
+  size: 10
+
+selection:
+  save_to_clipboard: false
+
+mouse:
+  url:
+    launcher:
+        program: $HOME/.local/bin/linkhandler
+        args: []
+
+# Base16 Apprentice 256 - alacritty color config
+# romainl
+colors:
+  # Default colors
+  primary:
+    background: '0x262626'
+    foreground: '0xBCBCBC'
+
+  # Colors the cursor will use if `custom_cursor_colors` is true
+  cursor:
+    text: '0x262626'
+    cursor: '0xBCBCBC'
+
+  # Normal colors
+  normal:
+    black:   '0x262626'
+    red:     '0x5F8787'
+    green:   '0x87AF87'
+    yellow:  '0x5F8787'
+    blue:    '0xFFFFAF'
+    magenta: '0x87AFD7'
+    cyan:    '0x5F875F'
+    white:   '0xBCBCBC'
+
+  # Bright colors
+  bright:
+    black:   '0x6C6C6C'
+    red:     '0x5F8787'
+    green:   '0x87AF87'
+    yellow:  '0x5F8787'
+    blue:    '0xFFFFAF'
+    magenta: '0x87AFD7'
+    cyan:    '0x5F875F'
+    white:   '0xFFFFFF'
+
+  indexed_colors:
+    - { index: 16, color: '0xFF8700' }
+    - { index: 17, color: '0x5F87AF' }
+    - { index: 18, color: '0x303030' }
+    - { index: 19, color: '0x333333' }
+    - { index: 20, color: '0x787878' }
+    - { index: 21, color: '0xC9C9C9' }

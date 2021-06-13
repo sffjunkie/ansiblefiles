@@ -19,21 +19,6 @@ zsh:
       - zsh-completions
       - zsh-syntax-highlighting
 
-go:
-  install_path: "$HOME/.local"
-
-python:
-  pyenv: true
-  virtualenvwrapper: true
-
-dev_roles:
-  - go
-  - node
-  - python
-  - rust
-
-config_roles: "{{ dev_roles + ['zsh', 'ohmyzsh'] }}"
-
 standard_os_packages:
   debian:
     - apt-transport-https

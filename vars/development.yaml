@@ -1,0 +1,13 @@
+---
+go:
+  install_path: "$HOME/.local"
+
+python:
+  pyenv: true
+  virtualenvwrapper: true
+
+dev_roles:
+  - go
+  - node
+  - python
+  - rust

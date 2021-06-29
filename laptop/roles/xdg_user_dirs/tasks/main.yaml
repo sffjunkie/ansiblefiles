@@ -21,7 +21,7 @@
     mode: 0600
 
 - name: Update XDG directories
-  ansible.builtin.shell:
+  ansible.builtin.shell:  # noqa command-instead-of-shell
     cmd: xdg-user-dirs-update
   register: updateresult
   changed_when: updateresult.rc == 0

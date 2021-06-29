@@ -3,7 +3,7 @@
   ansible.builtin.package:
     name: xorg
     state: present
-  when: "{{ ansible_of_family == 'archlinux' }}"
+  when: ansible_os_family == 'archlinux'
 
 - name: Install card driver
   ansible.builtin.package:

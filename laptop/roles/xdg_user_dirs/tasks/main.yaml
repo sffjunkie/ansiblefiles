@@ -23,5 +23,5 @@
 - name: Update XDG directories
   ansible.builtin.shell:
     cmd: xdg-user-dirs-update
-    register: updateresult
-    changed_when: updateresult.rc == 0
+  register: updateresult
+  changed_when: updateresult.rc == 0

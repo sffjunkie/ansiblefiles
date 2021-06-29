@@ -4,15 +4,15 @@
     name: "{{ item }}"
     state: present
   loop:
-    - nodejs
-    - npm
+    - "nodejs"
+    - "npm"
 
 - name: Install global packages
   community.general.npm:
     name: "{{ item }}"
     global: true
   loop:
-    - typescript
-    - @types/node
-    - @micrsoft/tsdoc
-    - typedoc
+    - "typescript"
+    - "@types/node"
+    - "@micrsoft/tsdoc"
+    - "typedoc"

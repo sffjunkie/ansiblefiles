@@ -18,21 +18,21 @@
   ansible.builtin.command: go version
   register: goversion
   changed_when: false
-  when: goavailable.failed == false
+  when: not goavailable.failed
 
 - name: Set current_version var to the current
   ansible.builtin.set_fact:
     current_version: "{{ goversion.stdout.split(' ')[2] }}"
-  when: goavailable.failed == false and goversion.failed == false
+  when: not goavailable.failed and not goversion.failed
 
 - name: Set current_version var to none
   ansible.builtin.set_fact:
     current_version: "none"
-  when: goavailable.failed == false and goversion.failed == true
+  when: not goavailable.failed and goversion.failed
 
 - ansible.builtin.debug:
     msg: "Go current version: {{ current_version }}"
-  when: goavailable.failed == false
+  when: not goavailable.failed
 
 - name: Download and extract the archive {{ archive_name }}
   ansible.builtin.unarchive:

@@ -1,0 +1,14 @@
+---
+- name: Ensure each item has 'env' and 'version' keys
+  ansible.builtin.set_fact:
+    all_packages: "{{ all_packages + [dict_defaults | combine(item)] }}"
+  loop: "{{ packages }}"
+  when: packages | length > 0
+
+- name: Pypi package
+  ansible.builtin.pip:
+    name: "{{ item.name }}{{ (';' + item.env) | default('', True) }}"
+    version: "{{ item.version | default('', True) }}"
+    state: present
+  loop: "{{ all_packages  }}"
+  when: all_packages | length > 0

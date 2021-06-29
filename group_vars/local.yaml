@@ -24,14 +24,19 @@ ohmyzsh:
     - zsh-syntax-highlighting
 
 os_packages:
+  - "{{ shell }}"
   - bat
-  - exa
-  - libnotify
+  - dunst
   - mpd
   - mpv
+  - nitrogen
   - ranger
   - sxhkd
   - sxiv
+
+shell_packages:
+  bash:
+    - bash-completion
 
 pypi_packages:
   - pipx
@@ -50,9 +55,9 @@ aliases: []
 # Dictionary describing config files for the 'configfiles' playbook to create.
 # Added to by various roles e.g. ohmyzsh
 # Each value is to be a dictionary.
-configfiles: {
-  path: {
+configfiles:
+  path:
     dirs:
       - "{{ local_home }}"
-  }
-}
+  zsh:
+    zdotdir: "${XDG_CONFIG_HOME:-$HOME/.config}/zsh"

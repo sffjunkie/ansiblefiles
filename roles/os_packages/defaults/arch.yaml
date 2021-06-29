@@ -1,5 +1,5 @@
 ---
-packages:
+default_os_packages:
   - nano
   # - dhcpd
   - base-devel

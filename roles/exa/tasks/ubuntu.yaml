@@ -1,0 +1,15 @@
+---
+- name: Install exa package for ubuntu versions > 20.04
+  ansible.builtin.package:
+    name: exa
+    state: present
+  when: ansible_distribution_version > "20.04"
+
+- name: Check binary exists
+  ansible.builtin.stat:
+    path: /usr/bin/exa
+  register: exa_bin
+
+- name: Install exa from github for ubuntu versions <= 20.04
+  ansible.builtin.include_tasks: ./from_github.yaml
+  when: ansible_distribution_version <= "20.04" and not exa_bin.stat.exists

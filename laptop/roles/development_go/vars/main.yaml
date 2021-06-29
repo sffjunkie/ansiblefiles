@@ -1,11 +1,9 @@
 ---
 version: "latest"
-
 version_url: "https://golang.org/VERSION?m=text"
 archive_name: "{{ filename_prefix }}.{{ os }}-{{ arch }}.tar.gz"
 download_url: "https://dl.google.com/go/{{ archive_name }}"
 install_path: "/usr/local/"
 current_version: ""
-
 go_arch: "{{ ansible_architecture[:5] }}"
 go_arch: "{{ "armv6l" if "armv7l" else go_arch }}"

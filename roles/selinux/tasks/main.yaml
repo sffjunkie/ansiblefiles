@@ -1,6 +1,6 @@
 ---
 - name: Install Python SELinux library.
-  package:
+  ansible.builtin.package:
     name: python3-libselinux
     state: present
 

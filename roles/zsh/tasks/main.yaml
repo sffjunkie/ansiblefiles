@@ -7,5 +7,6 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-- name: Copy config file.
-  debug: TODO
+- name: Add zsh to configfiles fact
+  ansible.builtin.set_fact:
+    configfiles: "{{ configfiles + ['zsh'] }}"

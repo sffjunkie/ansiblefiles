@@ -1,0 +1,21 @@
+---
+- name: Install base packages.
+  ansible.builtin.package:
+    name: xorg
+    state: present
+  when: "{{ ansible_of_family == 'archlinux' }}"
+
+- name: Install card driver
+  ansible.builtin.package:
+    name: "{{ x11.video_card_driver }}"
+    state: present
+
+- name: Install display manager.
+  ansible.builtin.package:
+    name: "{{ x11.display_manager }}"
+    state: present
+
+- name: Install window manager.
+  ansible.builtin.package:
+    name: "{{ x11.window_manager }}"
+    state: present

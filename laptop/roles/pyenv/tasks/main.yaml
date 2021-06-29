@@ -1,1 +1,9 @@
 ---
+- name: Install pyenv
+  shell: "curl https://pyenv.run | bash"
+  environment:
+    PYENV_ROOT: "{{ local_home }}"
+
+- name: Set configfiles property
+  ansible.builtin.set_fact:
+    config_files: "{{ config_files + [{ 'pyenv_path': local_home + '/pyenv/bin' }] }}"

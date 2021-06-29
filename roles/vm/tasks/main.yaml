@@ -22,5 +22,6 @@
   loop: {{ usernames }}
   loop_control: "userid"
 
-- import_role:
+- name: Configure SELinux
+  import_role:
     name: selinux

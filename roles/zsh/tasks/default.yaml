@@ -1,6 +1,6 @@
 ---
 # Default install method to use `package` task
 - name: Install zsh - Builtin
-  ansible.builtins.package:
+  ansible.builtin.package:
     name: zsh
     state: latest

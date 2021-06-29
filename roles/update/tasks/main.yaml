@@ -1,4 +1,11 @@
 ---
+- name: apt updgrade all
+  ansible.builtin.yum:
+    name: "*"
+    state: latest
+    update_cache: true
+  when: os_family == "debian"
+
 - name: yum updgrade all
   ansible.builtin.yum:
     name: "*"

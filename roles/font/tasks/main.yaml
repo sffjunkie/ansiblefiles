@@ -1,0 +1,32 @@
+---
+- name: Calc basename
+  ansible.builtin.set_fact:
+    _path: "{{ font_url | urlsplit('path') }}"
+    _basename: "{{ _path | basename }}"
+
+- name: Create output directory
+  ansible.builtin.file:
+    name: "/tmp/ansible-font/{{ _basename }}/contents"
+    state: directory
+
+- name: Download font
+  ansible.builtin.get_url:
+    url: "{{ font_url }}"
+    dest: "/tmp/ansible-font/{{ _basename }}/{{ _basename }}"
+
+- name: Extract files
+  unarchive:
+    src: "/tmp/ansible-font/{{ _basename }}/{{ _basename }}"
+    dest: "/tmp/ansible-font/{{ _basename }}/contents/"
+
+- name: Calc destination
+  ansible.builtin.set_fact:
+    _font_destination: "{{ '/usr/local/share/ansible-fonts' if global else ('~/.local/ansible-fonts' | expanduser) }}"
+
+- name: Copy font files
+  ansible.builtin.copy:
+    src: "/tmp/ansible-font/{{ _basename }}/contents/*.{otf,ttf}"
+    dest: "{{ _font_destination }}"
+  notify:
+    - Delete temporary files
+    - Update font cache

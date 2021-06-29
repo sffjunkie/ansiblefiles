@@ -1,0 +1,15 @@
+---
+- name: Install bat
+  ansible.builtin.package:
+    name: bat
+    state: present
+
+- name: Add alias as the executable is named batcat on debian
+  ansible.builtin.set_fact:
+    aliases: "{{ aliases + [['cat', 'batcat']] }}"
+  when: os_family == 'debian'
+
+- name: Otherwise add alias to bat
+  ansible.builtin.set_fact:
+    aliases: "{{ aliases + [['cat', 'bat']] }}"
+  when: os_family != 'debian'

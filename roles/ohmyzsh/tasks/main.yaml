@@ -3,10 +3,14 @@
   shell:
     cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   environment:
-    ZSH: "{{ zsh.ohmyzsh.path }}"
+    ZSH: "{{ ohmyzsh.path }}"
 
 - name: Install plugins.
   git:
     repo: "https://github.com/zsh-users/{{ item }}.git"
   loop:
-    "{{ zsh.ohmyzsh.plugins }}"
+    "{{ ohmyzsh.user_plugins }}"
+
+- name: Add ohmyzsh to configfiles fact
+  ansible.builtin.set_fact:
+    configfiles: "{{ configfiles + ['ohmyzsh'] }}"

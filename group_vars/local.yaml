@@ -1,0 +1,58 @@
+---
+x11:
+  video_card_driver: xf86-video-intel
+  display_manager:  lightdm
+  greeter: lightdm-gtk-greeter
+  window_manager: qtile
+
+base16_color_scheme: nord
+
+font: https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip
+font_size: 10pt
+
+shell: zsh
+ohmyzsh:
+  path: ~/.local/ohmyzsh/
+  plugins: # plugins shipped with oh-my-zsh
+    - docker
+    - docker-compose
+    - git
+    - sudo
+    - web-search
+  user_plugins: # plugins from https://github.com/zsh-users/
+    - zsh-completions
+    - zsh-syntax-highlighting
+
+os_packages:
+  - bat
+  - exa
+  - libnotify
+  - mpd
+  - mpv
+  - ranger
+  - sxhkd
+  - sxiv
+
+pypi_packages:
+  - pipx
+
+# Roles to set up development environments
+# The actual roles are named `development_<role_name>` e,g, `development_go`
+development_roles:
+  - go
+  - node
+  - python
+  - rust
+
+# List of aliases for the 'configfiles' playbook to create
+aliases: []
+
+# Dictionary describing config files for the 'configfiles' playbook to create.
+# Added to by various roles e.g. ohmyzsh
+# Each value is to be a dictionary.
+configfiles: {
+  path: {
+    dirs:
+      - "{{ local_home }}"
+  }
+}

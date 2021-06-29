@@ -1,9 +1,0 @@
----
-- name: "Create development directories in /home/{{ username }}"
-  file:
-    path: "/home/{{ username }}/{{ item }}"
-    state: directory
-    mode: 0755
-    access_time: preserve
-    modification_time: preserve
-  loop: "{{ lookup('file', 'files/dir.txt').splitlines() }}"

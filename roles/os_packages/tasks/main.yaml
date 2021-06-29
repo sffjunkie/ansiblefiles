@@ -1,0 +1,17 @@
+---
+- name: Load default package_list
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+    skip: true
+  vars:
+    params:
+      files:
+        - "{{distribution}}.yaml"
+        - "{{os_family}}.yaml"
+      paths:
+        - "vars"
+
+- name: Install packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages }}"

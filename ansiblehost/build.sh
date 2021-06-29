@@ -1,3 +1,3 @@
 #!/bin/sh
 [ -f requirements.yaml ] && ansible-galaxy install -r requirements.yaml
-ansible-playbook build.yaml --ask-pass
+ansible-playbook main.yaml --ask-pass

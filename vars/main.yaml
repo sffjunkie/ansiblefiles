@@ -7,6 +7,7 @@ shell: zsh
 _config_dir: ".config"
 _default_config_home: "{{ lookup('env','HOME') + '/' + _config_dir }}"
 config_home: "{{ lookup('env', 'XDG_CONFIG_HOME') | default(_default_config_home, True) }}"
+local_home: "{{ lookup('env','HOME') + '/' + as_user }}/.local"
 
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"

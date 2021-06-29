@@ -1,4 +1,0 @@
----
-os_packages:
-custom_os_packages:
-state: present

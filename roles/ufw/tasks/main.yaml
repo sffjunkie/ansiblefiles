@@ -1,6 +1,6 @@
 ---
 - name: Ensure ufw is installed.
-  package:
+  ansible.builtin.package:
     name: ufw
     state: present
 

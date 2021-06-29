@@ -1,0 +1,5 @@
+---
+- name: Install qtile
+  ansible.builtin.package:
+    name: qtile
+    state: present

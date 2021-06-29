@@ -1,1 +1,4 @@
 ---
+- name: Copy config files
+  copy:
+    src: "{{ }}"

@@ -1,0 +1,19 @@
+---
+- name: Install LightDM
+  ansible.builtin.package:
+    name: lightdm
+    state: present
+
+- name: Install LightDM GTK Greeter
+  ansible.builtin.package:
+    name: lightdm-gtk-greeter
+    state: present
+
+- name: Set LightDM greeter
+  ansible.builtin.shell: /usr/lib/lightdm/lightdm-set-defaults --greeter lightdm-gtk-greeter
+
+- name: Enable lightdm
+  ansible.builtin.systemd:
+    name: lightdm
+    state: started
+    enable: true

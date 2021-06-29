@@ -1,7 +1,7 @@
 ---
 # https://www.opencsw.org/package/zsh/
 - name: Install zsh - Solaris
-  ansible.builtins.shell: |
+  ansible.builtin.shell: |
     pkgadd -d http://get.opencsw.org/now
     /opt/csw/bin/pkgutil -U
     /opt/csw/bin/pkgutil -y -i zsh

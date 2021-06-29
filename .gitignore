@@ -1,5 +1,5 @@
 .vagrant
 files/ssh
-vars/secrets.yaml
+secrets.yaml
 inventory.yaml
 configfiles/templates

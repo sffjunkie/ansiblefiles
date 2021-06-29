@@ -1,8 +1,9 @@
 ---
 - name: Install pyenv
-  shell: "curl https://pyenv.run | bash"
+  shell: "curl https://pyenv.run | bash"  # noqa command-instead-of-module
   environment:
     PYENV_ROOT: "{{ local_home }}"
+  creates: "{{ local_home }}/.pyenv"
 
 - name: Set configfiles property
   ansible.builtin.set_fact:

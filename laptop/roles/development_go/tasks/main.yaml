@@ -30,13 +30,14 @@
     current_version: "none"
   when: not goavailable.failed and goversion.failed
 
-- ansible.builtin.debug:
+- name: Display current version
+  ansible.builtin.debug:
     msg: "Go current version: {{ current_version }}"
   when: not goavailable.failed
 
 - name: Download and extract the archive {{ archive_name }}
   ansible.builtin.unarchive:
-      src: "{{ download_url }}"
-      dest: "{{ install_path }}"
-      remote_src: yes
+    src: "{{ download_url }}"
+    dest: "{{ install_path }}"
+    remote_src: true
   when: current_version != available_version

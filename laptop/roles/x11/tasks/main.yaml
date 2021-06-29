@@ -11,11 +11,7 @@
     state: present
 
 - name: Install display manager.
-  ansible.builtin.package:
-    name: "{{ x11.display_manager }}"
-    state: present
+  ansible.builtin.include_tasks: "display_manager/{{ x11.display_manager }}.yaml"
 
 - name: Install window manager.
-  ansible.builtin.package:
-    name: "{{ x11.window_manager }}"
-    state: present
+  ansible.builtin.include_tasks: "window_manager/{{ x11.window_manager }}.yaml"

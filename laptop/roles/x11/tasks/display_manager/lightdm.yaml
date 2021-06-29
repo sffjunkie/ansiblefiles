@@ -19,3 +19,4 @@
   ansible.builtin.template:
     src: templates/50-laptop.conf
     dest: /etc/lightdm/lightdm.conf.d/50-laptop.conf
+    mode: 0644

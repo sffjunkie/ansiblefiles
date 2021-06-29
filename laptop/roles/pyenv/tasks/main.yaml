@@ -5,7 +5,7 @@
     PYENV_ROOT: "{{ local_home }}"
   args:
     creates: "{{ local_home }}/.pyenv"
-  pipefail: true
+  # pipefail: true
 
 - name: Set configfiles property
   ansible.builtin.set_fact:

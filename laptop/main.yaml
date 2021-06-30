@@ -26,22 +26,22 @@
         - ~/.local/bin
 
   roles:
-    - user_add
-    - user_ssh
-    - git
+    # - user_add
+    # - user_ssh
+    # - git
 #     - ansible.builtin.include_role:
 #         name: xdg_user_dirs
 #         vars:
 #           custom_xdg_user_dirs:
 #             XDG_PUBLICSHARE_DIR:
-    - role: os_packages
-      packages: "{{ os_packages }}"
-    - role: pypi_packages
-      packages: "{{ pypi_packages }}"
-    - exa
-#     - role: font
-#       font_url: "{{ font }}"
-#     - x11
+    # - role: os_packages
+    #   packages: "{{ os_packages }}"
+    # - role: pypi_packages
+    #   packages: "{{ pypi_packages }}"
+    # - exa
+    # - role: font
+    #   font_url: "{{ font }}"
+    - x11
 #     - development
 #     - docker
 

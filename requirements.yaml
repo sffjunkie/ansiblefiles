@@ -4,3 +4,4 @@ collections:
 
 roles:
   - mnussbaum.base16-builder-ansible
+  - PeterMosmans.virtualbox-guest

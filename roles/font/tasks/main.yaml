@@ -1,32 +1,74 @@
 ---
-- name: Calc basename
+- name: Calc path
   ansible.builtin.set_fact:
     _path: "{{ font_url | urlsplit('path') }}"
+
+- name: Calc basename
+  ansible.builtin.set_fact:
     _basename: "{{ _path | basename }}"
 
-- name: Create output directory
-  ansible.builtin.file:
-    name: "/tmp/ansible-font/{{ _basename }}/contents"
+- name: Create temporary directory
+  ansible.builtin.tempfile:
+    prefix: font
     state: directory
-
-- name: Download font
-  ansible.builtin.get_url:
-    url: "{{ font_url }}"
-    dest: "/tmp/ansible-font/{{ _basename }}/{{ _basename }}"
-
-- name: Extract files
-  unarchive:
-    src: "/tmp/ansible-font/{{ _basename }}/{{ _basename }}"
-    dest: "/tmp/ansible-font/{{ _basename }}/contents/"
-
-- name: Calc destination
-  ansible.builtin.set_fact:
-    _font_destination: "{{ '/usr/local/share/ansible-fonts' if global else ('~/.local/ansible-fonts' | expanduser) }}"
-
-- name: Copy font files
-  ansible.builtin.copy:
-    src: "/tmp/ansible-font/{{ _basename }}/contents/*.{otf,ttf}"
-    dest: "{{ _font_destination }}"
+  register: _tmp_dir
   notify:
     - Delete temporary files
-    - Update font cache
+
+- name: Set font tmp dir
+  ansible.builtin.set_fact:
+    _font_tmp_dir: "{{ _tmp_dir.path }}"
+
+- name: Download font
+  ansible.builtin.uri:
+    url: "{{ font_url }}"
+    dest: "{{ _font_tmp_dir }}/{{ _basename }}"
+  register: _font_download
+  changed_when: false
+
+- block:
+  - name: Create folder for extraction
+    ansible.builtin.file:
+      path: "{{ _font_tmp_dir }}/expanded/"
+      state: directory
+    changed_when: false
+
+  - name: Extract files
+    ansible.builtin.unarchive:
+      src: "{{ _font_tmp_dir }}/{{ _basename }}"
+      dest: "{{ _font_tmp_dir }}/expanded/"
+      remote_src: true
+    changed_when: false
+
+  - name: Calc destination
+    ansible.builtin.set_fact:
+      _font_destination: "{{ '/usr/local/share/fonts' if global else ('~/.local/share/fonts' | expanduser) }}"
+
+  - name: Create output directory
+    ansible.builtin.file:
+      path: "{{ _font_destination }}"
+      state: directory
+      mode: 0755
+      access_time: preserve
+      modification_time: preserve
+
+  - name: Find font files to copy
+    ansible.builtin.find:
+      paths: "{{ _font_tmp_dir }}/expanded/"
+      patterns:
+        - '*.ttf'
+        - '*.otf'
+      recurse: true
+    register: _font_files
+
+  - name: Copy font files to {{ _font_destination }}
+    ansible.builtin.copy:
+      src: "{{ item.path }}"
+      dest: "{{ _font_destination }}"
+      remote_src: true
+    loop: "{{ _font_files.files }}"
+    when: _font_files.matched > 0
+    notify:
+      - Update font cache
+
+  when: _font_download.status == 200

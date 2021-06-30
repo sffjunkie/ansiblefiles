@@ -1,7 +1,7 @@
 - name: Delete temporary files
   file:
-    name: "/tmp/ansible-font/"
+    name: "{{ _font_tmp_dir }}"
     state: absent
 
 - name: Update font cache
-  ansible.builtin.command: fc-cache -f
+  ansible.builtin.command: fc-cache -f -v

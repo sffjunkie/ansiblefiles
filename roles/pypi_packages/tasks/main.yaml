@@ -1,7 +1,7 @@
 ---
-- name: Ensure each item has 'env' and 'version' keys
+- name: Ensure each item is a dict with 'env' and 'version' keys
   ansible.builtin.set_fact:
-    all_packages: "{{ all_packages + [dict_defaults | combine(item)] }}"
+    all_packages: "{{ all_packages + [dict_defaults | combine({ 'name': item })] }}"
   loop: "{{ packages }}"
   when: packages | length > 0
 

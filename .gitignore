@@ -3,3 +3,4 @@ files/ssh
 secrets.yaml
 inventory.yaml
 configfiles/templates
+roles/galaxy

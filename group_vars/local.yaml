@@ -1,6 +1,6 @@
 ---
 x11:
-  video_card_driver: xf86-video-intel
+  video_card_driver: # Empty value falls back to modesetting driver
   display_manager:  lightdm
   greeter: lightdm-gtk-greeter
   window_manager: qtile

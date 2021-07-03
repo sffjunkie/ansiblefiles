@@ -1,13 +1,26 @@
 ---
 go:
-  install_path: "$HOME/.local"
+  install: local
+  version: latest
+
+node:
+  install: local
+  packages:
+    - "@types/node"
+    - "typescript"
+    - "typedoc"
 
 python:
-  pyenv: true
-  virtualenvwrapper: true
+  packages:
+    os:
+    pypi:
+      - pyenv
+      - pytest
+      - virtualenvwrapper
 
-dev_roles:
-  - go
-  - node
-  - python
-  - rust
+    pipx:
+      - black
+      - cookiecutter
+      - poetry
+      - sphinx
+      - tox

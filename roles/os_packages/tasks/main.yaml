@@ -1,20 +1,6 @@
 ---
-- name: Load default os package list
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
-  vars:
-    params:
-      files:
-        - "{{distribution}}.yaml"
-        - "{{os_family}}.yaml"
-      paths:
-        - "defaults"
-
-- name: Add with_packages
-  ansible.builtin.set_fact:
-    all_packages: "{{ (default_os_packages + packages)|unique }}"
-
 - name: Install packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
-  loop: "{{ all_packages }}"
+  loop: "{{ package_list }}"

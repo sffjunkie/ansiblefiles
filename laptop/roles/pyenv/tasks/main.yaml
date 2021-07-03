@@ -2,11 +2,29 @@
 - name: Install pyenv
   shell: "curl https://pyenv.run | bash"  # noqa command-instead-of-module
   environment:
-    PYENV_ROOT: "{{ local_home }}"
+    PYENV_ROOT: "{{ local_home }}/pyenv"
   args:
-    creates: "{{ local_home }}/.pyenv"
+    creates: "{{ local_home }}/pyenv"
   # pipefail: true
 
-- name: Set configfiles property
-  ansible.builtin.set_fact:
-    config_files: "{{ config_files + [{ 'pyenv_path': local_home + '/pyenv/bin' }] }}"
+- name: Update configfiles for pyenv
+  ansible.utils.update_fact:
+    updates:
+      - path: configfiles.configs
+        value: "{{ configfiles.configs + ['pyenv'] }}"
+      - path: configfiles.path
+        value: "{{ configfiles.path + [local_home + '/pyenv/bin'] }}"
+      - path: configfiles.envvars
+        value: "{{ configfiles.envvars | combine({ 'PYENV_ROOT': local_home + '/pyenv' }) }}"
+  register: _updated_fact
+  changed_when: false
+
+# - name: Set configfiles
+#   ansible.builtin.set_fact:
+#     configfiles: "{{ _updated_fact.configfiles }}"
+#   changed_when: false
+
+
+- name: pyenv debug
+  debug:
+    msg: "{{ _updated_fact }}"

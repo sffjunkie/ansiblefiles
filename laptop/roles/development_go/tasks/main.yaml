@@ -1,43 +1,51 @@
 ---
 - name: Get filename prefix with latest version
   ansible.builtin.set_fact:
-    available_version: "{{ lookup('url', version_url, split_lines=False) }}"
-  when: version == "latest"
+    _go_install_version: "{{ lookup('url', _go_version_url, split_lines=False) }}"
+  changed_when: false
+  when: go.version == "latest"
 
 - name: Get filename prefix with fixed version
   ansible.builtin.set_fact:
-    available_version: go{{ version }}
-  when: version != "latest"
-
-- name: Check go is available
-  ansible.builtin.command: which go
+    _go_install_version: go{{ version }}
   changed_when: false
-  register: goavailable
+  when: go.version != "latest"
 
 - name: Try to get current go version installed
-  ansible.builtin.command: go version
-  register: goversion
+  ansible.builtin.command: "{{ _go_bin_path }}/go version"
+  register: _go_version
   changed_when: false
-  when: not goavailable.failed
+  failed_when: false
 
 - name: Set current_version var to the current
   ansible.builtin.set_fact:
-    current_version: "{{ goversion.stdout.split(' ')[2] }}"
-  when: not goavailable.failed and not goversion.failed
+    _go_current_version: "{{ _go_version.stdout.split(' ')[2] }}"
+  changed_when: false
+  when: _go_version.rc == 0
 
-- name: Set current_version var to none
-  ansible.builtin.set_fact:
-    current_version: "none"
-  when: not goavailable.failed and goversion.failed
-
-- name: Display current version
-  ansible.builtin.debug:
-    msg: "Go current version: {{ current_version }}"
-  when: not goavailable.failed
-
-- name: Download and extract the archive {{ archive_name }}
+- name: Download and extract the archive {{ _go_archive_name }}
   ansible.builtin.unarchive:
-    src: "{{ download_url }}"
-    dest: "{{ install_path }}"
+    src: "{{ _go_download_url }}"
+    dest: "{{ _go_install_path }}"
+    mode: 0755
+    owner: "{{ _go_mode }}"
+    group: "{{ _go_mode }}"
     remote_src: true
-  when: current_version != available_version
+  when: _go_current_version != _go_install_version
+
+# We can't directly set a fact with a period in it so we need to update the whole fact
+# and set in a separate step
+- name: Compute configfiles with additional path
+  ansible.utils.update_fact:
+    updates:
+      - path: configfiles.path
+        value: "{{ configfiles.path + [_go_bin_path] }}"
+      - path: configfiles.envvars
+        value: "{{ configfiles.envvars | combine({'GOPATH': go.install_path + '/go'}) }}"
+  register: _updated_fact
+  changed_when: false
+
+- name: Set configfiles
+  ansible.builtin.set_fact:
+    configfiles: "{{ _updated_fact.configfiles }}"
+  changed_when: false

@@ -1,5 +1,5 @@
 ---
-- name: Install git - os specific method
+- name: Install zsh
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:
@@ -7,6 +7,17 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-- name: Add zsh to configfiles fact
+- name: Update configfiles for ZSH
+  ansible.utils.update_fact:
+    updates:
+      - path: configfiles.configs
+        value: "{{ configfiles.configs + 'zsh' }}"
+      - path: configfiles.envvars
+        value: "{{ configfiles.envvars | combine({'ZDOTDIR': config_home_replacement_text + '/zsh'}) }}"
+  register: _updated_fact
+  changed_when: false
+
+- name: Set configfiles
   ansible.builtin.set_fact:
-    configfiles: "{{ configfiles + ['zsh'] }}"
+    configfiles: "{{ _updated_fact.configfiles }}"
+  changed_when: false

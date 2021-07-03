@@ -11,8 +11,20 @@
   community.general.npm:
     name: "{{ item }}"
     global: true
-  loop:
-    - "typescript"
-    - "@types/node"
-    - "@micrsoft/tsdoc"
-    - "typedoc"
+  loop: "{{ node.packages }}"
+
+
+- name: Compute new configfiles
+  ansible.utils.update_fact:
+    updates:
+      - path: configfiles.path
+        value: "{{ configfiles.path + [_npm_bin_path] }}"
+      - path: configfiles.envvars
+        value: "{{ configfiles.envvars | combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
+  register: _updated_fact
+  changed_when: false
+
+- name: Set configfiles
+  ansible.builtin.set_fact:
+    configfiles: "{{ _updated_fact.configfiles }}"
+  changed_when: false

@@ -1,29 +1,36 @@
 ---
-- name: "Create development directories in /home/{{ as_user }}"
-  file:
-    path: "/home/{{ as_user }}/{{ item }}"
-    state: directory
-    mode: 0755
-    access_time: preserve
-    modification_time: preserve
-  loop: "{{ dirs }}"
+# - name: "Create development directories in /home/{{ userid }}"
+#   file:
+#     path: "/home/{{ userid }}/{{ item }}"
+#     state: directory
+#     mode: 0755
+#     access_time: preserve
+#     modification_time: preserve
+#     owner: "{{ userid }}"
+#     group: "{{ userid }}"
+#   loop: "{{ dirs }}"
 
-- name: Install Go dev environment.
-  include_role:
-    name: development_go
-  when: '"go" in development_roles'
+# - name: Install Go dev environment.
+#   include_role:
+#     name: development_go
+#   when: "'go' in development_roles"
 
-- name: Install Node dev environment.
-  include_role:
-    name: development_node
-  when: '"node" in development_roles'
+# - name: Install Node dev environment.
+#   include_role:
+#     name: development_node
+#   when: "'node' in development_roles"
 
 - name: Install Python dev environment.
   include_role:
     name: development_python
-  when: '"python" in development_roles'
+  when: "'python' in development_roles"
 
-- name: Install Rust dev environment.
+# - name: Install Rust dev environment.
+#   include_role:
+#     name: development_rust
+#   when: "'rust' in development_roles"
+
+- name: Install Ansible dev environment.
   include_role:
-    name: development_rust
-  when: '"rust" in development_roles'
+    name: development_ansible
+  when: "'ansible' in development_roles"

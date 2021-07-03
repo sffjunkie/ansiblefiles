@@ -1,17 +1,20 @@
 ---
 - name: Create and set permissions for .ssh directory
+  become_user: "{{ userid }}"
   file:
     path: "/home/{{ userid }}/.ssh"
     mode: 0700
     state: directory
 
 - name: create authorized_keys file
+  become_user: "{{ userid }}"
   file:
     path: "/home/{{ userid }}/.ssh/authorized_keys"
-    state: file
+    state: touch
     mode: 0644
 
 - name: Add id to authorized_keys
+  become_user: "{{ userid }}"
   vars:
     pub_content: "{{ lookup('file', '/home/{{ userid }}/.ssh/{{ public_key }}') }}"
   lineinfile:

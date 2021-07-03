@@ -7,7 +7,7 @@
 
 - name: Check binary exists
   ansible.builtin.stat:
-    path: /usr/bin/exa
+    path: /usr/local/bin/exa
   register: exa_bin
 
 - name: Install exa from github for ubuntu versions <= 20.04

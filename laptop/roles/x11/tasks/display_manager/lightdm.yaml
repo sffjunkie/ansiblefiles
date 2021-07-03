@@ -12,7 +12,6 @@
 - name: Enable lightdm
   ansible.builtin.systemd:
     name: lightdm
-    state: started
     enabled: true
 
 - name: Configure LightDM

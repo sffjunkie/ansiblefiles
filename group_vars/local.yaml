@@ -12,52 +12,41 @@ font_size: 10pt
 
 shell: zsh
 ohmyzsh:
-  path: ~/.local/ohmyzsh/
-  plugins: # plugins shipped with oh-my-zsh
+  install: local
+  plugins: # plugins to enable that are shipped with oh-my-zsh
     - docker
     - docker-compose
     - git
     - sudo
     - web-search
-  user_plugins: # plugins from https://github.com/zsh-users/
+  user_plugins: # plugins to install and enable from https://github.com/zsh-users/
     - zsh-completions
     - zsh-syntax-highlighting
 
-os_packages:
-  - "{{ shell }}"
-  - bat
-  - dunst
-  - mpd
-  - mpv
-  - nitrogen
-  - ranger
-  - sxhkd
-  - sxiv
+packages:
+  os:
+    - bat
+    - dunst
+    - mpd
+    - mpv
+    - nano
+    - nitrogen
+    - ranger
+    - sxhkd
+    - sxiv
 
-shell_packages:
-  bash:
-    - bash-completion
+  pypi:
+    - pipx
 
-pypi_packages:
-  - pipx
+
+  # shell:
+  #   bash:
+  #     - bash-completion
 
 # Roles to set up development environments
-# The actual roles are named `development_<role_name>` e,g, `development_go`
+# The actual roles are named `development_<role_name>` e.g. `development_go`
 development_roles:
   - go
   - node
   - python
   - rust
-
-# List of aliases for the 'configfiles' playbook to create
-aliases: []
-
-# Dictionary describing config files for the 'configfiles' playbook to create.
-# Added to by various roles e.g. ohmyzsh
-# Each value is to be a dictionary.
-configfiles:
-  path:
-    dirs:
-      - "{{ local_home }}"
-  zsh:
-    zdotdir: "${XDG_CONFIG_HOME:-$HOME/.config}/zsh"

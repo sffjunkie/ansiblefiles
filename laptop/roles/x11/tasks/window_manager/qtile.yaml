@@ -1,5 +1,27 @@
 ---
-- name: Install qtile
+- name: Install qtile os pre-reqs
   ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - libcairo2
+    - libpangocairo-1.0-0
+
+- name: Install qtile dependencies
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - xcffib
+    - dbus-next
+
+- name: Install cairoffi with --no-cache-dir --ignore-installed
+  ansible.builtin.pip:
+    name: cairocffi
+    state: present
+    extra_args: "--no-cache-dir --ignore-installed"
+
+- name: Install qtile
+  ansible.builtin.pip:
     name: qtile
     state: present

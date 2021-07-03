@@ -1,8 +1,25 @@
 ---
-_config_dir: ".config"
-_default_config_home: "{{ lookup('env','HOME') + '/' + _config_dir }}"
-config_home: "{{ lookup('env', 'XDG_CONFIG_HOME') | default(_default_config_home, True) }}"
-local_home: "{{ lookup('env','HOME') }}/.local"
+# userid is defined in the inventory file
+home: "/home/{{ userid }}"
+config_home: "{{ home }}/.config"
+local_home: "{{ home }}/.local"
+cache_home: "{{ home }}/.local"
+
+# Replacement strings to use in config files instead of the ones above
+config_home_replacement_text: "${XDG_CONFIG_HOME:-${HOME}/.config}"
+local_home_replacement_text: "${HOME}/.local"
+cache_home_replacement_text: "${XDG_CACHE_HOME:-${HOME}/.cache}"
+
+# List of aliases for the 'configfiles' playbook to create
+aliases: []
+
+# Dictionary describing config files for the 'configfiles' playbook to create.
+# Added to by various roles e.g. ohmyzsh, go
+configfiles:
+  path:
+    - "{{ local_home }}/bin"
+  configs: []
+  envvars: {}
 
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"

@@ -1,8 +1,0 @@
----
-default_os_packages:
-  - nano
-  # - dhcpd
-  - base-devel
-  - git
-  - python3
-  - python3-pip

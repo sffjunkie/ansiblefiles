@@ -3,7 +3,6 @@
   ansible.builtin.package:
     name: xorg
     state: present
-  # when: ansible_os_family == 'archlinux'
 
 - name: Set video_driver fact
   ansible.builtin.set_fact:
@@ -16,8 +15,8 @@
     state: present
   when: _xf86_video_driver|length > 0
 
+- name: Install window manager.
+  ansible.builtin.include_tasks: "window_manager/{{ x11.window_manager }}.yaml"
+
 - name: Install display manager.
   ansible.builtin.include_tasks: "display_manager/{{ x11.display_manager }}.yaml"
-
-# - name: Install window manager.
-#   ansible.builtin.include_tasks: "window_manager/{{ x11.window_manager }}.yaml"

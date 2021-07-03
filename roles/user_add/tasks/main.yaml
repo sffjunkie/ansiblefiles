@@ -7,6 +7,6 @@
 - name: Add sudo rights for user.
   ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ userid }}"
-    content: "{{ userid }} ALL=(ALL) NOPASSWD: ALL"
+    content: "{{ userid }} ALL=(ALL:ALL) ALL"
     mode: 0644
     validate: "visudo -cf %s"

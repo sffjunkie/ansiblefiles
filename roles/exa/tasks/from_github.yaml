@@ -50,9 +50,9 @@
 - name: Copy binary
   ansible.builtin.copy:
     src: "{{ _tmp_directory.path }}/expanded/bin/exa"
-    dest: /usr/bin/
+    dest: /usr/local/bin/
     remote_src: true
-    mode: 0700
+    mode: 0755
 
 - name: Create man page directories
   file:

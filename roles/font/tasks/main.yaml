@@ -14,6 +14,7 @@
   register: _tmp_dir
   notify:
     - Delete temporary files
+  changed_when: false
 
 - name: Set font tmp dir
   ansible.builtin.set_fact:
@@ -61,11 +62,17 @@
       recurse: true
     register: _font_files
 
+  - name: Calc file owner
+    ansible.builtin.set_fact:
+      owner: "{{ 'root' if global else userid }}"
+
   - name: Copy font files to {{ _font_destination }}
     ansible.builtin.copy:
       src: "{{ item.path }}"
       dest: "{{ _font_destination }}"
       remote_src: true
+      owner: "{{ owner }}"
+      group: "{{ owner }}"
     loop: "{{ _font_files.files }}"
     when: _font_files.matched > 0
     notify:

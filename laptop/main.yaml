@@ -1,7 +1,10 @@
 ---
 - hosts: laptop
   become: true
+  vars:
+    ansible_port: "{{ ssh_port }}"
   vars_files:
+    - ../vars/secrets.yaml
     - ../vars/development.yaml
     - ../vars/main.yaml
 
@@ -14,38 +17,48 @@
           - "  Shell: {{ shell }}"
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
-          - "  Development Environments: {{ dev_roles | join(', ') }}"
+          - "  Development Environments: {{ development_roles | join(', ') }}"
 
     - name: Create .local directories
       file:
         path: "{{ item }}"
         state: directory
         mode: 0755
+        owner: "{{ userid }}"
+        group: "{{ userid }}"
       loop:
         - ~/.local
         - ~/.local/bin
 
   roles:
-    # - user_add
-    # - user_ssh
-    # - git
+    # - role: PeterMosmans.virtualbox-guest # FIXME: Needs fixing
+    - role: os_packages_ansible
+    - role: os_packages
+      package_list: "{{ packages.os }}"
+    - role: pypi_packages
+      package_list: "{{ packages.pypi }}"
+
+    # Install git with values from secrets.yaml
+    - role: git
+      name: "{{ git.name }}"
+      email: "{{ git.email }}"
+      gpg_key: "{{ git.gpg_key }}"
+
+    # - python3-gobject
+    # - x11
+    # - development
+    # - docker
+    # - exa
+    # - role: font
+    #   font_url: "{{ font }}"
+
 #     - ansible.builtin.include_role:
 #         name: xdg_user_dirs
 #         vars:
 #           custom_xdg_user_dirs:
 #             XDG_PUBLICSHARE_DIR:
-    # - role: os_packages
-    #   packages: "{{ os_packages }}"
-    # - role: pypi_packages
-    #   packages: "{{ pypi_packages }}"
-    # - exa
-    # - role: font
-    #   font_url: "{{ font }}"
-    - x11
-#     - development
-#     - docker
 
-#   tasks:
+  tasks:
 #     - name: Install zsh.
 #       ansible.builtin.include_role:
 #         name: zsh
@@ -57,7 +70,11 @@
 #     - name: Install oh-my-zsh.
 #       ansible.builtin.include_role:
 #         name: ohmyzsh
-#       when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
+#       when: shell == 'zsh' and ohmyzsh is defined
+
+    - name: Configfiles configuration
+      ansible.builtin.debug:
+        msg: "{{ configfiles }}"
 
 # - name: Run configfiles playbook
 #   ansible.builtin.import_playbook: ../configfiles/main.yaml

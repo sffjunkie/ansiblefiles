@@ -18,39 +18,37 @@
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
           - "  Development Environments: {{ development_roles | join(', ') }}"
-
-    - name: Create .local directories
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: 0755
-        owner: "{{ userid }}"
-        group: "{{ userid }}"
-      loop:
-        - ~/.local
-        - ~/.local/bin
+          - "  Initial Configfiles Configuration:\n    {{ configfiles }}"
 
   roles:
-    # - role: PeterMosmans.virtualbox-guest # FIXME: Needs fixing
-    - role: os_packages_ansible
-    - role: os_packages
-      package_list: "{{ packages.os }}"
-    - role: pypi_packages
-      package_list: "{{ packages.pypi }}"
+    # - role: PeterMosmans.virtualbox-guest # FIXME: Needs reworking for our requirements
+    # - role: local_directories
+    # - role: os_packages_ansible
+
+    # - role: os_packages
+    #   package_list: "{{ packages.os }}"
+
+    # - role: pypi_packages
+    #   package_list: "{{ packages.pypi }}"
 
     # Install git with values from secrets.yaml
-    - role: git
-      name: "{{ git.name }}"
-      email: "{{ git.email }}"
-      gpg_key: "{{ git.gpg_key }}"
+    # - role: git
 
-    # - python3-gobject
+    # - role: zsh
+    #   set_shell_for: "{{ userid }}"
+    #   when: shell == 'zsh'
+
+    # - role: ohmyzsh
+    #   when: shell == 'zsh' and ohmyzsh is defined
+
+    # - python3_gobject
     # - x11
     # - development
     # - docker
     # - exa
     # - role: font
     #   font_url: "{{ font }}"
+    - role: vscode
 
 #     - ansible.builtin.include_role:
 #         name: xdg_user_dirs
@@ -72,7 +70,7 @@
 #         name: ohmyzsh
 #       when: shell == 'zsh' and ohmyzsh is defined
 
-    - name: Configfiles configuration
+    - name: Final configuration
       ansible.builtin.debug:
         msg: "{{ configfiles }}"
 

@@ -15,10 +15,10 @@
 #     name: development_go
 #   when: "'go' in development_roles"
 
-# - name: Install Node dev environment.
+# - name: Install Typescript dev environment.
 #   include_role:
-#     name: development_node
-#   when: "'node' in development_roles"
+#     name: development_ts
+#   when: "'ts' in development_roles"
 
 - name: Install Python dev environment.
   include_role:

@@ -1,0 +1,18 @@
+---
+- hosts: laptop
+  become: true
+  vars_files:
+    - ../vars/secrets.yaml
+    - ../vars/main.yaml
+
+  roles:
+    - role: user_add
+    - role: user_ssh
+    - role: ssh
+
+  tasks:
+    - name: Start display manager
+      ansible.builtin.systemd:
+        name: "{{ x11.display_manager }}"
+        state: started
+      tags: postconfigure

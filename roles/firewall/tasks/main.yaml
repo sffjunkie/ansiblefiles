@@ -1,0 +1,4 @@
+---
+- name: Configure ufw
+  when: os_family == 'debian'
+  include_tasks: ufw.yaml

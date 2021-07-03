@@ -12,24 +12,24 @@
   community.general.git_config:
     name: user.email
     scope: global
-    value: "{{ email }}"
+    value: "{{ git.email }}"
     state: present
-  when: email | length > 0
+  when: git.email | length > 0
 
 - name: Configure git name
   become_user: "{{ userid }}"
   community.general.git_config:
     name: user.name
     scope: global
-    value: "{{ name }}"
+    value: "{{ git.name }}"
     state: present
-  when: name | length > 0
+  when: git.name | length > 0
 
 - name: Configure git GPG Key
   become_user: "{{ userid }}"
   community.general.git_config:
     name: user.signingKey
     scope: global
-    value: "{{ gpg_key }}"
+    value: "{{ git.gpg_key }}"
     state: present
-  when: gpg_key | default("", True) | length > 0
+  when: git.gpg_key | default("", True) | length > 0

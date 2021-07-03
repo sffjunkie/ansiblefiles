@@ -5,13 +5,14 @@
 * [copyconfig](#copyconfig)
 * [docker](#docker)
 * [exa](#exa)
+* [firewall](#firewall)
 * [font](#font)
 * [git](#git)
 * [ohmyzsh](#ohmyzsh)
 * [os_packages_ansible](#os_packages_ansible)
 * os_packages_system
-* pypi_packages
-* ssh
+* [pypi_packages](#pypi_packages)
+* [ssh](#ssh)
 * ufw
 * update
 * user_add
@@ -45,6 +46,10 @@ Installs exa either from the os package repository or from Github.
 
 Installation from Github is provided as prior to Ubuntu 20.10 there was no os
 provided package.
+
+## <span id="firewall">firewall</span>
+
+Ensures a firewall is installed and sets up default rules.
 
 ## <span id="font">font</span>
 
@@ -86,3 +91,24 @@ Updates the SSH configuration to disable password authentication, disable root l
 ### Variables
 
 * `ssh_port` - the SSH port number to use.
+
+## <span id="update">update</span>
+
+Updates all packages
+
+## <span id="user_add">user_add</span>
+
+Adds a user and gives them sudo privileges
+
+## <span id="user_ssh">user_ssh</span>
+
+Creates a `.ssh` directory if necessary and adds an `authorized_keys` file to allow publickey login.
+
+## <span id="zsh">zsh</span>
+
+Installs ZSH and sets the shell for users
+
+### Variables
+
+* `set_shell_for` - the user id or list of user ids to set the shell for
+* `zsh_shell` - path to the the zsh binary.

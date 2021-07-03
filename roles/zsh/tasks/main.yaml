@@ -7,17 +7,36 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-- name: Update configfiles for ZSH
-  ansible.utils.update_fact:
-    updates:
-      - path: configfiles.configs
-        value: "{{ configfiles.configs + 'zsh' }}"
-      - path: configfiles.envvars
-        value: "{{ configfiles.envvars | combine({'ZDOTDIR': config_home_replacement_text + '/zsh'}) }}"
-  register: _updated_fact
-  changed_when: false
-
-- name: Set configfiles
+- name: listify set_shell_for
   ansible.builtin.set_fact:
-    configfiles: "{{ _updated_fact.configfiles }}"
-  changed_when: false
+    _set_shell_for: "{{ set_shell_for | listify }}"
+
+- name: "Configure user's shell"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    shell: "{{ zsh_shell }}"
+  loop: "{{ _set_shell_for }}"
+  when: _set_shell_for | length > 0
+
+- name: Update configfiles for ZSH
+  block:
+    - ansible.builtin.set_fact:
+        _zsh_config:
+          zsh: {}
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.configs
+            value: "{{ configfiles.configs | combine(_zsh_config) }}"
+          - path: configfiles.envvars
+            value: "{{ configfiles.envvars | combine({'ZDOTDIR': config_home_replacement_text + '/zsh'}) }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false
+
+# - name: Configuration after ZSH install
+#   ansible.builtin.debug:
+#     msg: "{{ configfiles }}"

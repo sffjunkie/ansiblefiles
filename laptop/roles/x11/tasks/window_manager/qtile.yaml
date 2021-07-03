@@ -1,5 +1,5 @@
 ---
-- name: Install qtile os pre-reqs
+- name: QTile - install qtile os dependencies
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -7,7 +7,7 @@
     - libcairo2
     - libpangocairo-1.0-0
 
-- name: Install qtile dependencies
+- name: QTile - install pypi dependencies
   ansible.builtin.pip:
     name: "{{ item }}"
     state: present
@@ -15,13 +15,30 @@
     - xcffib
     - dbus-next
 
-- name: Install cairoffi with --no-cache-dir --ignore-installed
+- name: QTile - install cairoffi with --no-cache-dir --ignore-installed
   ansible.builtin.pip:
     name: cairocffi
     state: present
     extra_args: "--no-cache-dir --ignore-installed"
 
-- name: Install qtile
+- name: QTile - install package
   ansible.builtin.pip:
     name: qtile
     state: present
+
+- name: Update configfiles for qtile
+  block:
+    - ansible.builtin.set_fact:
+        _qtile_config:
+          qtile: {}
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.configs
+            value: "{{ configfiles.configs | combine(_qtile_config) }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

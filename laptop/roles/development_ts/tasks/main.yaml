@@ -7,12 +7,11 @@
     - "nodejs"
     - "npm"
 
-- name: Install global packages
+- name: Install global NPM packages
   community.general.npm:
     name: "{{ item }}"
     global: true
   loop: "{{ node.packages }}"
-
 
 - name: Compute new configfiles
   ansible.utils.update_fact:

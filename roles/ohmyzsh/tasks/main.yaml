@@ -2,39 +2,38 @@
 - name: Run install script
   shell:
     cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    creates: "{{ _ohmyzsh_install_path }}/oh-my-zsh.sh"
   environment:
     ZSH: "{{ _ohmyzsh_install_path }}"
 
 - name: Install plugins.
   git:
     repo: "https://github.com/zsh-users/{{ item }}.git"
-    dest: "{{ _ohmyzsh_install_path/plugins/ }}"
+    dest: "{{ _ohmyzsh_install_path }}/plugins/{{ item }}"
   loop:
     "{{ ohmyzsh.user_plugins }}"
 
-- name: Set _ohmyzsh_config
-  ansible.builtin.set_fact:
-    _ohmyzsh_config:
-      ohmyzsh:
-        plugins: "{{ ohmyzsh.plugins + ohmyzsh.user_plugins }}"
-
-- name: Set envvars
-  ansible.builtin.set_fact:
-    _ohmyzsh_envvars:
-      ZSH: "{{ _ohmyzsh_install_path|replace(home, '${HOME}') }}"
-      ZSH_CACHE_DIR: "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-
 - name: Update configfiles for oh-my-zsh
-  ansible.utils.update_fact:
-    updates:
-      - path: configfiles.configs
-        value: "{{ configfiles.configs | combine(_ohmyzsh_config) }}"
-      - path: configfiles.envvars
-        value: "{{ configfiles.envvars | combine(_ohmyzsh_envvars) }}"
-  register: _updated_fact
-  changed_when: false
+  block:
+    - ansible.builtin.set_fact:
+        _ohmyzsh_config:
+          ohmyzsh:
+            plugins: "{{ ohmyzsh.plugins + ohmyzsh.user_plugins }}"
 
-- name: Set configfiles
-  ansible.builtin.set_fact:
-    configfiles: "{{ _updated_fact.configfiles }}"
-  changed_when: false
+    - ansible.builtin.set_fact:
+        _ohmyzsh_envvars:
+          ZSH: "{{ _ohmyzsh_install_path|replace(home, '${HOME}') }}"
+          ZSH_CACHE_DIR: "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.configs
+            value: "{{ configfiles.configs | combine(_ohmyzsh_config) }}"
+          - path: configfiles.envvars
+            value: "{{ configfiles.envvars | combine(_ohmyzsh_envvars) }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

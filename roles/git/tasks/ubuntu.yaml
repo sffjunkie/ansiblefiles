@@ -7,3 +7,4 @@
   ansible.builtin.apt:
     name: git
     state: latest
+    update_cache: true

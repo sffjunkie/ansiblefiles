@@ -1,0 +1,5 @@
+---
+vscode_themes:
+  nord:
+    extension: arcticicestudio.nord-visual-studio-code
+    colorTheme: Nord

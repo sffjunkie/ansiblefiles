@@ -43,7 +43,7 @@
 
   - name: Calc destination
     ansible.builtin.set_fact:
-      _font_destination: "{{ '/usr/local/share/fonts' if global else ('~/.local/share/fonts' | expanduser) }}"
+      _font_destination: "{{ '/usr/local/share/fonts' if install == 'system' else ('~/.local/share/fonts' | expanduser) }}"
 
   - name: Create output directory
     ansible.builtin.file:
@@ -64,7 +64,7 @@
 
   - name: Calc file owner
     ansible.builtin.set_fact:
-      owner: "{{ 'root' if global else userid }}"
+      owner: "{{ 'root' if install == 'system' else userid }}"
 
   - name: Copy font files to {{ _font_destination }}
     ansible.builtin.copy:

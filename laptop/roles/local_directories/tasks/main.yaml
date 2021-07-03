@@ -1,0 +1,13 @@
+---
+- name: Create .local directories
+  file:
+    path: "{{ item|expanduser }}"
+    state: directory
+    mode: 0755
+    owner: "{{ userid }}"
+    group: "{{ userid }}"
+    access_time: preserve
+    modification_time: preserve
+  loop:
+    - ~/.local
+    - ~/.local/bin

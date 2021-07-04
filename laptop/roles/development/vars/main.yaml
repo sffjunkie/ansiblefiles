@@ -1,7 +1,0 @@
----
-dirs:
-  - development
-  - development/project
-  - development/venv
-  - development/gist
-  - development/incubator

@@ -1,5 +1,6 @@
 ---
-os_packages_ansible:
+base_os_packages:
+  - accountsservice
   - apt-transport-https
   - build-essential
   - ca-certificates
@@ -7,5 +8,6 @@ os_packages_ansible:
   - python3-apt
   - python3-pip
   - software-properties-common
+  - unattended-upgrades
   - unzip
   - virtualenv

@@ -1,8 +1,0 @@
-cookiecutter
-poetry
-tox
-pytest
-sphinx
-rich
-virtualenv
-setuptools

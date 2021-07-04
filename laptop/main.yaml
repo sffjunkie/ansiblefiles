@@ -4,7 +4,7 @@
   vars:
     ansible_port: "{{ ssh_port }}"
   vars_files:
-    - ../vars/secrets.yaml
+    - ../vars/laptop.yaml
     - ../vars/development.yaml
     - ../vars/main.yaml
 
@@ -18,37 +18,35 @@
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
           - "  Development Environments: {{ development_roles | join(', ') }}"
-          - "  Initial Configfiles Configuration:\n    {{ configfiles }}"
 
   roles:
-    # - role: PeterMosmans.virtualbox-guest # FIXME: Needs reworking for our requirements
-    # - role: local_directories
-    # - role: os_packages_ansible
+    - role: local_directories
 
-    # - role: os_packages
-    #   package_list: "{{ packages.os }}"
+    - role: base_os_packages
 
-    # - role: pypi_packages
-    #   package_list: "{{ packages.pypi }}"
+    - role: os_packages
+      package_list: "{{ packages.os }}"
+
+    - role: pypi_packages
+      package_list: "{{ packages.pypi }}"
 
     # Install git with values from secrets.yaml
-    # - role: git
+    - role: git
 
-    # - role: zsh
-    #   set_shell_for: "{{ userid }}"
-    #   when: shell == 'zsh'
+    - role: zsh
+      set_shell_for: "{{ userid }}"
+      when: shell == 'zsh'
 
-    # - role: ohmyzsh
-    #   when: shell == 'zsh' and ohmyzsh is defined
+    - role: ohmyzsh
+      when: shell == 'zsh' and ohmyzsh is defined
 
-    # - python3_gobject
-    # - x11
-    # - development
-    # - docker
-    # - exa
-    # - role: font
-    #   font_url: "{{ font }}"
-    - role: vscode
+    - python3_gobject
+    - x11
+    - development
+    - docker
+    - exa
+    - role: font
+      font_url: "{{ font }}"
 
 #     - ansible.builtin.include_role:
 #         name: xdg_user_dirs

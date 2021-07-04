@@ -3,6 +3,7 @@
 home: "/home/{{ userid }}"
 config_home: "{{ home }}/.config"
 local_home: "{{ home }}/.local"
+local_bin: "{{ local_home }}/bin"
 cache_home: "{{ home }}/.local"
 
 # Replacement strings to use in config files instead of the ones above
@@ -17,7 +18,7 @@ aliases: []
 # Added to by various roles e.g. ohmyzsh, go
 configfiles:
   path:
-    - "{{ local_home }}/bin"
+    - "{{ local_bin }}"
   configs: []
   envvars: {}
 

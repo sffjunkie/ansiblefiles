@@ -33,15 +33,13 @@
     remote_src: true
   when: _go_current_version != _go_install_version
 
-# We can't directly set a fact with a period in it so we need to update the whole fact
-# and set in a separate step
 - name: Compute configfiles with additional path
   ansible.utils.update_fact:
     updates:
       - path: configfiles.path
         value: "{{ configfiles.path + [_go_bin_path] }}"
       - path: configfiles.envvars
-        value: "{{ configfiles.envvars | combine({'GOPATH': go.install_path + '/go'}) }}"
+        value: "{{ configfiles.envvars | combine({'GOPATH': _go_install_path + '/go'}) }}"
   register: _updated_fact
   changed_when: false
 

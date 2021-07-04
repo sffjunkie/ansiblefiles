@@ -9,8 +9,8 @@
       paths:
         - "vars"
 
-- name: Install packages
+- name: Install base packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
-  loop: "{{ os_packages_system }}"
+  loop: "{{ base_os_packages }}"

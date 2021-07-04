@@ -1,16 +1,34 @@
 ---
+- name: Install pyenv
+  ansible.builtin.include_role:
+    name: pyenv
+
 - name: Install Python packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
-  loop: "{{ lookup('file', 'files/' + os_family + '.txt').splitlines() }}"
+  loop: "{{ python.packages.os }}"
+  when: python.packages.os is defined and python.packages.os | length > 0
 
 - name: Install pypi packages
-  pip:
+  ansible.builtin.pip:
     name: "{{ item }}"
     state: present
-  loop: "{{ lookup('file', 'files/pypi.txt').splitlines() }}"
+  loop: "{{ python.packages.pypi }}"
+  when: python.packages.pypi is defined and python.packages.pypi | length > 0
 
-- name: Install pyenv
-  include_role:
-    name: pyenv
+- name: Install pipx packages
+  ansible.builtin.shell:
+    cmd: "pipx install {{ item }}"
+  loop: "{{ python.packages.pipx }}"
+  when: python.packages.pipx is defined and python.packages.pipx | length > 0
+  register: _pipx_result
+  changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
+  failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+
+- name: Install git packages
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ python.packages.git }}"
+  when: python.packages.git is defined and python.packages.git | length > 0

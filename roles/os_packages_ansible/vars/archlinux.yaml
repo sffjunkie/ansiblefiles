@@ -1,6 +1,0 @@
----
-os_packages_ansible:
-  - base-devel
-  - python3
-  - python3-pip
-  - unzip

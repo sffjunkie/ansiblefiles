@@ -1,0 +1,46 @@
+---
+x11:
+  # dpi: 144
+  video_card_driver: # Empty value falls back to modesetting driver
+  display_manager:  lightdm
+  greeter: lightdm-gtk-greeter
+  window_manager: qtile
+
+color_scheme: nord
+
+font: https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip
+font_size: 10 #pt
+
+shell: zsh
+ohmyzsh:
+  install: user
+  plugins: # plugins to enable that are shipped with oh-my-zsh
+    - docker
+    - docker-compose
+    - git
+    - sudo
+    - web-search
+  user_plugins: # plugins to install and enable from https://github.com/zsh-users/
+    - zsh-completions
+    - zsh-syntax-highlighting
+
+packages:
+  os:
+    - bat
+    - dunst
+    - mpd
+    - mpv
+    - nano
+    - ncmpcpp
+    - nitrogen
+    - pavucontrol
+    - ranger
+    - sxhkd
+    - sxiv
+
+  pypi:
+    - pipx
+
+  # shell:
+  #   bash:
+  #     - bash-completion

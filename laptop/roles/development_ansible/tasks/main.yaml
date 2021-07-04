@@ -9,8 +9,35 @@
       paths:
         - 'defaults'
 
-- name: "Ansible: Install packages"
+- name: "Ansible: Install default os packages"
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
   loop: "{{ ansible_development_os_packages }}"
+  when: ansible_development_os_packages | length > 0
+
+- name: "Ansible: Install os packages"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ ansible.packages.os }}"
+  when: ansible.packages.os is defined and ansible.packages.os | length > 0
+
+- name: "Ansible: Install pypi packages"
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+    extra_args: "{{ '--user' if ansible.install == 'user' else None | default(omit) }}"
+  loop: "{{ ansible.packages.pypi }}"
+  when: ansible.packages.pypi is defined and ansible.packages.pypi | length > 0
+
+- name: "Ansible: Install pipx packages"
+  ansible.builtin.shell:
+    cmd: "pipx install {{ pipx_item }}"
+  loop: "{{ ansible.packages.pipx }}"
+  loop_control:
+    loop_var: pipx_item
+  when: ansible.packages.pipx is defined and ansible.packages.pipx | length > 0
+  register: _pipx_result
+  changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
+  failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)

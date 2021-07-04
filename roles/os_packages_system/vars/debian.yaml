@@ -1,4 +1,0 @@
----
-os_packages_system:
-  - accountsservice
-  - unattended-upgrades

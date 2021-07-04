@@ -11,3 +11,4 @@
   loop:
     - ~/.local
     - ~/.local/bin
+    - ~/.config

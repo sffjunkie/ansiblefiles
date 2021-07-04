@@ -2,12 +2,13 @@
 - hosts: laptop
   become: true
   vars_files:
-    - ../vars/secrets.yaml
     - ../vars/main.yaml
 
   roles:
     - role: user_add
+      tags: preconfigure
     - role: user_ssh
+      tags: preconfigure
     - role: ssh
 
   tasks:

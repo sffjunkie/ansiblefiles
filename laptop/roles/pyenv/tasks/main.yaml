@@ -1,30 +1,40 @@
 ---
+- name: Set _pyenv_root fact
+  ansible.builtin.set_fact:
+    _pyenv_root: "{{ local_home }}/pyenv"
+
 - name: Install pyenv
+  become_user: "{{ userid }}"
   shell: "curl https://pyenv.run | bash"  # noqa command-instead-of-module
   environment:
-    PYENV_ROOT: "{{ local_home }}/pyenv"
+    PYENV_ROOT: "{{ _pyenv_root }}"
   args:
-    creates: "{{ local_home }}/pyenv"
+    creates: "{{ _pyenv_root }}"
+  changed_when: false
   # pipefail: true
 
-- name: Update configfiles for pyenv
-  ansible.utils.update_fact:
-    updates:
-      - path: configfiles.configs
-        value: "{{ configfiles.configs + ['pyenv'] }}"
-      - path: configfiles.path
-        value: "{{ configfiles.path + [local_home + '/pyenv/bin'] }}"
-      - path: configfiles.envvars
-        value: "{{ configfiles.envvars | combine({ 'PYENV_ROOT': local_home + '/pyenv' }) }}"
-  register: _updated_fact
-  changed_when: false
+- name: Install pyenv-virtualenv
+  ansible.builtin.git:
+    repo: https://github.com/pyenv/pyenv-virtualenv.git
+    dest: "{{ _pyenv_root }}/plugins/pyenv-virtualenv"
 
-# - name: Set configfiles
-#   ansible.builtin.set_fact:
-#     configfiles: "{{ _updated_fact.configfiles }}"
-#   changed_when: false
+- name: Update configfiles for qtile
+  block:
+    - ansible.builtin.set_fact:
+        _pyenv_config: {}
+      changed_when: false
 
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.configs
+            value: "{{ configfiles.configs | combine(_pyenv_config) }}"
+          - path: configfiles.path
+            value: "{{ configfiles.path + [_pyenv_root + '/bin'] }}"
+          - path: configfiles.envvars
+            value: "{{ configfiles.envvars | combine({ 'PYENV_ROOT': _pyenv_root }) }}"
+      register: _updated_fact
+      changed_when: false
 
-- name: pyenv debug
-  debug:
-    msg: "{{ _updated_fact }}"
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

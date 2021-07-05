@@ -1,13 +1,32 @@
 ---
+apps:
+  editor: nvim
+  code_editor: code
+  notifier: dunst
+  browser: firefox
+  terminal: alacritty
+  music_player: ncmpcpp
+  music_visualizer: vis
+  file_manager: ranger
+  audio_mixer: pulsemixer
+  image_viewer: sxiv
+  pdf_viewer: zathura
+
+linkhandler:
+  'text/x-python': "{{ code_editor }}"
+
 x11:
   # dpi: 144
   video_card_driver: # Empty value falls back to modesetting driver
   display_manager:  lightdm
   greeter: lightdm-gtk-greeter
   window_manager: qtile
+  avatar: 'files/avatar96x96.png'
 
 color_scheme: nord
 
+# TODO: Allow for multiple fonts - rename font role to font_archive add new font role to
+# loop through all fonts
 font: https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip
 font_size: 10 #pt
 
@@ -26,17 +45,22 @@ ohmyzsh:
 
 packages:
   os:
+    - "{{ terminal }}"
+    - "{{ editor }}"
     - bat
     - dunst
+    - firefox
     - mpd
     - mpv
     - nano
     - ncmpcpp
     - nitrogen
     - pavucontrol
+    - picom
     - ranger
     - sxhkd
     - sxiv
+    - zathura
 
   pypi:
     - pipx

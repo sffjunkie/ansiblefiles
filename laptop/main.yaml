@@ -6,7 +6,7 @@
   vars_files:
     - ../vars/laptop.yaml
     - ../vars/development.yaml
-    - ../vars/main.yaml
+    - ../vars/playbook.yaml
 
   pre_tasks:
     - name: Debug
@@ -39,14 +39,6 @@
     # # Install git with values from secrets.yaml
     # - role: git
 
-    # - role: zsh
-    #   set_shell_for: "{{ userid }}"
-    #   when: shell == 'zsh'
-
-    # - role: ohmyzsh
-    #   when: shell == 'zsh' and ohmyzsh is defined
-
-    # - python3_gobject
     # - x11
     - development
     # - docker
@@ -54,36 +46,36 @@
     # - role: font
     #   font_url: "{{ font }}"
 
-#     - ansible.builtin.include_role:
-#         name: xdg_user_dirs
-#         vars:
-#           custom_xdg_user_dirs:
-#             XDG_PUBLICSHARE_DIR:
+    # - ansible.builtin.include_role:
+    #     name: xdg_user_dirs
+    #     vars:
+    #       custom_xdg_user_dirs:
+    #         XDG_PUBLICSHARE_DIR:
+
+    # - role: zsh
+    #   set_shell_for: "{{ userid }}"
+    #   when: shell == 'zsh'
+
+    # - role: ohmyzsh
+    #   when: shell == 'zsh' and ohmyzsh is defined
 
   tasks:
-#     # This task needs to run near the end so that previous roles/tasks
-#     # can add to the list of oh-my-zsh plugins
-#     # See ./vars/main.yaml
-#     - name: Install oh-my-zsh.
-#       ansible.builtin.include_role:
-#         name: ohmyzsh
-#       when: shell == 'zsh' and ohmyzsh is defined
 
     - name: Final configuration
       ansible.builtin.debug:
         msg: "{{ configfiles }}"
 
-# - name: Run configfiles playbook
-#   ansible.builtin.import_playbook: ../configfiles/main.yaml
-#   tags:
-#     - configfiles
+  # - name: Run configfiles playbook
+  #   ansible.builtin.import_playbook: ../configfiles/main.yaml
+  #   tags:
+  #     - configfiles
 
-# - name: Run scriptfiles playbook
-#   ansible.builtin.import_playbook: ../scriptfiles/main.yaml
-#   tags:
-#     - scriptfiles
+  # - name: Run scriptfiles playbook
+  #   ansible.builtin.import_playbook: ../scriptfiles/main.yaml
+  #   tags:
+  #     - scriptfiles
 
-# - name: Copy config files
-#   ansible.builtin.copy:
-#     src: "{{ configfiles_path }}/*"
-#     dest: "/home/{{ user.id }}/"
+  # - name: Copy config files
+  #   ansible.builtin.copy:
+  #     src: "{{ configfiles_path }}/*"
+  #     dest: "/home/{{ user.id }}/"

@@ -7,20 +7,26 @@ local_bin: "{{ local_home }}/bin"
 cache_home: "{{ home }}/.local"
 
 # Replacement strings to use in config files instead of the ones above
-config_home_replacement_text: "${XDG_CONFIG_HOME:-${HOME}/.config}"
 local_home_replacement_text: "${HOME}/.local"
+config_home_replacement_text: "${XDG_CONFIG_HOME:-${HOME}/.config}"
 cache_home_replacement_text: "${XDG_CACHE_HOME:-${HOME}/.cache}"
 
-# List of aliases for the 'configfiles' playbook to create
-aliases: []
 
-# Dictionary describing config files for the 'configfiles' playbook to create.
+# Dictionary describing values for the 'configfiles' playbook to create.
 # Added to by various roles e.g. ohmyzsh, go
 configfiles:
+  # Additions to the PATH
   path:
     - "{{ local_bin }}"
-  configs: []
+
+  # Configuration file values with a key for each role that is generated
+  configs: {}
+
+  # Environment variables
   envvars: {}
+
+  # List of aliases for the 'configfiles' playbook to create
+  aliases: []
 
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"

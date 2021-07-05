@@ -45,4 +45,4 @@
 - name: Clone ansible git repository
   git:
     repo: https://github.com/ansible/ansible.git
-    dest: {{ home }}/development/source/ansible
+    dest: "{{ home }}/development/source/ansible"

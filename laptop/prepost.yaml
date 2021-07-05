@@ -2,7 +2,7 @@
 - hosts: laptop
   become: true
   vars_files:
-    - ../vars/main.yaml
+    - ../vars/playbook.yaml
 
   roles:
     - role: user_add
@@ -12,8 +12,6 @@
     - role: ssh
 
   tasks:
-    - name: Start display manager
-      ansible.builtin.systemd:
-        name: "{{ x11.display_manager }}"
-        state: started
+    - name: Reboot the machine
+      ansible.builtin.reboot:
       tags: postconfigure

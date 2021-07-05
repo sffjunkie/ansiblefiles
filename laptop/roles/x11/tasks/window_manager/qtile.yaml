@@ -9,6 +9,10 @@
     - libpangocairo-1.0-0
     - libxcb-render0-dev
 
+- name: Install python3 gobject
+  ansible.builtin.import_role:
+    name: python3_gobject
+
 - name: QTile - install pypi dependencies
   ansible.builtin.pip:
     name: "{{ item }}"
@@ -52,6 +56,12 @@
   ansible.builtin.pip:
     name: qtile
     state: present
+
+- name: Create qtile .desktop file
+  ansible.builtin.copy:
+    src: files/qtile.desktop
+    dest: /usr/share/xsessions/
+    mode: '0644'
 
 - name: Update configfiles for qtile
   block:

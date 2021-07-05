@@ -10,22 +10,20 @@ development_dirs:
 # Roles to set up development environments
 # The actual roles are named `development_<role_name>` e.g. `development_go`
 development_roles:
-  - ansible
-  - go
+  # - ansible
+  # - go
   - python
   # - rust
   # - ts
-  - vscode
+  # - vscode
 
 ansible:
   install: user
   packages:
-    pypi:
-      - ansible
-
     pipx:
+      - ansible-base
       - ansible-lint
-      - "molecule[docker]"
+      - \"molecule[docker]\"
       - yamllint
 
 go:
@@ -37,9 +35,6 @@ python:
   packages:
     os:
       - python3-venv
-
-    pypi:
-      - virtualenvwrapper
 
     git:
       - { repo: https://github.com/pyenv/pyenv-virtualenvwrapper, dest: "{{ local_home }}/pyenv/plugins/pyenv-virtualenvwrapper" }

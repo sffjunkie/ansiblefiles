@@ -21,7 +21,9 @@
 - name: Update configfiles for qtile
   block:
     - ansible.builtin.set_fact:
-        _pyenv_config: {}
+        _pyenv_config:
+          pyenv:
+            PYENV_ROOT: "{{ _pyenv_root }}"
       changed_when: false
 
     - ansible.utils.update_fact:
@@ -29,9 +31,7 @@
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_pyenv_config) }}"
           - path: configfiles.path
-            value: "{{ configfiles.path + [_pyenv_root + '/bin'] }}"
-          - path: configfiles.envvars
-            value: "{{ configfiles.envvars | combine({ 'PYENV_ROOT': _pyenv_root }) }}"
+            value: "{{ [local_home_replacement_text + '/pyenv/bin'] + configfiles.path }}"
       register: _updated_fact
       changed_when: false
 

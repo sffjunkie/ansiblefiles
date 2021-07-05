@@ -29,3 +29,7 @@
 #       ansible.builtin.command:
 #         cmd: code --install-extension "{{ _vscode_theme_extension }}"
 #       when: _vscode_theme_extension | length > 0
+
+- name: vscode configuration
+  ansible.builtin.debug:
+    msg: "{{ configfiles }}"

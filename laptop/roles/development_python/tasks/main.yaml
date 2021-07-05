@@ -1,8 +1,4 @@
 ---
-- name: Install pyenv
-  ansible.builtin.include_role:
-    name: pyenv
-
 - name: Install Python packages
   ansible.builtin.package:
     name: "{{ item }}"

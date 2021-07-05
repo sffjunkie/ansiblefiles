@@ -33,17 +33,27 @@
     remote_src: true
   when: _go_current_version != _go_install_version
 
-- name: Compute configfiles with additional path
-  ansible.utils.update_fact:
-    updates:
-      - path: configfiles.path
-        value: "{{ configfiles.path + [_go_bin_path] }}"
-      - path: configfiles.envvars
-        value: "{{ configfiles.envvars | combine({'GOPATH': _go_install_path + '/go'}) }}"
-  register: _updated_fact
-  changed_when: false
-
-- name: Set configfiles
+- name: gopath text
   ansible.builtin.set_fact:
-    configfiles: "{{ _updated_fact.configfiles }}"
-  changed_when: false
+    _go_install_path: "{{ local_home_replacement_text }}"
+  when: go.install == 'user'
+
+- name: Update configfiles for go
+  block:
+    - ansible.builtin.set_fact:
+        _go_config:
+          go:
+            GOPATH: "{{ _go_install_path + '/go' }}"
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.path
+            value: "{{ configfiles.path + [_go_bin_path] }}"
+          - path: configfiles.configs
+            value: "{{ configfiles.configs | combine(_go_config) }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

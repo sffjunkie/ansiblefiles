@@ -11,19 +11,25 @@
   community.general.npm:
     name: "{{ item }}"
     global: true
-  loop: "{{ node.packages }}"
+  loop: "{{ ts.packages }}"
 
-- name: Compute new configfiles
-  ansible.utils.update_fact:
-    updates:
-      - path: configfiles.path
-        value: "{{ configfiles.path + [_npm_bin_path] }}"
-      - path: configfiles.envvars
-        value: "{{ configfiles.envvars | combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
-  register: _updated_fact
-  changed_when: false
+- name: Update configfiles for ts
+  block:
+    - ansible.builtin.set_fact:
+        _ts_config:
+          ts: {}
 
-- name: Set configfiles
-  ansible.builtin.set_fact:
-    configfiles: "{{ _updated_fact.configfiles }}"
-  changed_when: false
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.path
+            value: "{{ configfiles.path + [_npm_bin_path] }}"
+          - path: configfiles.configs
+            value: "{{ configfiles.configs }}"
+          - path: configfiles.envvars
+            value: "{{ configfiles.envvars | combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

@@ -1,5 +1,5 @@
 ---
-- name: Create .local directories
+- name: Create root directories
   file:
     path: "{{ item|expanduser }}"
     state: directory

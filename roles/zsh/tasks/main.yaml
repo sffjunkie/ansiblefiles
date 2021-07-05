@@ -26,6 +26,8 @@
 
     - ansible.utils.update_fact:
         updates:
+          - path: configfiles.path
+            value: "{{ configfiles.path }}"
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_zsh_config) }}"
           - path: configfiles.envvars
@@ -36,7 +38,3 @@
     - ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false
-
-# - name: Configuration after ZSH install
-#   ansible.builtin.debug:
-#     msg: "{{ configfiles }}"

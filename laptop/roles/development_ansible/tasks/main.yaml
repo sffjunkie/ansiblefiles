@@ -41,3 +41,8 @@
   register: _pipx_result
   changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
   failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+
+- name: Clone ansible git repository
+  git:
+    repo: https://github.com/ansible/ansible.git
+    dest: {{ home }}/development/source/ansible

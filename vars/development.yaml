@@ -12,13 +12,13 @@ development:
   # Roles to set up development environments
   # The actual roles are named `development_<role_name>` e.g. `development_go`
   roles:
-    # - ansible
-    # - go
-    # - python
+    - ansible
+    - go
+    - python
     - pyenv
     - rust
-    # - typescript
-    # - vscode
+    - typescript
+    - vscode
 
   common:
     install: user

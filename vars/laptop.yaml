@@ -30,9 +30,10 @@ x11:
 
 color_scheme: nord
 
-# TODO: Allow for multiple fonts - rename font role to font_archive add new font role to
-# loop through all fonts
-font: https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip
+fonts:
+  - name: Hack
+    url: https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip
+    style: monospace
 font_size: 10 #pt
 
 shell: zsh

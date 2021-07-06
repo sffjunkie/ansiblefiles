@@ -35,8 +35,7 @@
     - role: pypi_packages
       package_list: "{{ packages.pypi }}"
 
-    - role: font
-      font_url: "{{ font }}"
+    - fonts
     - x11
     - git
     - development
@@ -62,7 +61,7 @@
         content: "{{ configfiles | to_nice_json }}"
 
 - name: Run configfiles playbook
-  ansible.builtin.import_playbook: ../configfiles/main.yaml
+  ansible.builtin.import_playbook: ../configfiles/build.yaml
   tags:
     - configfiles
 

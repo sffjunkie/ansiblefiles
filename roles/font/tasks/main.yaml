@@ -68,12 +68,14 @@
 
   - name: Copy font files to {{ _font_destination }}
     ansible.builtin.copy:
-      src: "{{ item.path }}"
+      src: "{{ font_file.path }}"
       dest: "{{ _font_destination }}"
       remote_src: true
       owner: "{{ owner }}"
       group: "{{ owner }}"
     loop: "{{ _font_files.files }}"
+    loop_control:
+      loop_var: font_file
     when: _font_files.matched > 0
     notify:
       - Update font cache

@@ -4,6 +4,7 @@
   gather_facts: false
   vars_files:
     - ../vars/development.yaml
+    - ../vars/laptop.yaml
     - ../vars/_playbook.yaml
     - ./vars/main.yaml
 
@@ -17,8 +18,8 @@
         msg:
           - "Config files: {{ configfiles }}"
 
-  # roles:
-  #   - mnussbaum.base16-builder-ansible
+  roles:
+    - mnussbaum.base16-builder-ansible
 
   tasks:
     - name: Go config
@@ -41,18 +42,18 @@
   #     ansible.builtin.include_tasks: includes/shell/zsh.yaml
   #     when: '"zsh" in config_roles'
 
-  #   - name: Generate scheme colors
-  #     ansible.builtin.base16_builder:
-  #       scheme: "{{ base16.color_scheme }}"
-  #       template: "{{ base16.templates }}"
-  #     register: base16_schemes
+    - name: Generate scheme colors
+      base16_builder:
+        scheme: "{{ base16.color_scheme }}"
+        template: "{{ base16.templates }}"
+      register: base16_schemes
 
   #   # - debug:
   #   #     var: base16_schemes
 
-  #   - name: Alacritty Config
-  #     ansible.builtin.include_tasks: includes/application/alacritty.yaml
-  #     when: '"alacritty" in applications'
+    - name: Alacritty Config
+      ansible.builtin.include_tasks: includes/application/alacritty.yaml
+      when: '"alacritty" in applications'
 
   #   - name: Copy files to output
   #     ansible.builtin.copy:

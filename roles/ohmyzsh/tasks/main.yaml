@@ -20,18 +20,12 @@
         _ohmyzsh_config:
           ohmyzsh:
             plugins: "{{ ohmyzsh.plugins + ohmyzsh.user_plugins }}"
-
-    - ansible.builtin.set_fact:
-        _ohmyzsh_envvars:
-          ZSH: "{{ _ohmyzsh_install_path|replace(home, '${HOME}') }}"
-          ZSH_CACHE_DIR: "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+            ZSH: "{{ _ohmyzsh_install_path|replace(home, '${HOME}') }}"
 
     - ansible.utils.update_fact:
         updates:
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_ohmyzsh_config) }}"
-          - path: configfiles.envvars
-            value: "{{ configfiles.envvars | combine(_ohmyzsh_envvars) }}"
       register: _updated_fact
       changed_when: false
 

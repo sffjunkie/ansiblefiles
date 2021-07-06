@@ -10,10 +10,10 @@
   changed_when: false
 
 - name: Install card driver
+  when: _xf86_video_driver|length > 0
   ansible.builtin.package:
     name: "{{ _xf86_video_driver }}"
     state: present
-  when: _xf86_video_driver|length > 0
 
 - name: Install window manager.
   ansible.builtin.include_tasks: "window_manager/{{ x11.window_manager }}.yaml"

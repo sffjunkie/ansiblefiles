@@ -27,20 +27,20 @@
       when: '"go" in configfiles.configs'
 
   #   - name: Node config
-  #     ansible.builtin.include_tasks: includes/development/node.yaml
   #     when: '"node" in config_roles'
+  #     ansible.builtin.include_tasks: includes/development/node.yaml
 
   #   - name: Python config
-  #     ansible.builtin.include_tasks: includes/development/python.yaml
   #     when: '"python" in config_roles'
+  #     ansible.builtin.include_tasks: includes/development/python.yaml
 
   #   - name: Rust config
-  #     ansible.builtin.include_tasks: includes/development/rust.yaml
   #     when: '"rust" in config_roles'
+  #     ansible.builtin.include_tasks: includes/development/rust.yaml
 
   #   - name: Zsh config
-  #     ansible.builtin.include_tasks: includes/shell/zsh.yaml
   #     when: '"zsh" in config_roles'
+  #     ansible.builtin.include_tasks: includes/shell/zsh.yaml
 
     - name: Generate scheme colors
       base16_builder:
@@ -52,8 +52,8 @@
   #   #     var: base16_schemes
 
     - name: Alacritty Config
-      ansible.builtin.include_tasks: includes/application/alacritty.yaml
       when: '"alacritty" in applications'
+      ansible.builtin.include_tasks: includes/application/alacritty.yaml
 
   #   - name: Copy files to output
   #     ansible.builtin.copy:

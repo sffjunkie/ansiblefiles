@@ -26,6 +26,6 @@
 #         _vscode_theme_extension: "{{ vscode_themes[color_scheme].extension }}"
 
 #     - name: Install theme extension
+#       when: _vscode_theme_extension | length > 0
 #       ansible.builtin.command:
 #         cmd: code --install-extension "{{ _vscode_theme_extension }}"
-#       when: _vscode_theme_extension | length > 0

@@ -5,5 +5,5 @@
   register: reboot_file
 
 - name: Reboot if needed
-  ansible.builtin.reboot:
   when: reboot_file.stat.exists
+  ansible.builtin.reboot:

@@ -12,8 +12,8 @@
     mode: 0700
 
 - name: ohmyzsh
+  when: zsh.ohmyzsh.path | length > 0
   ansible.builtin.template:
     src: templates/.config/zsh/ohmyzsh.sh.j2
     dest: "output/{{ zsh.zdotdir }}/ohmyzsh.sh"
     mode: 0700
-  when: zsh.ohmyzsh.path | length > 0

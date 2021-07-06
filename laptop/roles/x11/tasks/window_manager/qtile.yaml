@@ -34,24 +34,24 @@
   changed_when: false
 
 - name: Uninstall cairocffi - exists but not built by ansible
+  when: _cairocffi_init.stat.exists and not _cairocffi_built.stat.exists
   ansible.builtin.pip:
     name: cairocffi
     state: absent
-  when: _cairocffi_init.stat.exists and not _cairocffi_built.stat.exists
 
 - name: QTile - install cairoffi with --no-cache-dir
+  when: not _cairocffi_built.stat.exists
   ansible.builtin.pip:
     name: cairocffi
     state: present
     extra_args: "--no-cache-dir"
-  when: not _cairocffi_built.stat.exists
 
 - name: Touch 'built by ansible' flag file
+  when: not _cairocffi_built.stat.exists
   ansible.builtin.file:
     path: "{{ '/usr/local/lib/python' ~ ansible_python.version.major ~ '.' ~ ansible_python.version.minor ~ '/dist-packages/cairocffi/.ansible' }}"
     state: touch
   changed_when: false
-  when: not _cairocffi_built.stat.exists
 
 - name: QTile - install package
   ansible.builtin.pip:

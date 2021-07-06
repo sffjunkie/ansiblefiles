@@ -22,7 +22,10 @@
   block:
     - ansible.builtin.set_fact:
         _zsh_config:
-          zsh: {}
+          zsh:
+            ZSH_CACHE_DIR: '${XDG_CACHE_HOME:-$HOME/.cache}/zsh'
+            ZDOTDIR': "{{ config_home_replacement_text + '/zsh' }}"
+
 
     - ansible.utils.update_fact:
         updates:
@@ -30,8 +33,6 @@
             value: "{{ configfiles.pathend }}"
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_zsh_config) }}"
-          - path: configfiles.envvars
-            value: "{{ configfiles.envvars | combine({'ZDOTDIR': config_home_replacement_text + '/zsh'}) }}"
       register: _updated_fact
       changed_when: false
 

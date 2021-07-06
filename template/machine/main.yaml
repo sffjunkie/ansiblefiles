@@ -23,14 +23,14 @@
 
   tasks:
     - name: Install zsh.
+      when: shell == 'zsh'
       include_role:
         name: zsh
-      when: shell == 'zsh'
 
     - name: Install oh-my-zsh.
+      when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
       include_role:
         name: ohmyzsh
-      when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
 
   #   - name: Install config files
   #     ansible.builtin.git:

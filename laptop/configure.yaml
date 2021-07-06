@@ -5,7 +5,7 @@
     ansible_port: "{{ ssh_port }}"
   vars_files:
     - ../vars/laptop.yaml
-    - ../vars/development.yaml
+    # - ../vars/development.yaml
     - ../vars/_playbook.yaml
     - ../vars/_install_overrides.yaml
 
@@ -14,10 +14,7 @@
       ansible.builtin.debug:
         msg:
           - "Computed stats"
-          - "  Configuration file home directory: {{ config_home }}"
           - "  Shell: {{ shell }}"
-          - "  Distribution: {{ distribution }}"
-          - "  OS Family: {{ os_family }}"
           - "  Development Environments: {{ development.roles | join(', ') }}"
 
     - name: Initial configuration
@@ -25,29 +22,29 @@
         msg: "{{ configfiles }}"
 
   roles:
-    - role: dotlocal_directories
+    # - role: dotlocal_directories
 
-    - role: base_os_packages
+    # - role: base_os_packages
 
     - role: os_packages
       package_list: "{{ packages.os }}"
 
-    - role: pypi_packages
-      package_list: "{{ packages.pypi }}"
+    # - role: pypi_packages
+    #   package_list: "{{ packages.pypi }}"
 
-    - fonts
-    - x11
-    - git
-    - development
-    - docker
-    - exa
+    # - fonts
+    # - x11
+    # - git
+    # - development
+    # - docker
+    # - exa
 
-    - role: zsh
-      set_shell_for: "{{ userid }}"
-      when: shell == 'zsh'
+    # - role: zsh
+    #   when: shell == 'zsh'
+    #   set_shell_for: "{{ userid }}"
 
-    - role: ohmyzsh
-      when: shell == 'zsh' and ohmyzsh is defined
+    # - role: ohmyzsh
+    #   when: shell == 'zsh' and ohmyzsh is defined
 
   tasks:
     - name: Final configuration
@@ -59,11 +56,12 @@
       ansible.builtin.copy:
         dest: "{{ playbook_dir }}/../configfiles.json"
         content: "{{ configfiles | to_nice_json }}"
+      changed_when: false
 
-- name: Run configfiles playbook
-  ansible.builtin.import_playbook: ../configfiles/build.yaml
-  tags:
-    - configfiles
+# - name: Run configfiles playbook
+#   ansible.builtin.import_playbook: ../configfiles/build.yaml
+#   tags:
+#     - configfiles
 
   # - name: Run scriptfiles playbook
   #   ansible.builtin.import_playbook: ../scriptfiles/main.yaml

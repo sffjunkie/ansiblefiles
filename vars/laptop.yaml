@@ -1,4 +1,9 @@
 ---
+directories:
+  - ~/.local
+  - ~/.local/bin
+  - ~/.config
+
 apps:
   audio_mixer: pulsemixer
   browser: firefox
@@ -16,9 +21,8 @@ apps:
   video_player: mpv
 
 linkhandler:
-  'text/x-python': "{{ code_editor }}"
-  'image/png': "{{ image_viewer }}"
-
+  'text/x-python': "{{ apps.code_editor }}"
+  'image/png': "{{ apps.image_viewer }}"
 
 x11:
   # dpi: 144
@@ -72,3 +76,105 @@ packages:
   pypi:
     - pipx
     - pywal
+
+# List of directories to be created in $HOME
+development:
+  dirs:
+    - development
+    - development/gist
+    - development/incubator
+    - development/project
+    - development/source
+    - development/venv
+
+  # Roles to set up development environments
+  # The actual roles are named `development_<role_name>` e.g. `development_go`
+  roles:
+    - ansible
+    - go
+    - python
+    - pyenv
+    - rust
+    - typescript
+    - vscode
+
+  common:
+    install: user
+    packages:
+      pypi:
+        - meson
+
+  ansible:
+    install: user
+    packages:
+      pipx:
+        - ansible-base
+        - ansible-lint
+        # - \"molecule[docker]\"
+        - yamllint
+
+  go:
+    install: user  # or 'system'
+    version: latest
+
+  python:
+    install: user
+    packages:
+      os:
+        - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"
+      pipx:
+        - black
+        - cookiecutter
+        - poetry
+        - pytest
+        - sphinx
+        - tox
+
+  pyenv:
+    plugins:
+      git:
+        - { repo: https://github.com/pyenv/pyenv-virtualenv, dest: "{{ local_home }}/pyenv/plugins/pyenv-virtualenv" }
+
+  rust:
+    install: user
+
+  typescript:
+    install: global
+    npm_global_is_local: true  # if true then global npm packages will be installed under $HOME/.local/
+    packages:
+      os:
+        - "nodejs"
+        - "npm"
+      npm:
+        - "@types/node"
+        - "typescript"
+        - "typedoc"
+
+  vscode:
+    extensions:
+      - 2gua.rainbow-brackets
+      - avli.clojure
+      - DavidAnson.vscode-markdownlint
+      - golang.go
+      - hashicorp.terraform
+      - jakeboone02.mediawiki
+      - mathiasfrohlich.Kotlin
+      - miguelsolorio.fluent-icons
+      - mindaro-dev.file-downloader
+      - ms-azuretools.vscode-docker
+      - ms-dotnettools.csharp
+      - ms-python.python
+      - ms-python.vscode-pylance
+      - ms-toolsai.jupyter
+      - ms-vscode-remote.remote-containers
+      - ms-vscode-remote.remote-ssh
+      - ms-vscode-remote.remote-ssh-edit
+      - ms-vscode-remote.vscode-remote-extensionpack
+      - oderwat.indent-rainbow
+      - PKief.material-icon-theme
+      - redhat.vscode-yaml
+      - rust-lang.rust
+      - samuelcolvin.jinjahtml
+      - seanwu.vscode-qt-for-python
+      - siegebell.prettify-symbols-mode
+      - vscode-icons-team.vscode-icons

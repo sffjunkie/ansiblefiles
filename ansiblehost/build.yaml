@@ -51,8 +51,8 @@
     #     version: develop
 
     - name: "Disable pi user"
+      when: distribution == 'raspbian'
       ansible.builtin.user:
         name: pi
         expires: 1
         password_lock: true
-      when: distribution == 'raspbian'

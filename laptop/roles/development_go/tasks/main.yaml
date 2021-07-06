@@ -24,6 +24,7 @@
   when: _go_version.rc == 0
 
 - name: "Go: Download and extract the archive {{ _go_archive_name }}"
+  when: _go_current_version != _go_install_version
   ansible.builtin.unarchive:
     src: "{{ _go_download_url }}"
     dest: "{{ _go_install_path }}"
@@ -31,12 +32,11 @@
     owner: "{{ _go_mode }}"
     group: "{{ _go_mode }}"
     remote_src: true
-  when: _go_current_version != _go_install_version
 
 - name: "Go: gopath text"
+  when: development.go.install == 'user'
   ansible.builtin.set_fact:
     _go_install_path: "{{ local_home_replacement_text }}"
-  when: development.go.install == 'user'
 
 - name: "Go: Update configfiles"
   block:

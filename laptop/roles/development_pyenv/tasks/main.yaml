@@ -1,57 +1,39 @@
 ---
-- name: pyenv configuration
-  ansible.builtin.debug:
-    msg: "{{ configfiles }}"
-
-- name: Set _pyenv_root fact
+- name: Set pyenv_root fact
   ansible.builtin.set_fact:
-    _pyenv_root: "{{ local_home }}/pyenv"
+    pyenv_root: "{{ local_home }}/pyenv"
 
 - name: Install pyenv
   become_user: "{{ userid }}"
   shell: "curl https://pyenv.run | bash"  # noqa command-instead-of-module
   environment:
-    PYENV_ROOT: "{{ _pyenv_root }}"
+    PYENV_ROOT: "{{ pyenv_root }}"
   args:
-    creates: "{{ _pyenv_root }}"
+    creates: "{{ pyenv_root }}"
   changed_when: false
-
-# - name: "Pyenv: Install packages"
-#   ansible.builtin.include_role:
-#     name: install_packages
-#   vars:
-#     install_info: "{{ development.pyenv }}"
 
 - name: Install pyenv-virtualenv
   ansible.builtin.git:
     repo: https://github.com/pyenv/pyenv-virtualenv.git
-    dest: "{{ _pyenv_root }}/plugins/pyenv-virtualenv"
+    dest: "{{ pyenv_root }}/plugins/pyenv-virtualenv"
 
 - name: Update configfiles for pyenv
   block:
     - ansible.builtin.set_fact:
         _pyenv_config:
           pyenv:
-            PYENV_ROOT: "{{ _pyenv_root }}"
+            PYENV_ROOT: "{{ pyenv_root | replace(home, '${HOME}') }}"
       changed_when: false
-      no_log: true
 
     - ansible.utils.update_fact:
         updates:
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_pyenv_config) }}"
-          # Put pyenv at start of path
           - path: configfiles.pathstart
             value: "{{ [local_home_replacement_text + '/pyenv/bin'] + configfiles.pathstart }}"
       register: _updated_fact
       changed_when: false
-      no_log: true
 
     - ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false
-      no_log: true
-
-- name: pyenv configuration
-  ansible.builtin.debug:
-    msg: "{{ configfiles }}"

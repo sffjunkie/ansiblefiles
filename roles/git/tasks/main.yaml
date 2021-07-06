@@ -8,28 +8,28 @@
       - "default.yaml"
 
 - name: Configure git email
+  when: git.email | length > 0
   become_user: "{{ userid }}"
   community.general.git_config:
     name: user.email
     scope: global
     value: "{{ git.email }}"
     state: present
-  when: git.email | length > 0
 
 - name: Configure git name
+  when: git.name | length > 0
   become_user: "{{ userid }}"
   community.general.git_config:
     name: user.name
     scope: global
     value: "{{ git.name }}"
     state: present
-  when: git.name | length > 0
 
 - name: Configure git GPG Key
+  when: git.gpg_key | default("", True) | length > 0
   become_user: "{{ userid }}"
   community.general.git_config:
     name: user.signingKey
     scope: global
     value: "{{ git.gpg_key }}"
     state: present
-  when: git.gpg_key | default("", True) | length > 0

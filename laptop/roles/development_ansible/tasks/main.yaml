@@ -10,11 +10,11 @@
         - 'defaults'
 
 - name: "Ansible: Install default os packages"
+  when: ansible_development_os_packages | length > 0
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
   loop: "{{ ansible_development_os_packages }}"
-  when: ansible_development_os_packages | length > 0
 
 - name: "Ansible: Install packages"
   ansible.builtin.include_role:

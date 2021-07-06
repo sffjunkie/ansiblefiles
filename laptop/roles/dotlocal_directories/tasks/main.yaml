@@ -1,5 +1,5 @@
 ---
-- name: Create root directories
+- name: Create base directories
   ansible.builtin.file:
     path: "{{ item|expanduser }}"
     state: directory
@@ -8,7 +8,4 @@
     group: "{{ userid }}"
     access_time: preserve
     modification_time: preserve
-  loop:
-    - ~/.local
-    - ~/.local/bin
-    - ~/.config
+  loop: "{{ directories }}"

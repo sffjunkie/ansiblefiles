@@ -5,6 +5,7 @@
             "GOPATH": "${HOME}/.local/go"
         },
         "ohmyzsh": {
+            "ZSH": "${HOME}/.local/oh-my-zsh",
             "plugins": [
                 "docker",
                 "docker-compose",
@@ -16,20 +17,19 @@
             ]
         },
         "pyenv": {
-            "PYENV_ROOT": "/home/sdk/.local/pyenv"
+            "PYENV_ROOT": "${HOME}/.local/pyenv"
         },
         "qtile": {},
         "rust": {
             "CARGO_HOME": "${HOME}/.local/cargo",
             "RUSTUP_HOME": "${HOME}/.local/rust"
         },
-        "zsh": {}
+        "zsh": {
+            "ZDOTDIR'": "${XDG_CONFIG_HOME:-${HOME}/.config}/zsh",
+            "ZSH_CACHE_DIR": "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+        }
     },
-    "envvars": {
-        "ZDOTDIR": "${XDG_CONFIG_HOME:-${HOME}/.config}/zsh",
-        "ZSH": "${HOME}/.local/oh-my-zsh",
-        "ZSH_CACHE_DIR": "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-    },
+    "envvars": {},
     "pathend": [
         "${HOME}/.local/bin",
         "${HOME}/.local/go/bin",

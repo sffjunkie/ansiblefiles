@@ -1,28 +1,32 @@
 ---
-# - name: Get installation targets by type
-#   ansible.builtin.set_fact:
-#     _types: "{{ install_overrides|_install_types(os_family, distribution) }}"
+- name: Get installation targets by type
+  ansible.builtin.set_fact:
+    _overrides: "{{ _install_overrides|_install_types(os_family, distribution) }}"
 
-# - name: dbg
-#   ansible.builtin.debug:
-#     msg: "{{ _types }}"
+- name: dbg
+  ansible.builtin.debug:
+    msg: "{{ _overrides }}"
 
 # - name: Compile items
+#   when: _overrides['compile'] is defined and _overrides['compile'] | length > 0
 #   include_role:
 #     name: package_compile
 #   vars:
-#     compile_info: "{{ item }}"
-#   loop: "{{ _types['compile'] }}"
-#   when: _types['compile'] is defined and _types['compile'] | length > 0
+#     compile_info: "{{ compileinfo }}"
+#   loop: "{{ _overrides['compile'] }}"
+#   loop_control:
+#     loop_var: compileinfo
 
 # - name: Install items using a role
+#   when: _overrides['role'] is defined and _overrides['role'] | length > 0
 #   include_role:
-#     name: "{{ item.package }}"
-#   loop: "{{ _types['role'] }}"
-#   when: _types['role'] is defined and _types['role'] | length > 0
+#     name: "{{ roleinfo.package }}"
+#   loop: "{{ _overrides['role'] }}"
+#   loop_control:
+#     loop_var: roleinfo
 
-- name: Install os packages
-  ansible.builtin.package:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ package_list }}"
+# - name: Install os packages
+#   ansible.builtin.package:
+#     name: "{{ item }}"
+#     state: present
+#   loop: "{{ package_list }}"

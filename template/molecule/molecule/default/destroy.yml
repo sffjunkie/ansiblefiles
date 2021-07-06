@@ -10,14 +10,14 @@
     # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config
-      set_fact:
+      ansible.builtin.set_fact:
         instance_conf: {}
 
     - name: Dump instance config
-      copy:
+      when: server.changed | default(false) | bool
+      ansible.builtin.copy:
         content: |
           # Molecule managed
 
           {{ instance_conf | to_json | from_json | to_yaml }}
         dest: "{{ molecule_instance_config }}"
-      when: server.changed | default(false) | bool

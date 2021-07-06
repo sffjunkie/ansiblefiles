@@ -28,35 +28,35 @@
 
   tasks:
     - name: Install zsh.
+      when: shell == 'zsh'
       include_role:
         name: zsh
-      when: shell == 'zsh'
 
     - name: Install oh-my-zsh.
+      when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
       include_role:
         name: ohmyzsh
-      when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
 
     - name: Install Go dev environment.
+      when: '"go" in development_roles'
       include_role:
         name: development_go
-      when: '"go" in development_roles'
 
     - name: Install Node dev environment.
+      when: '"node" in development_roles'
       include_role:
         name: development_node
-      when: '"node" in development_roles'
 
     - name: Install Python dev environment.
+      when: '"python" in development_roles'
       include_role:
         name: development_python
-      when: '"python" in development_roles'
 
     - name: Install Rust dev environment.
-      include_role:
-        name: development_rust
       when: '"rust" in development_roles'
 
+      include_role:
+        name: development_rust
   #   - name: Install config files
   #     ansible.builtin.git:
   #       repo: 'https://github.com/sffjunkie/configfiles'

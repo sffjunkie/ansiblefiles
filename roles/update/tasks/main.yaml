@@ -1,31 +1,31 @@
 ---
 - name: apt updgrade all
+  when: "os_family == 'debian'"
   ansible.builtin.apt:
     update_cache: true
     upgrade: dist
     autoremove: yes
-  when: "os_family == 'debian'"
   notify: reboot machine
 
 - name: yum updgrade all
+  when: "os_family == 'centos'"
   ansible.builtin.yum:
     name: "*"
     state: latest
     update_cache: true
     autoremove: true
-  when: "os_family == 'centos'"
   notify: reboot machine
 
 - name: dnf updgrade all
+  when: "os_family == 'fedora'"
   ansible.builtin.dnf:
     name: "*"
     state: latest
     update_cache: true
-  when: "os_family == 'fedora'"
   notify: reboot machine
 
 - name: pacman update all
+  when: "os_family == 'archlinux'"
   community.general.pacman:
     upgrade: true
-  when: "os_family == 'archlinux'"
   notify: reboot machine

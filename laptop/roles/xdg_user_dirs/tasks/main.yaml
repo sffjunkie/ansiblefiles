@@ -5,6 +5,7 @@
   loop: "{{ custom_xdg_user_dirs | dict2items }}"
 
 - name: Create XDG user directories
+  when: item.value | default("", True) | length > 0
   ansible.builtin.file:
     path: "/home/{{ username }}/{{ item.value }}"
     state: directory
@@ -12,7 +13,6 @@
     access_time: preserve
     modification_time: preserve
   loop: "{{ xdg_user_dirs | dict2items }}"
-  when: item.value | default("", True) | length > 0
 
 - name: Create user-dirs.dirs files
   ansible.builtin.template:

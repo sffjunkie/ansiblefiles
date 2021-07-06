@@ -1,9 +1,9 @@
 ---
 - name: reboot machine
+  when: reboot_after_update
   ansible.builtin.include_tasks: "{{ lookup('first_found', params) }}"
   vars:
     params:
       - "{{distribution}}.yaml"
       - "{{os_family}}.yaml"
       - "default.yaml"
-  when: reboot_after_update

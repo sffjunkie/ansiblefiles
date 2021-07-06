@@ -16,8 +16,9 @@ cache_home_replacement_text: "${XDG_CACHE_HOME:-${HOME}/.cache}"
 # Added to by various roles e.g. ohmyzsh, go
 configfiles:
   # Additions to the PATH
-  path:
-    - "{{ local_bin }}"
+  pathstart: []
+  pathend:
+    - ${HOME}/.local/bin
 
   # Configuration file values with a key for each role that is generated
   configs: {}

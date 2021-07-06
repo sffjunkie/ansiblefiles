@@ -1,19 +1,24 @@
 ---
 apps:
-  editor: nvim
-  code_editor: code
-  notifier: dunst
+  audio_mixer: pulsemixer
   browser: firefox
-  terminal: alacritty
+  code_editor: code
+  compositor: picom
+  editor: neovim
+  file_manager: ranger
+  hot_keys: sxhkd
+  image_viewer: sxiv
   music_player: ncmpcpp
   music_visualizer: vis
-  file_manager: ranger
-  audio_mixer: pulsemixer
-  image_viewer: sxiv
+  notifier: dunst
   pdf_viewer: zathura
+  terminal: alacritty
+  video_player: mpv
 
 linkhandler:
   'text/x-python': "{{ code_editor }}"
+  'image/png': "{{ image_viewer }}"
+
 
 x11:
   # dpi: 144
@@ -21,7 +26,7 @@ x11:
   display_manager:  lightdm
   greeter: lightdm-gtk-greeter
   window_manager: qtile
-  avatar: 'files/avatar96x96.png'
+  avatar: "{{ playbook_dir }}/../files/avatar96x96.png"
 
 color_scheme: nord
 
@@ -45,26 +50,24 @@ ohmyzsh:
 
 packages:
   os:
-    - "{{ terminal }}"
-    - "{{ editor }}"
+    - "{{ apps.audio_mixer }}"
+    - "{{ apps.browser }}"
+    # - "{{ apps.compositor }}"
+    - "{{ apps.editor }}"
+    - "{{ apps.file_manager }}"
+    - "{{ apps.image_viewer }}"
+    - "{{ apps.music_player }}"
+    # - "{{ apps.music_visualizer }}"
+    - "{{ apps.notifier }}"
+    - "{{ apps.pdf_viewer }}"
+    # - "{{ apps.terminal }}"
+    - "{{ apps.video_player }}"
+    - "{{ apps.hot_keys }}"
     - bat
-    - dunst
-    - firefox
     - mpd
-    - mpv
-    - nano
-    - ncmpcpp
     - nitrogen
     - pavucontrol
-    - picom
-    - ranger
-    - sxhkd
-    - sxiv
-    - zathura
 
   pypi:
     - pipx
-
-  # shell:
-  #   bash:
-  #     - bash-completion
+    - pywal

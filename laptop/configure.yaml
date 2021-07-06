@@ -1,0 +1,77 @@
+---
+- hosts: laptop
+  become: true
+  vars:
+    ansible_port: "{{ ssh_port }}"
+  vars_files:
+    - ../vars/laptop.yaml
+    - ../vars/development.yaml
+    - ../vars/_playbook.yaml
+    - ../vars/_install_overrides.yaml
+
+  pre_tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Computed stats"
+          - "  Configuration file home directory: {{ config_home }}"
+          - "  Shell: {{ shell }}"
+          - "  Distribution: {{ distribution }}"
+          - "  OS Family: {{ os_family }}"
+          - "  Development Environments: {{ development.roles | join(', ') }}"
+
+    - name: Initial configuration
+      ansible.builtin.debug:
+        msg: "{{ configfiles }}"
+
+  roles:
+    - role: dotlocal_directories
+
+    - role: base_os_packages
+
+    - role: os_packages
+      package_list: "{{ packages.os }}"
+
+    - role: pypi_packages
+      package_list: "{{ packages.pypi }}"
+
+    - role: font
+      font_url: "{{ font }}"
+    - x11
+    - git
+    - development
+    - docker
+    - exa
+
+    - role: zsh
+      set_shell_for: "{{ userid }}"
+      when: shell == 'zsh'
+
+    - role: ohmyzsh
+      when: shell == 'zsh' and ohmyzsh is defined
+
+  tasks:
+    - name: Final configuration
+      ansible.builtin.debug:
+        msg: "{{ configfiles }}"
+
+    - name: Store final configuration
+      delegate_to: localhost
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../configfiles.json"
+        content: "{{ configfiles | to_nice_json }}"
+
+- name: Run configfiles playbook
+  ansible.builtin.import_playbook: ../configfiles/main.yaml
+  tags:
+    - configfiles
+
+  # - name: Run scriptfiles playbook
+  #   ansible.builtin.import_playbook: ../scriptfiles/main.yaml
+  #   tags:
+  #     - scriptfiles
+
+  # - name: Copy config files
+  #   ansible.builtin.copy:
+  #     src: "{{ configfiles_path }}/*"
+  #     dest: "/home/{{ user.id }}/"

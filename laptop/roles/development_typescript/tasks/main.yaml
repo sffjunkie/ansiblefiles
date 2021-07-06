@@ -1,0 +1,27 @@
+---
+- name: "Typescript: Install packages"
+  ansible.builtin.include_role:
+    name: install_packages
+  vars:
+    install_info: "{{ development.typescript }}"
+
+# - name: "Typescript: Update configfiles"
+#   block:
+#     - ansible.builtin.set_fact:
+#         _ts_config:
+#           typescript: {}
+
+#     - ansible.utils.update_fact:
+#         updates:
+#           - path: configfiles.pathend
+#             value: "{{ configfiles.pathend + [_npm_bin_path] }}"
+#           - path: configfiles.configs
+#             value: "{{ configfiles.configs }}"
+#           - path: configfiles.envvars
+#             value: "{{ configfiles.envvars | combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
+#       register: _updated_fact
+#       changed_when: false
+
+#     - ansible.builtin.set_fact:
+#         configfiles: "{{ _updated_fact.configfiles }}"
+#       changed_when: false

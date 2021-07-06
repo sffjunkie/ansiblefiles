@@ -2,7 +2,7 @@
 - hosts: laptop
   become: true
   vars_files:
-    - ../vars/playbook.yaml
+    - ../vars/_playbook.yaml
 
   roles:
     - role: user_add

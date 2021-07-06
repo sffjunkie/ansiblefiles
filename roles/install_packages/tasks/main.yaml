@@ -1,0 +1,51 @@
+---
+- name: Install os, pypi and pipx packages
+  when: install_info | length > 0
+  block:
+    - name: Install os packages
+      ansible.builtin.package:
+        name: "{{ os_item }}"
+        state: present
+      loop: "{{ install_info.packages.os }}"
+      loop_control:
+        loop_var: os_item
+      when: install_info.packages.os is defined and install_info.packages.os | length > 0
+
+    - name: Install pypi packages
+      ansible.builtin.pip:
+        name: "{{ pypi_item }}"
+        state: present
+        extra_args: "{{ '--user' if install_info.install == 'user' else None | default(omit) }}"
+      loop: "{{ install_info.packages.pypi }}"
+      loop_control:
+        loop_var: pypi_item
+      when: install_info.packages.pypi is defined and install_info.packages.pypi | length > 0
+
+    - name: Install pipx packages
+      ansible.builtin.shell:
+        cmd: "pipx install {{ pipx_item }}"
+      loop: "{{ install_info.packages.pipx }}"
+      loop_control:
+        loop_var: pipx_item
+      when: install_info.packages.pipx is defined and install_info.packages.pipx | length > 0
+      register: _pipx_result
+      changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
+      failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+
+    - name: Install git packages
+      ansible.builtin.git:
+        repo: "{{ git_item.repo }}"
+        dest: "{{ git_item.dest }}"
+      loop: "{{ install_info.packages.git }}"
+      loop_control:
+        loop_var: git_item
+      when: install_info.packages.git is defined and install_info.packages.git | length > 0
+
+    - name: "Install NPM packages"
+      community.general.npm:
+        name: "{{ npm_item }}"
+        global: "{{ (install_info.install == 'global') | ternary(true, omit) }}"
+      loop: "{{ install_info.packages.npm }}"
+      loop_control:
+        loop_var: npm_item
+      when: install_info.packages.npm is defined and install_info.packages.npm | length > 0

@@ -51,6 +51,7 @@
     path: "{{ '/usr/local/lib/python' ~ ansible_python.version.major ~ '.' ~ ansible_python.version.minor ~ '/dist-packages/cairocffi/.ansible' }}"
     state: touch
   changed_when: false
+  when: not _cairocffi_built.stat.exists
 
 - name: QTile - install package
   ansible.builtin.pip:

@@ -1,28 +1,28 @@
 ---
-- name: Calc CARGO_HOME
+- name: "Rust: Calculate CARGO_HOME"
   ansible.builtin.set_fact:
     _cargo_home: "{{ local_home }}/cargo"
 
-- name: Calc cargo bin directory
+- name: "Rust: Calculate cargo bin directory"
   ansible.builtin.set_fact:
     _cargo_bin: "{{ _cargo_home }}/bin"
 
-- name: Calc RUSTUP_HOME
+- name: "Rust: Calculate RUSTUP_HOME"
   ansible.builtin.set_fact:
     _rustup_home: "{{ local_home }}/rust"
 
-- name: Update configfiles for rust
+- name: "Rust: Update configfiles"
   block:
     - ansible.builtin.set_fact:
         _rust_config:
           rust:
-            CARGO_HOME: "{{ _cargo_home }}"
-            RUSTUP_HOME: "{{ _rustup_home }}"
+            CARGO_HOME: "{{ _cargo_home | replace(home, '${HOME}') }}"
+            RUSTUP_HOME: "{{ _rustup_home | replace(home, '${HOME}') }}"
 
     - ansible.utils.update_fact:
         updates:
-          - path: configfiles.path
-            value: "{{ configfiles.path + [_cargo_bin] }}"
+          - path: configfiles.pathend
+            value: "{{ configfiles.pathend + [_cargo_bin | replace(home, '${HOME}')] }}"
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_rust_config) }}"
       register: _updated_fact

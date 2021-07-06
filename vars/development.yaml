@@ -1,87 +1,102 @@
 ---
 # List of directories to be created in $HOME
-development_dirs:
-  - development
-  - development/project
-  - development/venv
-  - development/gist
-  - development/incubator
+development:
+  dirs:
+    - development
+    - development/gist
+    - development/incubator
+    - development/project
+    - development/source
+    - development/venv
 
-# Roles to set up development environments
-# The actual roles are named `development_<role_name>` e.g. `development_go`
-development_roles:
-  # - ansible
-  # - go
-  - python
-  # - rust
-  # - ts
-  # - vscode
+  # Roles to set up development environments
+  # The actual roles are named `development_<role_name>` e.g. `development_go`
+  roles:
+    # - ansible
+    # - go
+    # - python
+    - pyenv
+    - rust
+    # - typescript
+    # - vscode
 
-ansible:
-  install: user
-  packages:
-    pipx:
-      - ansible-base
-      - ansible-lint
-      - \"molecule[docker]\"
-      - yamllint
+  common:
+    install: user
+    packages:
+      pypi:
+        - meson
 
-go:
-  install: user  # or 'system'
-  version: latest
+  ansible:
+    install: user
+    packages:
+      pipx:
+        - ansible-base
+        - ansible-lint
+        # - \"molecule[docker]\"
+        - yamllint
 
-python:
-  install: user
-  packages:
-    os:
-      - python3-venv
+  go:
+    install: user  # or 'system'
+    version: latest
 
-    git:
-      - { repo: https://github.com/pyenv/pyenv-virtualenvwrapper, dest: "{{ local_home }}/pyenv/plugins/pyenv-virtualenvwrapper" }
+  python:
+    install: user
+    packages:
+      os:
+        - python3-venv
+      pipx:
+        - black
+        - cookiecutter
+        - poetry
+        - pytest
+        - sphinx
+        - tox
 
-    pipx:
-      - black
-      - cookiecutter
-      - poetry
-      - pytest
-      - sphinx
-      - tox
+  pyenv:
+    plugins:
+      git:
+        - { repo: https://github.com/pyenv/pyenv-virtualenv, dest: "{{ local_home }}/pyenv/plugins/pyenv-virtualenv" }
 
-rust:
-  install: user
+  rust:
+    install: user
 
-ts:
-  install: user
-  packages:
-    - "@types/node"
-    - "typescript"
-    - "typedoc"
+  typescript:
+    install: global
+    npm_global_is_local: true  # if true then global npm packages will be installed under $HOME/.local/
+    packages:
+      os:
+        - "nodejs"
+        - "npm"
+      npm:
+        - "@types/node"
+        - "typescript"
+        - "typedoc"
 
-vscode:
-  extensions:
-    - 2gua.rainbow-brackets
-    - avli.clojure
-    - DavidAnson.vscode-markdownlint
-    - golang.go
-    - hashicorp.terraform
-    - jakeboone02.mediawiki
-    - mathiasfrohlich.Kotlin
-    - miguelsolorio.fluent-icons
-    - mindaro-dev.file-downloader
-    - ms-azuretools.vscode-docker
-    - ms-dotnettools.csharp
-    - ms-python.python
-    - ms-python.vscode-pylance
-    - ms-toolsai.jupyter
-    - ms-vscode-remote.remote-containers
-    - ms-vscode-remote.remote-ssh
-    - ms-vscode-remote.remote-ssh-edit
-    - ms-vscode-remote.vscode-remote-extensionpack
-    - oderwat.indent-rainbow
-    - PKief.material-icon-theme
-    - redhat.vscode-yaml
-    - rust-lang.rust
-    - samuelcolvin.jinjahtml
-    - seanwu.vscode-qt-for-python
-    - siegebell.prettify-symbols-mode
-    - vscode-icons-team.vscode-icons
+  vscode:
+    extensions:
+      - 2gua.rainbow-brackets
+      - avli.clojure
+      - DavidAnson.vscode-markdownlint
+      - golang.go
+      - hashicorp.terraform
+      - jakeboone02.mediawiki
+      - mathiasfrohlich.Kotlin
+      - miguelsolorio.fluent-icons
+      - mindaro-dev.file-downloader
+      - ms-azuretools.vscode-docker
+      - ms-dotnettools.csharp
+      - ms-python.python
+      - ms-python.vscode-pylance
+      - ms-toolsai.jupyter
+      - ms-vscode-remote.remote-containers
+      - ms-vscode-remote.remote-ssh
+      - ms-vscode-remote.remote-ssh-edit
+      - ms-vscode-remote.vscode-remote-extensionpack
+      - oderwat.indent-rainbow
+      - PKief.material-icon-theme
+      - redhat.vscode-yaml
+      - rust-lang.rust
+      - samuelcolvin.jinjahtml
+      - seanwu.vscode-qt-for-python
+      - siegebell.prettify-symbols-mode
+      - vscode-icons-team.vscode-icons

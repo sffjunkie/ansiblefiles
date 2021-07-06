@@ -3,7 +3,7 @@
   become: true
   become_method: sudo
   vars_files:
-    - ../vars/playbook.yaml
+    - ../vars/_playbook.yaml
     - ../vars/secrets.yaml
     - ./vars/pypi.yaml
 

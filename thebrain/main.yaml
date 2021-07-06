@@ -3,7 +3,7 @@
   become: true
   become_user: "{{ username }}"
   vars_files:
-    - ../vars/playbook.yaml
+    - ../vars/_playbook.yaml
     - ../vars/secrets.yaml
 
   pre_tasks:

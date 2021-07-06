@@ -1,0 +1,37 @@
+{
+    "aliases": [],
+    "configs": {
+        "ohmyzsh": {
+            "plugins": [
+                "docker",
+                "docker-compose",
+                "git",
+                "sudo",
+                "web-search",
+                "zsh-completions",
+                "zsh-syntax-highlighting"
+            ]
+        },
+        "pyenv": {
+            "PYENV_ROOT": "/home/sdk/.local/pyenv"
+        },
+        "qtile": {},
+        "rust": {
+            "CARGO_HOME": "${HOME}/.local/cargo",
+            "RUSTUP_HOME": "${HOME}/.local/rust"
+        },
+        "zsh": {}
+    },
+    "envvars": {
+        "ZDOTDIR": "${XDG_CONFIG_HOME:-${HOME}/.config}/zsh",
+        "ZSH": "${HOME}/.local/oh-my-zsh",
+        "ZSH_CACHE_DIR": "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+    },
+    "pathend": [
+        "${HOME}/.local/bin",
+        "${HOME}/.local/cargo/bin"
+    ],
+    "pathstart": [
+        "${HOME}/.local/pyenv/bin"
+    ]
+}

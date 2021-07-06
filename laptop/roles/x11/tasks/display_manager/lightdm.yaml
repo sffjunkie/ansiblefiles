@@ -6,7 +6,7 @@
 
 - name: Set lightdm display manager binary
   ansible.builtin.set_fact:
-    _lightdm_binary: {{ '/usr/sbin/lightdm' if os_family == 'debian' }}
+    _lightdm_binary: "{{ '/usr/sbin/lightdm' if os_family == 'debian' }}"
   changed_when: false
 
 - name: Enable lightdm

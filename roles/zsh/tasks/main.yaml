@@ -26,8 +26,8 @@
 
     - ansible.utils.update_fact:
         updates:
-          - path: configfiles.path
-            value: "{{ configfiles.path }}"
+          - path: configfiles.pathend
+            value: "{{ configfiles.pathend }}"
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_zsh_config) }}"
           - path: configfiles.envvars

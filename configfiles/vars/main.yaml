@@ -1,5 +1,5 @@
 ---
-config_roles: "{{ dev_roles + ['zsh', 'ohmyzsh'] }}"
+# config_roles: "{{ dev_roles + ['zsh', 'ohmyzsh'] }}"
 
 font:
   family: Hack

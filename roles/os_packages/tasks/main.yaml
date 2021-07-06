@@ -1,4 +1,26 @@
 ---
+# - name: Get installation targets by type
+#   ansible.builtin.set_fact:
+#     _types: "{{ install_overrides|_install_types(os_family, distribution) }}"
+
+# - name: dbg
+#   ansible.builtin.debug:
+#     msg: "{{ _types }}"
+
+# - name: Compile items
+#   include_role:
+#     name: package_compile
+#   vars:
+#     compile_info: "{{ item }}"
+#   loop: "{{ _types['compile'] }}"
+#   when: _types['compile'] is defined and _types['compile'] | length > 0
+
+# - name: Install items using a role
+#   include_role:
+#     name: "{{ item.package }}"
+#   loop: "{{ _types['role'] }}"
+#   when: _types['role'] is defined and _types['role'] | length > 0
+
 - name: Install os packages
   ansible.builtin.package:
     name: "{{ item }}"

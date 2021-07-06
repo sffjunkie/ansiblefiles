@@ -1,0 +1,11 @@
+---
+- name: "Alacritty: ubuntu: add PPA"
+  ansible.builtin.apt_repository:
+    repo: ppa:aslatter/ppa
+    state: present
+
+- name: "Alacritty: ubuntu: update apt and install"
+  ansible.builtin.apt:
+    update_cache: true
+    name: alacritty
+    state: latest

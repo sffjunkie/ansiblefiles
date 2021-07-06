@@ -1,5 +1,5 @@
 - name: Delete temporary files
-  file:
+  ansible.builtin.file:
     name: "{{ _font_tmp_dir }}"
     state: absent
 

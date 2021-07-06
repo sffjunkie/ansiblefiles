@@ -55,7 +55,7 @@
     mode: 0755
 
 - name: Create man page directories
-  file:
+  ansible.builtin.file:
     path: "/usr/local/share/man/{{ item }}"
     state: directory
     # mode: 0755
@@ -88,7 +88,7 @@
   when: shell == 'zsh'
 
 - name: Remove exa temp directory
-  file:
+  ansible.builtin.file:
     path: "{{ _tmp_directory.path }}"
     state: absent
   when: _tmp_directory != ''

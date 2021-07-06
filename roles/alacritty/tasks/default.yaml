@@ -1,0 +1,5 @@
+---
+- name: "Alacritty: install from package"
+  ansible.builtin.package:
+    name: alacritty
+    state: present

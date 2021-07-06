@@ -1,0 +1,43 @@
+---
+- name: Create temporary build directory
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: compile
+  register: _tmp_directory
+  changed_when: false
+
+- name: Unarchive sources
+  ansible.builtin.unarchive:
+    src: "{{ compile_info.src }}"
+    dest: "{{ _tmp_directory.path }}"
+    mode: 0755
+    remote_src: true
+  when: (compile_info.src | splitext | last) in ['.zip', '.tar.gz', '.tar.zstd']
+
+- name: Checkout sources
+  ansible.builtin.git:
+    repo: "{{ compile_info.src | splitext | first }}"
+    dest: "{{ _tmp_directory.path }}"
+  when: (compile_info.src | splitext | last) == '.git'
+
+- name: Run build
+  ansible.builtin.shell:
+    cmd: "{{ compile_info.build_commands }}"
+    chdir: "{{ _tmp_directory.path }}"
+  register: _build_result
+
+- name: dbg
+  ansible.builtin.debug:
+    msg: "{{ _build_result }}"
+
+- name: Run install
+  ansible.builtin.shell:
+    cmd: "{{ compile_info.install_commands }}"
+    chdir: "{{ _tmp_directory.path }}"
+  register: _install_result
+  when: _build_result.rc == 0
+
+- name: Remove temporary build directory
+  ansible.builtin.file:
+    path: "{{ _tmp_directory.path }}"
+    state: absent

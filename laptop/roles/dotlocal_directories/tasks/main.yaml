@@ -1,6 +1,6 @@
 ---
 - name: Create root directories
-  file:
+  ansible.builtin.file:
     path: "{{ item|expanduser }}"
     state: directory
     mode: 0755

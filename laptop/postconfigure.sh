@@ -1,5 +1,5 @@
 #!/bin/sh
 ansible-playbook prepost.yaml \
     --tags postconfigure \
-    -e @../vars/secrets.yaml \
+    -e @../common/vars/secrets.yaml \
     --ask-vault-pass

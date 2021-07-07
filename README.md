@@ -33,3 +33,7 @@ gets installed.
 * development.yaml - configures development environments on the laptop
 
 The other files hold variables used within the playbooks
+
+# License
+
+These playbooks are under the CC-BY-4.0 license

@@ -24,13 +24,13 @@ The folowing roles are provided here
     * development_ansible - Configures an Ansible development environment
     * development_go - Configures a Golang development environment
     * development_ts - Configures a Typescript development environment
+    * development_pyenv - Installs pyenv
     * development_python - Configures a Python development environment
     * development_rust - Configures a Rust development environment
-* local_directories - Creates ${HOME}/.local directories
-* pyenv - Installs pyenv
+* dotlocal_directories - Creates ${HOME}/.local directories
 * python3_gobject - Install the Python gobject libraries. These are used by QTile
 * x11 - Installs and configures X11. This includes
     * video driver
     * display manager - Currently lightdm
-    * window manager - currently [QTile](#http://www.qtile.org/)
+    * window manager - currently [QTile](http://www.qtile.org/)
 <!-- * xdg_user_dirs - Configures XDG user directories -->

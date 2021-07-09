@@ -1,0 +1,7 @@
+---
+- name: Add .local/bin to root's .bashrc
+  ansible.builtin.lineinfile:
+    dest: "{{ '~/.bashrc' | expanduser }}"
+    regexp: "^export PATH=${HOME}/.local/bin:${PATH}$"
+    line: "export PATH=${HOME}/.local/bin:${PATH}"
+    state: present

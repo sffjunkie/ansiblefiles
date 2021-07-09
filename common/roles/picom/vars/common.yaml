@@ -1,0 +1,7 @@
+---
+picom_common_pre_requisites:
+  packages:
+    - ninja-build
+
+  pypi:
+    - meson

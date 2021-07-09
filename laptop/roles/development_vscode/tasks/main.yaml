@@ -1,6 +1,6 @@
 ---
-- name: Include theme info vars
-  ansible.builtin.include_vars: "{{ playbook_dir }}/../vars/_vscode-theme.yaml"
+- ansible.builtin.debug:
+    msg: Building vs code environment
 
 - name: Install vscode
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"

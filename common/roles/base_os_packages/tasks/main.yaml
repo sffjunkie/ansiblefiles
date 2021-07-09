@@ -11,6 +11,6 @@
 
 - name: Install base packages
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: "{{ base_os_packages }}"
     state: present
-  loop: "{{ base_os_packages }}"
+  # loop: "{{ base_os_packages }}"

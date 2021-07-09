@@ -1,0 +1,16 @@
+---
+- name: "{{ _role_title }}: Add GPG apt Key"
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: "{{ _role_title }}: Add Repository"
+  ansible.builtin.apt_repository:
+    repo: "https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+
+- name: "{{ _role_title }} Update apt and install"
+  ansible.builtin.apt:
+    update_cache: true
+    name: vagrant
+    state: latest

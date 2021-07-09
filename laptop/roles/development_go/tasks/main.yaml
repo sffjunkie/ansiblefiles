@@ -1,4 +1,7 @@
 ---
+- ansible.builtin.debug:
+    msg: Building go development environment
+
 - name: "Go: Calculate filename prefix with latest version"
   ansible.builtin.set_fact:
     _go_install_version: "{{ lookup('url', _go_version_url, split_lines=False) }}"
@@ -34,7 +37,7 @@
     remote_src: true
 
 - name: "Go: gopath text"
-  when: development.go.install == 'user'
+  when: development.go.location == 'user'
   ansible.builtin.set_fact:
     _go_install_path: "{{ local_home_replacement_text }}"
 

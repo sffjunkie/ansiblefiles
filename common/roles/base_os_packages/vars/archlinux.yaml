@@ -1,3 +1,5 @@
 ---
 base_os_packages:
-  - nano
+  - python3
+  - base-devel
+  - unzip

@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  role_name: picom
+  author: Simon Kennedy
+  description: Installs picom from source
+  license: CC-BY
+  platforms:
+    - name: Fedora
+      versions:
+        - all
+
+    - name: Debian
+      versions:
+        - all

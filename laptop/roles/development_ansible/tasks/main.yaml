@@ -1,4 +1,7 @@
 ---
+- ansible.builtin.debug:
+    msg: Building ansible development environment
+
 - name: "Ansible: Load default os package list"
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
@@ -12,15 +15,14 @@
 - name: "Ansible: Install default os packages"
   when: ansible_development_os_packages | length > 0
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: "{{ ansible_development_os_packages }}"
     state: present
-  loop: "{{ ansible_development_os_packages }}"
 
 - name: "Ansible: Install packages"
   ansible.builtin.include_role:
     name: install_packages
   vars:
-    install_info: "{{ development.ansible }}"
+    install: "{{ development.ansible }}"
 
 - name: Clone ansible git repository
   ansible.builtin.git:

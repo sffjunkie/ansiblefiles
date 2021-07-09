@@ -1,0 +1,5 @@
+---
+- name: Delete temporary picom build directory
+  ansible.builtin.file:
+    path: "{{ _picom_tmp_directory }}"
+    state: absent

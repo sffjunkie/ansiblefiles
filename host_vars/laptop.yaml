@@ -4,7 +4,7 @@ directories:
   - ~/.local/bin
   - ~/.config
 
-apps:
+app_definitions:
   audio_mixer: pulsemixer
   browser: firefox
   code_editor: code
@@ -14,15 +14,40 @@ apps:
   hot_keys: sxhkd
   image_viewer: sxiv
   music_player: ncmpcpp
-  music_visualizer: vis
+  music_visualizer: cli-visualizer
   notifier: dunst
   pdf_viewer: zathura
   terminal: alacritty
   video_player: mpv
 
+apps:
+  name: Applications
+  packages:
+    - "{{ app_definitions.audio_mixer }}"
+    - "{{ app_definitions.browser }}"
+    - "{{ app_definitions.compositor }}"
+    - "{{ app_definitions.editor }}"
+    - "{{ app_definitions.file_manager }}"
+    - "{{ app_definitions.image_viewer }}"
+    - "{{ app_definitions.music_player }}"
+    # - "{{ app_definitions.music_visualizer }}"
+    - "{{ app_definitions.notifier }}"
+    - "{{ app_definitions.pdf_viewer }}"
+    - "{{ app_definitions.terminal }}"
+    - "{{ app_definitions.video_player }}"
+    - "{{ app_definitions.hot_keys }}"
+    - bat
+    - mpd
+    - nitrogen
+    - pavucontrol
+
+  pypi:
+    - pipx
+    - pywal
+
 linkhandler:
-  'text/x-python': "{{ apps.code_editor }}"
-  'image/png': "{{ apps.image_viewer }}"
+  'text/x-python': "{{ app_definitions.code_editor }}"
+  'image/png': "{{ app_definitions.image_viewer }}"
 
 x11:
   # dpi: 144
@@ -30,7 +55,8 @@ x11:
   display_manager:  lightdm
   greeter: lightdm-gtk-greeter
   window_manager: qtile
-  avatar: "{{ playbook_dir }}/../files/avatar96x96.png"
+
+avatar: "{{ playbook_dir }}/../files/avatar96x96.png"
 
 color_scheme: nord
 
@@ -42,7 +68,7 @@ font_size: 10 #pt
 
 shell: zsh
 ohmyzsh:
-  install: user
+  location: user
   plugins: # plugins to enable that are shipped with oh-my-zsh
     - docker
     - docker-compose
@@ -52,30 +78,6 @@ ohmyzsh:
   user_plugins: # plugins to install and enable from https://github.com/zsh-users/
     - zsh-completions
     - zsh-syntax-highlighting
-
-packages:
-  os:
-    - "{{ apps.audio_mixer }}"
-    - "{{ apps.browser }}"
-    # - "{{ apps.compositor }}"
-    - "{{ apps.editor }}"
-    - "{{ apps.file_manager }}"
-    - "{{ apps.image_viewer }}"
-    - "{{ apps.music_player }}"
-    # - "{{ apps.music_visualizer }}"
-    - "{{ apps.notifier }}"
-    - "{{ apps.pdf_viewer }}"
-    # - "{{ apps.terminal }}"
-    - "{{ apps.video_player }}"
-    - "{{ apps.hot_keys }}"
-    - bat
-    - mpd
-    - nitrogen
-    - pavucontrol
-
-  pypi:
-    - pipx
-    - pywal
 
 # List of directories to be created in $HOME
 development:
@@ -89,6 +91,7 @@ development:
 
   # Roles to set up development environments
   # The actual roles are named `development_<role_name>` e.g. `development_go`
+  # and are called from the `development` role
   roles:
     - ansible
     - go
@@ -99,36 +102,43 @@ development:
     - vscode
 
   common:
-    install: user
+    name: Common Development Packages
     packages:
-      pypi:
-        - meson
+      - cmake
+      - ninja-build
+      #   - vagrant
+      #   - virtualbox
+
+    pypi:
+      - meson
 
   ansible:
-    install: user
-    packages:
-      pipx:
-        - ansible-base
-        - ansible-lint
-        # - \"molecule[docker]\"
-        - yamllint
+    name: Ansible Development Packages
+    location: user
+    pipx:
+      - ansible-base
+      - ansible-lint
+      - molecule
+      - yamllint
 
   go:
-    install: user  # or 'system'
+    name: Go Development Packages
+    location: user  # or 'system'
     version: latest
 
   python:
-    install: user
+    name: Python Development Packages
+    location: user
     packages:
-      os:
-        - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"
-      pipx:
-        - black
-        - cookiecutter
-        - poetry
-        - pytest
-        - sphinx
-        - tox
+      - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"
+
+    pipx:
+      - black
+      - cookiecutter
+      - poetry
+      - pytest
+      - sphinx
+      - tox
 
   pyenv:
     plugins:
@@ -136,19 +146,20 @@ development:
         - { repo: https://github.com/pyenv/pyenv-virtualenv, dest: "{{ local_home }}/pyenv/plugins/pyenv-virtualenv" }
 
   rust:
-    install: user
+    name: Rust Development Packages
+    location: user
 
   typescript:
+    name: Typescript Development Packages
     install: global
     npm_global_is_local: true  # if true then global npm packages will be installed under $HOME/.local/
     packages:
-      os:
-        - "nodejs"
-        - "npm"
-      npm:
-        - "@types/node"
-        - "typescript"
-        - "typedoc"
+      - "nodejs"
+      - "npm"
+    npm:
+      - "@types/node"
+      - "typescript"
+      - "typedoc"
 
   vscode:
     extensions:

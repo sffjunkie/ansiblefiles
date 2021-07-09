@@ -1,5 +1,5 @@
 ---
-_go_install_path: "{{ local_home if development.go.install == 'user' else '/usr/local' }}"
+_go_install_path: "{{ local_home if development.go.location == 'user' else '/usr/local' }}"
 _go_version_url: "https://golang.org/VERSION?m=text"
 _go_archive_name: "{{ _go_install_version }}.{{ os }}-{{ _go_arch }}.tar.gz"
 _go_download_url: "https://dl.google.com/go/{{ _go_archive_name }}"

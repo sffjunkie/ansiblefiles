@@ -1,0 +1,7 @@
+---
+base_os_packages:
+  - python3
+  - python-dnf
+  - unzip
+  - yum-utils
+  - "@development-tools"

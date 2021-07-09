@@ -1,6 +1,9 @@
 ---
+- ansible.builtin.debug:
+    msg: Building python development environment
+
 - name: "Python: Install packages"
   ansible.builtin.include_role:
     name: install_packages
   vars:
-    install_info: "{{ development.python }}"
+    install: "{{ development.python }}"

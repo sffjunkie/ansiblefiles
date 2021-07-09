@@ -4,6 +4,7 @@
   vars:
     ansible_port: "{{ ssh_port }}"
   vars_files:
+    - ../common/vars/install_overrides.yaml
     - ../common/vars/playbook.yaml
 
   pre_tasks:
@@ -19,30 +20,26 @@
         msg: "{{ configfiles }}"
 
   roles:
-    - role: dotlocal_directories
-
-    - git
-
-    - role: base_os_packages
-
-    - role: os_packages
-      package_list: "{{ packages.os }}"
-
-    - role: pypi_packages
-      package_list: "{{ packages.pypi }}"
-
-    - fonts
-    - x11
+    # - dotlocal_directories
+    # - git
+    # - base_os_packages
     - development
-    - docker
-    - exa
 
-    - role: zsh
-      when: shell == 'zsh'
-      set_shell_for: "{{ userid }}"
+    - role: install_packages
+      install: "{{ apps }}"
 
-    - role: ohmyzsh
-      when: shell == 'zsh' and ohmyzsh is defined
+    # - x11
+    # - avatar
+    # - docker
+    # - exa
+    # - fonts
+
+    # - role: zsh
+    #   when: shell == 'zsh'
+    #   set_shell_for: "{{ userid }}"
+
+    # - role: ohmyzsh
+    #   when: shell == 'zsh' and ohmyzsh is defined
 
   tasks:
     - name: Final configuration

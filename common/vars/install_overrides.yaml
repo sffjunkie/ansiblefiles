@@ -1,0 +1,13 @@
+---
+install_overrides:
+  bat:
+    install: role
+
+  picom.debian:
+    install: role
+
+  picom.archlinux:
+    install: package
+
+  alacritty:
+    install: role

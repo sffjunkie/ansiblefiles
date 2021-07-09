@@ -10,4 +10,3 @@ base_os_packages:
   - software-properties-common
   - unattended-upgrades
   - unzip
-  - virtualenv

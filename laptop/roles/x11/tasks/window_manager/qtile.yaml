@@ -1,13 +1,12 @@
 ---
 - name: QTile - install qtile os dependencies
   ansible.builtin.package:
-    name: "{{ item }}"
+    name:
+      - libcairo2
+      - libffi-dev
+      - libpangocairo-1.0-0
+      - libxcb-render0-dev
     state: present
-  loop:
-    - libcairo2
-    - libffi-dev
-    - libpangocairo-1.0-0
-    - libxcb-render0-dev
 
 - name: Install python3 gobject
   ansible.builtin.import_role:
@@ -15,11 +14,10 @@
 
 - name: QTile - install pypi dependencies
   ansible.builtin.pip:
-    name: "{{ item }}"
+    name:
+      - xcffib
+      - dbus-next
     state: present
-  loop:
-    - xcffib
-    - dbus-next
 
 - name: Check for cairocffi
   ansible.builtin.stat:

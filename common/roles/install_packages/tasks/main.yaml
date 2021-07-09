@@ -1,51 +1,74 @@
 ---
-- name: Install os, pypi and pipx packages
-  when: install_info | length > 0
+- name: Calc 'name'
+  ansible.builtin.set_fact:
+    _group_name: "{{ install.name | default('', True)}}"
+  changed_when: false
+
+- when: install.packages is defined
   block:
-    - name: Install os packages
-      ansible.builtin.package:
-        name: "{{ os_item }}"
-        state: present
-      loop: "{{ install_info.packages.os }}"
-      loop_control:
-        loop_var: os_item
-      when: install_info.packages.os is defined and install_info.packages.os | length > 0
+  - name: Calc package overides by name
+    ansible.builtin.set_fact:
+      _package_overrides_by_name: "{{ install_overrides | install_overrides_by_name(os_family, distribution)}}"
+    changed_when: false
 
-    - name: Install pypi packages
-      ansible.builtin.pip:
-        name: "{{ pypi_item }}"
-        state: present
-        extra_args: "{{ '--user' if install_info.install == 'user' else None | default(omit) }}"
-      loop: "{{ install_info.packages.pypi }}"
-      loop_control:
-        loop_var: pypi_item
-      when: install_info.packages.pypi is defined and install_info.packages.pypi | length > 0
+  - name: Calc os packages
+    ansible.builtin.set_fact:
+      _packages: "{{ _packages + ([item] if (item | install_override_is_package(_package_overrides_by_name)) else []) }}"
+    loop: "{{ install.packages }}"
+    changed_when: false
 
-    - name: Install pipx packages
-      ansible.builtin.shell:
-        cmd: "pipx install {{ pipx_item }}"
-      loop: "{{ install_info.packages.pipx }}"
-      loop_control:
-        loop_var: pipx_item
-      when: install_info.packages.pipx is defined and install_info.packages.pipx | length > 0
-      register: _pipx_result
-      changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
-      failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+  - name: Calc install roles
+    ansible.builtin.set_fact:
+      _roles: "{{ _roles + ([item] if (item | install_override_is_role(_package_overrides_by_name)) else []) }}"
+    loop: "{{ install.packages }}"
+    changed_when: false
 
-    - name: Install git packages
-      ansible.builtin.git:
-        repo: "{{ git_item.repo }}"
-        dest: "{{ git_item.dest }}"
-      loop: "{{ install_info.packages.git }}"
-      loop_control:
-        loop_var: git_item
-      when: install_info.packages.git is defined and install_info.packages.git | length > 0
+  - name: Install from os repositories
+    when: _packages | length > 0
+    ansible.builtin.package:
+      name: "{{ _packages }}"
+      state: present
 
-    - name: "Install NPM packages"
-      community.general.npm:
-        name: "{{ npm_item }}"
-        global: "{{ (install_info.install == 'global') | ternary(true, omit) }}"
-      loop: "{{ install_info.packages.npm }}"
-      loop_control:
-        loop_var: npm_item
-      when: install_info.packages.npm is defined and install_info.packages.npm | length > 0
+  - name: Install using roles
+    when: _roles | length > 0
+    ansible.builtin.include_role:
+      name: "{{ role_item }}"
+    loop: "{{ _roles }}"
+    loop_control:
+      loop_var: role_item
+
+- name: Install from pypi repository
+  when: install.pypi is defined and install.pypi | length > 0
+  ansible.builtin.pip:
+    name: "{{ install.pypi }}"
+    state: present
+    extra_args: "{{ '--user' if (install.location is defined and install.location == 'user') else None | default(omit) }}"
+
+- name: Install pipx packages
+  when: install.pipx is defined and install.pipx | length > 0
+  ansible.builtin.shell:
+    cmd: "pipx install {{ pipx_item }}"
+  loop: "{{ install.pipx }}"
+  loop_control:
+    loop_var: pipx_item
+  register: _pipx_result
+  changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
+  failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+
+- name: Install git packages
+  when: install.git is defined and install.git | length > 0
+  ansible.builtin.git:
+    repo: "{{ git_item.repo }}"
+    dest: "{{ git_item.dest }}"
+  loop: "{{ install.git }}"
+  loop_control:
+    loop_var: git_item
+
+#     - name: "Install NPM packages"
+#       when: install.packages.npm is defined and install.packages.npm | length > 0
+#       community.general.npm:
+#         name: "{{ npm_item }}"
+#         global: "{{ (install.install == 'global') | ternary(true, omit) }}"
+#       loop: "{{ install.packages.npm }}"
+#       loop_control:
+#         loop_var: npm_item

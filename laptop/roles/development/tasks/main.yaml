@@ -10,11 +10,11 @@
     group: "{{ userid }}"
   loop: "{{ development.dirs }}"
 
-- name: Install common tools
-  ansible.builtin.import_role:
+- name: Install common packages
+  ansible.builtin.include_role:
     name: install_packages
   vars:
-    install_info: "{{ development.common }}"
+    install: "{{ development.common }}"
 
 - name: Install development environments.
   ansible.builtin.include_role:

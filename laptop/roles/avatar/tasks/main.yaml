@@ -1,0 +1,18 @@
+---
+- name: Configure avatar
+  block:
+    - name: Get avatar extension
+      ansible.builtin.set_fact:
+        _avatar_ext: "{{ avatar | splitext | last }}"
+
+    - name: Copy avatar
+      ansible.builtin.copy:
+        src: "{{ x11.avatar }}"
+        dest: "/var/lib/AccountsService/icons/{{ userid }}{{ _avatar_ext }}"
+        mode: 0644
+
+    - name: Create accountsservice config for user
+      ansible.builtin.template:
+        src: templates/accountsservice.ini
+        dest: "/var/lib/AccountsService/users/{{ userid }}"
+        mode: 0644

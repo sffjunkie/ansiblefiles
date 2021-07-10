@@ -11,3 +11,15 @@ install_overrides:
 
   alacritty:
     install: role
+
+  inkscape.debian:
+    install: role
+
+  inkscape.archlinux:
+    install: package
+
+  exa:
+    install: role
+
+  docker:
+    install: role

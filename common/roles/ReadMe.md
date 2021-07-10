@@ -1,7 +1,7 @@
 # Common Ansible Roles
 
 * [alacritty](#alacritty)
-* [base_os_packages](#base_os_packages)
+* [base_packages](#base_packages)
 * [base16_shell](#base16_shell)
 * [bat](#bat)
 * [copyconfig](#copyconfig)
@@ -26,7 +26,7 @@
 Installs alacritty on Ubuntu using a PPA. For other os/distributions the os
 package manager is used.
 
-## <span id="base_os_packages">base_os_packages</span>
+## <span id="base_packages">base_packages</span>
 
 Installs os packages needed for running the playbook.
 

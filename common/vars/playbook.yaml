@@ -28,6 +28,8 @@ configfiles:
   # List of aliases for the 'configfiles' playbook to create
   aliases: []
 
+  packages: []
+
 distribution: "{{ ansible_lsb.id | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
 os: "{{ 'macos' if os_family == 'darwin' else 'windows' if os_family == 'windows' else 'linux' }}"

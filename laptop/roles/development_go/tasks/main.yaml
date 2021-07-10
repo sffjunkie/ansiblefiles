@@ -54,6 +54,8 @@
             value: "{{ configfiles.pathend + [_go_bin_path] }}"
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_go_config) }}"
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['go'] }}"
       register: _updated_fact
       changed_when: false
 

@@ -1,60 +1,63 @@
 ---
-- name: Update SSH configuration to be more secure.
+- name: Pre-configuration
   tags: preconfigure
-  ansible.builtin.lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    state: present
-    validate: 'sshd -t -f %s'
-  with_items:
-    - regexp: "^PasswordAuthentication"
-      line: "PasswordAuthentication no"
-    - regexp: "^PermitRootLogin"
-      line: "PermitRootLogin no"
-    - regexp: "^Port"
-      line: "Port {{ ssh_port }}"
-  notify: restart ssh
-
-- name: Configure UFW
-  when: os_family == 'debian'
-  tags: postconfigure
   block:
-  - name: Check if ufw running
-    ansible.builtin.command:
-      cmd: ufw status
-    register: ufw_check
-    changed_when: false
-
-  - name: Configure ufw to allow sshd to listen on the new tcp port
-    community.general.ufw:
-      rule: allow
-      port: "{{ ssh_port }}"
-    when: "'inactive' not in ufw_check.stdout"
-
-  - name: Configure ufw to disable default ssh port
-    community.general.ufw:
-      rule: deny
-      port: "22"
-    when: "'inactive' not in ufw_check.stdout"
-
-- name: Configure SELinux
-  when: ansible_selinux.status == 'enabled'
-  tags: postconfigure
-  block:
-    # Use secure and encrypted communication.
-    - name: Configure selinux to allow sshd to listen on the new tcp port
-      community.general.seport:
-        ports: "{{ ssh_port }}"
-        proto: tcp
-        setype: ssh_port_t
+    - name: Update SSH configuration to be more secure.
+      ansible.builtin.lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
         state: present
-      when: ansible_selinux.status == 'enabled'
+        validate: 'sshd -t -f %s'
+      with_items:
+        - regexp: "^PasswordAuthentication"
+          line: "PasswordAuthentication no"
+        - regexp: "^PermitRootLogin"
+          line: "PermitRootLogin no"
+        - regexp: "^Port"
+          line: "Port {{ ssh_port }}"
+      notify: restart ssh
 
-    # Use secure and encrypted communication.
-    - name: Configure selinux to allow sshd to listen on the new tcp port
-      community.general.seport:
-        ports: "22"
-        proto: tcp
-        setype: ssh_port_t
-        state: absent
+- name: Post-configuration
+  tags: postconfigure
+  block:
+    - name: Configure UFW
+      when: os_family == 'debian'
+      block:
+      - name: Check if ufw running
+        ansible.builtin.command:
+          cmd: ufw status
+        register: ufw_check
+        changed_when: false
+
+      - name: Configure ufw to allow sshd to listen on the new tcp port
+        community.general.ufw:
+          rule: allow
+          port: "{{ ssh_port }}"
+        when: "'inactive' not in ufw_check.stdout"
+
+      - name: Configure ufw to disable default ssh port
+        community.general.ufw:
+          rule: deny
+          port: "22"
+        when: "'inactive' not in ufw_check.stdout"
+
+    - name: Configure SELinux
+      when: ansible_selinux.status == 'enabled'
+      block:
+        # Use secure and encrypted communication.
+        - name: Configure selinux to allow sshd to listen on the new tcp port
+          community.general.seport:
+            ports: "{{ ssh_port }}"
+            proto: tcp
+            setype: ssh_port_t
+            state: present
+          when: ansible_selinux.status == 'enabled'
+
+        # Use secure and encrypted communication.
+        - name: Configure selinux to allow sshd to listen on the new tcp port
+          community.general.seport:
+            ports: "22"
+            proto: tcp
+            setype: ssh_port_t
+            state: absent

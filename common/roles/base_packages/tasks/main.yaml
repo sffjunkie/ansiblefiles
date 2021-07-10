@@ -1,0 +1,32 @@
+---
+- name: Load default os package list
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{distribution}}.yaml"
+        - "{{os_family}}.yaml"
+      paths:
+        - "vars"
+
+- name: Load common package list
+  ansible.builtin.include_vars: vars/common.yaml
+
+- name: Update list with common packages
+  ansible.utils.update_fact:
+    updates:
+      - path: base.packages
+        value: "{{ common_packages + base.packages }}"
+  register: _updated_fact
+  changed_when: false
+
+- ansible.builtin.set_fact:
+    base: "{{ _updated_fact.base }}"
+  changed_when: false
+
+- name: Install base packages
+  ansible.builtin.include_role:
+    name: install_packages
+  vars:
+    install: "{{ base }}"
+    record_installed: false

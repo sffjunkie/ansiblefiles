@@ -2,8 +2,10 @@ class FilterModule(object):
     def filters(self):
         return {
             "install_overrides_by_name": self.overrides_by_name,
-            "install_override_is_package": self.is_package,
-            "install_override_is_role": self.is_role,
+            "install_override_packages": self.is_package,
+            "install_override_roles": self.is_role,
+            "packages": self.packages,
+            "roles": self.roles,
         }
 
     def overrides_by_name(self, overrides, os_family, distribution):
@@ -29,11 +31,18 @@ class FilterModule(object):
 
         return result
 
+
     def is_package(self, package, package_info):
         return package not in package_info or (
             package in package_info and package_info[package]["install"] == "package"
         )
 
+    def packages(self, package_list, package_info):
+        return [package for package in package_list if self.is_package(package, package_info)]
+
     def is_role(self, package, package_info):
         # return True
         return package in package_info and package_info[package]["install"] == "role"
+
+    def roles(self, package_list, package_info):
+        return [package for package in package_list if self.is_role(package, package_info)]

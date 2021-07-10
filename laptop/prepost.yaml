@@ -2,16 +2,15 @@
 - hosts: laptop
   become: true
   vars_files:
-    - ../vars/_playbook.yaml
+    - ../common/vars/playbook.yaml
 
   roles:
     - role: user_add
       tags: preconfigure
     - role: user_ssh
       tags: preconfigure
+
     - role: ssh
 
-  tasks:
-    - name: Reboot the machine
-      ansible.builtin.reboot:
+    - role: update
       tags: postconfigure

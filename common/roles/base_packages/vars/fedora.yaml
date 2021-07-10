@@ -1,0 +1,6 @@
+---
+base:
+  packages:
+    - python-dnf
+    - yum-utils
+    - "@development-tools"

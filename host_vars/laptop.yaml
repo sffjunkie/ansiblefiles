@@ -37,6 +37,10 @@ apps:
     - "{{ app_definitions.video_player }}"
     - "{{ app_definitions.hot_keys }}"
     - bat
+    # - darktable
+    - docker
+    - exa
+    # - inkscape
     - mpd
     - nitrogen
     - pavucontrol
@@ -79,8 +83,8 @@ ohmyzsh:
     - zsh-completions
     - zsh-syntax-highlighting
 
-# List of directories to be created in $HOME
 development:
+  # List of directories to be created in $HOME
   dirs:
     - development
     - development/gist
@@ -106,8 +110,8 @@ development:
     packages:
       - cmake
       - ninja-build
-      #   - vagrant
-      #   - virtualbox
+      - vagrant
+      - virtualbox
 
     pypi:
       - meson
@@ -129,13 +133,13 @@ development:
   python:
     name: Python Development Packages
     location: user
-    packages:
-      - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"
 
-    pipx:
+    pypi:
       - black
       - cookiecutter
+      - mypy
       - poetry
+      - pylint
       - pytest
       - sphinx
       - tox
@@ -144,14 +148,16 @@ development:
     plugins:
       git:
         - { repo: https://github.com/pyenv/pyenv-virtualenv, dest: "{{ local_home }}/pyenv/plugins/pyenv-virtualenv" }
+        - { repo: https://github.com/pyenv/pyenv-doctor, dest: "{{ local_home }}/pyenv/plugins/pyenv-doctor" }
 
   rust:
     name: Rust Development Packages
     location: user
+    toolchain: stable
 
   typescript:
     name: Typescript Development Packages
-    install: global
+    location: global
     npm_global_is_local: true  # if true then global npm packages will be installed under $HOME/.local/
     packages:
       - "nodejs"

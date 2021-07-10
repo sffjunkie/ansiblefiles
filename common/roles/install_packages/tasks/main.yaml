@@ -4,56 +4,117 @@
     _group_name: "{{ install.name | default('', True)}}"
   changed_when: false
 
-- when: install.packages is defined
+- when: _group_name != ''
   block:
-  - name: Calc package overides by name
-    ansible.builtin.set_fact:
-      _package_overrides_by_name: "{{ install_overrides | install_overrides_by_name(os_family, distribution)}}"
-    changed_when: false
+    - debug:
+        msg: "Install packages for {{ _group_name }}"
 
-  - name: Calc os packages
-    ansible.builtin.set_fact:
-      _packages: "{{ _packages + ([item] if (item | install_override_is_package(_package_overrides_by_name)) else []) }}"
-    loop: "{{ install.packages }}"
-    changed_when: false
+- name: Calc package overides by name
+  ansible.builtin.set_fact:
+    _package_overrides_by_name: "{{ install_overrides | install_overrides_by_name(os_family, distribution)}}"
+  changed_when: false
 
-  - name: Calc install roles
-    ansible.builtin.set_fact:
-      _roles: "{{ _roles + ([item] if (item | install_override_is_role(_package_overrides_by_name)) else []) }}"
-    loop: "{{ install.packages }}"
-    changed_when: false
+- name: Install packages
+  when: install.packages is defined
+  block:
+    - name: Calc packages to install from os repository
+      ansible.builtin.set_fact:
+        _packages: "{{ install.packages | packages(_package_overrides_by_name) }}"
+      changed_when: false
 
-  - name: Install from os repositories
-    when: _packages | length > 0
-    ansible.builtin.package:
-      name: "{{ _packages }}"
-      state: present
+    - name: Install from os repositories
+      when: _packages | length > 0
+      block:
+        - name: Install package
+          ansible.builtin.package:
+            name: "{{ _packages }}"
+            state: present
 
-  - name: Install using roles
-    when: _roles | length > 0
-    ansible.builtin.include_role:
-      name: "{{ role_item }}"
-    loop: "{{ _roles }}"
-    loop_control:
-      loop_var: role_item
+        - name: Update configfiles fact
+          when: record_installed
+          ansible.utils.update_fact:
+            updates:
+              - path: configfiles.packages
+                value: "{{ (configfiles.packages + _packages) | unique }}"
+          register: _updated_fact
+          changed_when: false
+
+        - name: Set configfiles fact
+          when: record_installed
+          ansible.builtin.set_fact:
+            configfiles: "{{ _updated_fact.configfiles }}"
+          changed_when: false
+
+    - name: Calc roles to use to install packages
+      ansible.builtin.set_fact:
+        _roles: "{{ install.packages | roles(_package_overrides_by_name) }}"
+      changed_when: false
+
+    - name: Install using roles
+      when: _roles | length > 0
+      block:
+        - ansible.builtin.include_role:
+            name: "{{ role_item }}"
+          loop: "{{ _roles }}"
+          loop_control:
+            loop_var: role_item
+
 
 - name: Install from pypi repository
   when: install.pypi is defined and install.pypi | length > 0
-  ansible.builtin.pip:
-    name: "{{ install.pypi }}"
-    state: present
-    extra_args: "{{ '--user' if (install.location is defined and install.location == 'user') else None | default(omit) }}"
+  block:
+    - name: Install package
+      become_user: "{{ (install.location is defined and install.location == 'user') | ternary(userid, 'root') }}"
+      ansible.builtin.pip:
+        name: "{{ install.pypi }}"
+        state: present
+        extra_args: "{{ (install.location is defined and install.location == 'user') | ternary('--user', omit) }}"
+
+    - name: Calculate new configfiles fact
+      when: record_installed
+      ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ (configfiles.packages + install.pypi) | unique }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Update configfiles fact
+      when: record_installed
+      ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false
+
 
 - name: Install pipx packages
   when: install.pipx is defined and install.pipx | length > 0
-  ansible.builtin.shell:
-    cmd: "pipx install {{ pipx_item }}"
-  loop: "{{ install.pipx }}"
-  loop_control:
-    loop_var: pipx_item
-  register: _pipx_result
-  changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
-  failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+  block:
+    - name: Run pipx install
+      become_user: "{{ (install.location is defined and install.location == 'user') | ternary(userid, 'root') }}"
+      ansible.builtin.shell:
+        cmd: "pipx install {{ pipx_item }}"
+      loop: "{{ install.pipx }}"
+      loop_control:
+        loop_var: pipx_item
+      register: _pipx_result
+      changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
+      failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+
+    - name: Calculate new configfiles fact
+      when: record_installed
+      ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ (configfiles.packages + install.pipx) | unique }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Update configfiles fact
+      when: record_installed
+      ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false
+
 
 - name: Install git packages
   when: install.git is defined and install.git | length > 0
@@ -64,11 +125,11 @@
   loop_control:
     loop_var: git_item
 
-#     - name: "Install NPM packages"
-#       when: install.packages.npm is defined and install.packages.npm | length > 0
-#       community.general.npm:
-#         name: "{{ npm_item }}"
-#         global: "{{ (install.install == 'global') | ternary(true, omit) }}"
-#       loop: "{{ install.packages.npm }}"
-#       loop_control:
-#         loop_var: npm_item
+- name: "Install NPM packages"
+  when: install.npm is defined and install.npm | length > 0
+  community.general.npm:
+    name: "{{ npm_item }}"
+    global: "{{ (install.location is defined and install.location == 'global') | ternary(true, omit) }}"
+  loop: "{{ install.npm }}"
+  loop_control:
+    loop_var: npm_item

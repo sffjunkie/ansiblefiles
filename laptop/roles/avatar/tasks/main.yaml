@@ -7,7 +7,7 @@
 
     - name: Copy avatar
       ansible.builtin.copy:
-        src: "{{ x11.avatar }}"
+        src: "{{ avatar }}"
         dest: "/var/lib/AccountsService/icons/{{ userid }}{{ _avatar_ext }}"
         mode: 0644
 

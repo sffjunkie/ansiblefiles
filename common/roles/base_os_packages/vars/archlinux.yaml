@@ -1,5 +1,0 @@
----
-base_os_packages:
-  - python3
-  - base-devel
-  - unzip

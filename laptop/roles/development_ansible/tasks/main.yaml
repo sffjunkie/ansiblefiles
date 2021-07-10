@@ -28,3 +28,16 @@
   ansible.builtin.git:
     repo: https://github.com/ansible/ansible.git
     dest: "{{ home }}/development/source/ansible"
+
+- name: "Ansible: Update configfiles"
+  block:
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['ansible'] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

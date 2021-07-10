@@ -1,0 +1,90 @@
+---
+- name: Get remote repository version
+  ansible.builtin.command:
+    cmd: "git ls-remote {{ _picom_repo }} HEAD"
+  register: _picom_remote_version
+  changed_when: false
+
+- ansible.builtin.set_fact:
+    _picom_remote_version: "vgit-{{ (_picom_remote_version.stdout | split | first)[:5] }}"
+  changed_when: false
+
+- name: Get current command version
+  ansible.builtin.command:
+    cmd: picom --version
+  register: _picom_local_version
+  changed_when: false
+  failed_when: false
+
+- ansible.builtin.set_fact:
+    _picom_local_version: "{{ _picom_local_version.stdout if _picom_local_version.rc == 0 else '' }}"
+  changed_when: false
+
+- name: New build required
+  when: _picom_local_version != _picom_remote_version
+  block:
+    - name: Load default pre-requisites package list
+      ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+      vars:
+        params:
+          files:
+            - "{{distribution}}.yaml"
+            - "{{os_family}}.yaml"
+          paths:
+            - "vars"
+
+    - name: Load common pre-requisites
+      ansible.builtin.include_vars: vars/common.yaml
+
+    - name: Merge pre-requisites
+      ansible.builtin.set_fact:
+        _pre_reqs: "{{ picom_pre_requisites | combine(picom_common_pre_requisites, list_merge='keep', recursive=True) }}"
+      changed_when: false
+
+    - name: Install pre-requisites - os package
+      ansible.builtin.package:
+        name: "{{ _pre_reqs.packages }}"
+        state: present
+
+    - name: Install pre-requisites - pypi
+      ansible.builtin.pip:
+        name: "{{ _pre_reqs.pypi }}"
+        state: present
+
+    - name: Create temporary directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: picom
+      register: _picom_tmp_directory
+      changed_when: false
+      notify: Delete temporary picom build directory
+
+    - name: Get sources
+      ansible.builtin.git:
+        repo: "{{ _picom_repo }}"
+        dest: "{{ _picom_tmp_directory }}"
+      changed_when: false
+
+    - name: Create ninja build script
+      ansible.builtin.command:
+        cmd: meson --buildtype=release . build
+        chdir: "{{ _picom_tmp_directory }}"
+      register: _picom_meson
+      changed_when: not 'Directory already configured' in _picom_meson.stdout and _picom_meson.rc == 0
+      failed_when: _picom_meson.rc > 0
+
+    - name: Create ninja build script
+      ansible.builtin.command:
+        cmd: ninja -C build
+        chdir: "{{ _picom_tmp_directory }}"
+      register: _picom_build
+      changed_when: not 'no work to do' in _picom_build.stdout and _picom_build.rc == 0
+      failed_when: _picom_build.rc > 0
+
+    - name: Install picom
+      ansible.builtin.command:
+        cmd: ninja -C build install
+        chdir: "{{ _picom_tmp_directory }}"
+      register: _picom_install
+      changed_when: _picom_install.rc == 0
+      failed_when: _picom_install.rc > 0

@@ -5,19 +5,18 @@
 
 - name: Install pyenv
   become_user: "{{ userid }}"
-  shell: "curl https://pyenv.run | bash"  # noqa command-instead-of-module
+  ansible.builtin.shell: "curl https://pyenv.run | bash"  # noqa command-instead-of-module
   environment:
     PYENV_ROOT: "{{ pyenv_root }}"
   args:
     creates: "{{ pyenv_root }}"
-  changed_when: false
 
 - name: Install pyenv-virtualenv
   ansible.builtin.git:
     repo: https://github.com/pyenv/pyenv-virtualenv.git
     dest: "{{ pyenv_root }}/plugins/pyenv-virtualenv"
 
-- name: Update configfiles for pyenv
+- name: "Pyenv: Update configfiles"
   block:
     - ansible.builtin.set_fact:
         _pyenv_config:
@@ -31,6 +30,8 @@
             value: "{{ configfiles.configs | combine(_pyenv_config) }}"
           - path: configfiles.pathstart
             value: "{{ [local_home_replacement_text + '/pyenv/bin'] + configfiles.pathstart }}"
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['pyenv'] }}"
       register: _updated_fact
       changed_when: false
 

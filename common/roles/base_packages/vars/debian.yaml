@@ -1,0 +1,15 @@
+---
+base:
+  packages:
+    - accountsservice
+    - apt-transport-https
+    - build-essential
+    - ca-certificates
+    - python3-apt
+    - python3-pip
+    - software-properties-common
+    - unattended-upgrades
+    - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"
+
+  pypi:
+    - pipx

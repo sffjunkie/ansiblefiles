@@ -22,6 +22,8 @@
 #             value: "{{ configfiles.configs }}"
 #           - path: configfiles.envvars
 #             value: "{{ configfiles.envvars | combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
+          # - path: configfiles.packages
+          #   value: "{{ configfiles.packages + ['typescript'] }}"
 #       register: _updated_fact
 #       changed_when: false
 

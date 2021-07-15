@@ -1,0 +1,28 @@
+---
+- name: Install LightDM
+  ansible.builtin.package:
+    name: lightdm
+    state: present
+
+- name: Set lightdm display manager binary
+  ansible.builtin.set_fact:
+    _lightdm_binary: "{{ '/usr/sbin/lightdm' if os_family == 'debian' }}"
+  changed_when: false
+
+- name: Enable lightdm
+  ansible.builtin.lineinfile:
+    dest: /etc/X11/default-display-manager
+    regexp: "^/usr/sbin/"
+    line: "{{ _lightdm_binary }}"
+    state: present
+
+- name: Install Greeter
+  ansible.builtin.package:
+    name: "{{ machine.x11.greeter }}"
+    state: present
+
+- name: Configure LightDM
+  ansible.builtin.template:
+    src: templates/50-laptop.conf
+    dest: /etc/lightdm/lightdm.conf.d/50-laptop.conf
+    mode: 0644

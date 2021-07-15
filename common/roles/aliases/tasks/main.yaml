@@ -1,0 +1,17 @@
+---
+- ansible.builtin.set_fact:
+    _aliases: "{{ _aliases + [[item.key, item.value]] }}"
+  loop: "{{ alias_list | dict2items }}"
+
+- name: Update aliases fact
+  ansible.utils.update_fact:
+    updates:
+      - path: configfiles.aliases
+        value: "{{ configfiles.aliases + _aliases  }}"
+  register: _updated_fact
+  changed_when: false
+
+- name: Set configfiles fact
+  ansible.builtin.set_fact:
+    configfiles: "{{ _updated_fact.configfiles }}"
+  changed_when: false

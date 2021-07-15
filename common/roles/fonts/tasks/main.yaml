@@ -1,7 +1,7 @@
 ---
 - name: "Fonts: Process font"
   ansible.builtin.include_role:
-    name: install_font
+    name: font_install
   vars:
     font_url: "{{ item.url }}"
-  loop: "{{ fonts }}"
+  loop: "{{ machine.fonts }}"

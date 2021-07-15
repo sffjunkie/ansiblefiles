@@ -1,12 +1,14 @@
 ---
 - name: Install base packages.
   ansible.builtin.package:
-    name: xorg
+    name:
+      - xorg
+      - xterm
     state: present
 
 - name: Set video_driver fact
   ansible.builtin.set_fact:
-    _xf86_video_driver: "{{ '' if ansible_virtualization_type == 'virtualbox' else x11.video_card_driver }}"
+    _xf86_video_driver: "{{ '' if ansible_virtualization_type == 'virtualbox' else machine.x11.video_card_driver }}"
   changed_when: false
 
 - name: Install card driver
@@ -16,7 +18,7 @@
     state: present
 
 - name: Install window manager.
-  ansible.builtin.include_tasks: "window_manager/{{ x11.window_manager }}.yaml"
+  ansible.builtin.include_tasks: "window_manager/{{ machine.x11.window_manager }}/main.yaml"
 
 - name: Install display manager.
-  ansible.builtin.include_tasks: "display_manager/{{ x11.display_manager }}.yaml"
+  ansible.builtin.include_tasks: "display_manager/{{ machine.x11.display_manager }}/main.yaml"

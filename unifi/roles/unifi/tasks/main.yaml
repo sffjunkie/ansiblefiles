@@ -10,12 +10,12 @@
     state: present
 
 - name: Install
-  apt:
+  ansible.builtin.package:
     name: unifi
     update_cache: True
 
 - name: Start Unifi controller
-  systemd:
+  ansible.builtin.systemd:
     name: unifi
     state: started
     enabled: yes

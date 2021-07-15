@@ -3,11 +3,22 @@
   block:
     - name: Get avatar extension
       ansible.builtin.set_fact:
-        _avatar_ext: "{{ avatar | splitext | last }}"
+        _avatar_ext: "{{ user.avatar | splitext | last }}"
+
+    - name: Create folders
+      ansible.builtin.file:
+        path: "/var/lib/AccountsService/{{ item }}"
+        state: directory
+        mode: 0755
+        access_time: preserve
+        modification_time: preserve
+      loop:
+        - icons
+        - users
 
     - name: Copy avatar
       ansible.builtin.copy:
-        src: "{{ avatar }}"
+        src: "{{ user.avatar }}"
         dest: "/var/lib/AccountsService/icons/{{ userid }}{{ _avatar_ext }}"
         mode: 0644
 

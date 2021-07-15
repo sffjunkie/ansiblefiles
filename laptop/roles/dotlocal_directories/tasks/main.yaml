@@ -8,4 +8,4 @@
     group: "{{ userid }}"
     access_time: preserve
     modification_time: preserve
-  loop: "{{ directories }}"
+  loop: "{{ machine.directories }}"

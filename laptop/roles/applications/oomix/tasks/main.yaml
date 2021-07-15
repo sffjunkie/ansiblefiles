@@ -1,0 +1,15 @@
+---
+- name: Clone repository
+  become_user: "{{ userid }}"
+  ansible.builtin.git:
+    repo: https://github.com/themix-project/oomox
+    dest: "{{ ~/development/source/oomix | expanduser }}"
+
+- name: Build package (Ubuntu)
+  when: distribution == 'ubuntu'
+  become_user: "{{ userid }}"
+  ansible.builtin.shell: ~/development/source/oomix/packaging/ubuntu/docker_ubuntu_package.sh
+
+# - name: Build package (Arch)
+#   when: distribution == 'ubuntu'
+#   become_user: "{{ userid }}"

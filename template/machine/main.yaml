@@ -23,12 +23,12 @@
 
   tasks:
     - name: Install zsh.
-      when: shell == 'zsh'
+      when: machine.shell == 'zsh'
       include_role:
         name: zsh
 
     - name: Install oh-my-zsh.
-      when: shell == 'zsh' and zsh.ohmyzsh.path | length > 0
+      when: machine.shell == 'zsh' and machine.ohmyzsh.path | length > 0
       include_role:
         name: ohmyzsh
 

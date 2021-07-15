@@ -1,0 +1,5 @@
+---
+- name: Install arc theme
+  ansible.builtin.package:
+    name: arc-gtk-theme
+    state: present

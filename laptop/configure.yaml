@@ -7,36 +7,30 @@
     - ../common/vars/install_overrides.yaml
     - ../common/vars/playbook.yaml
 
-  # pre_tasks:
-  #   - name: Debug
-  #     ansible.builtin.debug:
-  #       msg:
-  #         - "Computed stats"
-  #         - "  Shell: {{ shell }}"
-  #         - "  Development Environments: {{ development.roles | join(', ') }}"
-
   roles:
-    - git
-    - dotlocal_directories
-    - base_packages
-
-    - role: zsh
-      when: shell == 'zsh'
-      set_shell_for: "{{ userid }}"
-
-    - role: ohmyzsh
-      when: shell == 'zsh' and ohmyzsh is defined
+    # - base_packages
+    # - git
+    # - docker
+    # - dotlocal_directories
 
     # Install development environments before applications so we have
     # compilers avaiable to build the applications if needed.
-    - development
+    # - dev_environments
 
     - role: install_packages
-      install: "{{ apps }}"
+      install: "{{ machine.apps }}"
 
-    - x11
-    - avatar
-    - fonts
+    # - x11
+    # - avatar
+    # - fonts
+# - role: arc_theme
+
+    # - role: zsh
+    #   when: machine.shell == 'zsh'
+    #   set_shell_for: "{{ userid }}"
+
+    # - role: ohmyzsh
+    #   when: machine.shell == 'zsh' and machine.ohmyzsh is defined
 
   tasks:
     - name: Sort packages
@@ -52,16 +46,30 @@
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false
 
-    - name: Final configuration
-      ansible.builtin.debug:
-        msg: "{{ configfiles }}"
+    - name: Add machine vars to configfiles
+      block:
+        - ansible.utils.update_fact:
+            updates:
+              - path: configfiles.machine
+                value: "{{ machine }}"
+          register: _updated_fact
+          changed_when: false
 
-  #   - name: Store final configuration
-  #     delegate_to: localhost
-  #     ansible.builtin.copy:
-  #       dest: "{{ playbook_dir }}/../configfiles.json"
-  #       content: "{{ configfiles | to_nice_json }}"
-  #     changed_when: false
+        - name: Set configfiles fact
+          ansible.builtin.set_fact:
+            configfiles: "{{ _updated_fact.configfiles }}"
+          changed_when: false
+
+    # - name: Final configuration
+    #   ansible.builtin.debug:
+    #     msg: "{{ configfiles }}"
+
+    - name: Store final configuration
+      delegate_to: localhost
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../configfiles.json"
+        content: "{{ configfiles | to_nice_json }}"
+      changed_when: false
 
 # - name: Run configfiles playbook
 #   ansible.builtin.import_playbook: ../configfiles/build.yaml

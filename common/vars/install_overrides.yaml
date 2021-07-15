@@ -1,25 +1,22 @@
 ---
 install_overrides:
-  bat:
-    install: role
-
-  picom.debian:
-    install: role
-
-  picom.archlinux:
-    install: package
-
   alacritty:
     install: role
 
-  inkscape.debian:
+  bat:
     install: role
 
-  inkscape.archlinux:
-    install: package
+  docker:
+    install: role
 
   exa:
     install: role
 
-  docker:
+  inkscape.ubuntu:
+    install: role
+
+  picom.ubuntu:
+    install: role
+
+  vscode:
     install: role

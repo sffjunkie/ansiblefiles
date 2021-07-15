@@ -3,9 +3,7 @@
   connection: local
   gather_facts: false
   vars_files:
-    - ../vars/development.yaml
-    - ../vars/laptop.yaml
-    - ../vars/_playbook.yaml
+    - ../common/vars/playbook.yaml
     - ./vars/main.yaml
 
   pre_tasks:
@@ -23,24 +21,24 @@
 
   tasks:
     - name: Go config
-      ansible.builtin.include_tasks: includes/development/go.yaml
+      ansible.builtin.include_tasks: tasks/development/go.yaml
       when: '"go" in configfiles.configs'
 
   #   - name: Node config
   #     when: '"node" in config_roles'
-  #     ansible.builtin.include_tasks: includes/development/node.yaml
+  #     ansible.builtin.include_tasks: tasks/development/node.yaml
 
   #   - name: Python config
   #     when: '"python" in config_roles'
-  #     ansible.builtin.include_tasks: includes/development/python.yaml
+  #     ansible.builtin.include_tasks: tasks/development/python.yaml
 
   #   - name: Rust config
   #     when: '"rust" in config_roles'
-  #     ansible.builtin.include_tasks: includes/development/rust.yaml
+  #     ansible.builtin.include_tasks: tasks/development/rust.yaml
 
   #   - name: Zsh config
   #     when: '"zsh" in config_roles'
-  #     ansible.builtin.include_tasks: includes/shell/zsh.yaml
+  #     ansible.builtin.include_tasks: tasks/shell/zsh.yaml
 
     - name: Generate scheme colors
       base16_builder:
@@ -53,7 +51,7 @@
 
     - name: Alacritty Config
       when: '"alacritty" in applications'
-      ansible.builtin.include_tasks: includes/application/alacritty.yaml
+      ansible.builtin.include_tasks: tasks/application/alacritty.yaml
 
   #   - name: Copy files to output
   #     ansible.builtin.copy:

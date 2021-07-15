@@ -1,6 +1,7 @@
 [Desktop Entry]
+Encoding=UTF-8
 Name=Qtile
 Comment=Qtile Session
-Exec=python3 /usr/local/bin/qtile
+Exec=python3 /usr/local/bin/qtile start
 Type=Application
 Keywords=wm;tiling

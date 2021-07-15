@@ -1,0 +1,8 @@
+---
+- name: Install xmonad
+  ansible.builtin.package:
+    name:
+      - libghc-xmonad-dev
+      - libghc-xmonad-contrib-dev
+      - xmonad
+    state: present

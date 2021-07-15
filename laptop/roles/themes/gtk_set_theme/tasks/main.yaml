@@ -1,0 +1,4 @@
+---
+- name: Set GTK shell
+  when: machine.gtk_theme | length > 0
+  ansible.builtin.shell: gsettings set org.gnome.desktop.interface gtk-theme "{{ gtk_theme }}"

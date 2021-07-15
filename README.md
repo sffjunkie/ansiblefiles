@@ -2,6 +2,7 @@
 
 * _ansiblehost_ _(Future)_ - Configures a machine to manage these Ansible
   files run them
+* common - Common roles, plugins and vars
 * configfiles - Generates laptop configuration files
 * laptop - Configures the laptop
 * machine - Common configuration for VMs
@@ -24,16 +25,40 @@ The laptop config is done in 3 steps
 3. postconfigure - Updates the firewall to allow the new port number and deny
    the default port then reboots the machine
 
-## vars directory
+## laptop.yaml
 
-The vars directory contains the following files that can be edited to determine what
-gets installed.
-
-* laptop.yaml - configures my laptop
-* development.yaml - configures development environments on the laptop
-
-The other files hold variables used within the playbooks
+The `laptop.yaml` host_vars file determines waht gets installed on the laptop.
 
 # License
 
 These playbooks are under the CC-BY-4.0 license
+
+
+
+
+
+
+system
+    flatpak
+
+applications
+    alacritty
+    base16-shell
+    bat
+    exa
+    picom
+    vagrant
+
+development
+
+themes
+
+shell
+    zsh
+    ohmyzsh
+development
+x11
+
+playbook
+    aliases
+    copyconfig

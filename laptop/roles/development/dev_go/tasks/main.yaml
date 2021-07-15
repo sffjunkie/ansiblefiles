@@ -1,0 +1,64 @@
+---
+- ansible.builtin.debug:
+    msg: Building go development environment
+
+- name: "Go: Calculate filename prefix with latest version"
+  ansible.builtin.set_fact:
+    _go_install_version: "{{ lookup('url', _go_version_url, split_lines=False) }}"
+  changed_when: false
+  when: machine.development.go.version == "latest"
+
+- name: "Go: Calculate filename prefix with fixed version"
+  ansible.builtin.set_fact:
+    _go_install_version: go{{ version }}
+  changed_when: false
+  when: machine.development.go.version != "latest"
+
+- name: "Go: Try to get current go version installed"
+  ansible.builtin.command: "{{ _go_bin_path }}/go version"
+  register: _go_version
+  changed_when: false
+  failed_when: false
+
+- name: "Go: Set current_version var to the current"
+  ansible.builtin.set_fact:
+    _go_current_version: "{{ _go_version.stdout.split(' ')[2] }}"
+  changed_when: false
+  when: _go_version.rc == 0
+
+- name: "Go: Download and extract the archive {{ _go_archive_name }}"
+  when: _go_current_version != _go_install_version
+  ansible.builtin.unarchive:
+    src: "{{ _go_download_url }}"
+    dest: "{{ _go_install_path }}"
+    mode: 0755
+    owner: "{{ _go_mode }}"
+    group: "{{ _go_mode }}"
+    remote_src: true
+
+- name: "Go: gopath text"
+  when: machine.development.go.location == 'user'
+  ansible.builtin.set_fact:
+    _go_install_path: "{{ local_home_replacement_text }}"
+
+- name: "Go: Update configfiles"
+  block:
+    - ansible.builtin.set_fact:
+        _go_config:
+          go:
+            GOPATH: "{{ _go_install_path + '/go' }}"
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.pathend
+            value: "{{ configfiles.pathend + [_go_bin_path] }}"
+          - path: configfiles.configs
+            value: "{{ configfiles.configs | combine(_go_config) }}"
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['go'] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

@@ -1,4 +1,7 @@
 ---
+- ansible.builtin.debug:
+    msg: Building ZSH environment
+
 - name: Install zsh
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
@@ -12,11 +15,11 @@
     _set_shell_for: "{{ set_shell_for | listify }}"
 
 - name: "Configure user's shell"
+  when: _set_shell_for | length > 0
   ansible.builtin.user:
     name: "{{ item }}"
     shell: "{{ zsh_shell }}"
   loop: "{{ _set_shell_for }}"
-  when: _set_shell_for | length > 0
 
 - name: Update configfiles for ZSH
   block:
@@ -25,7 +28,6 @@
           zsh:
             ZSH_CACHE_DIR: '${XDG_CACHE_HOME:-$HOME/.cache}/zsh'
             ZDOTDIR': "{{ config_home_replacement_text + '/zsh' }}"
-
 
     - ansible.utils.update_fact:
         updates:

@@ -8,18 +8,19 @@
     ZSH: "{{ _ohmyzsh_install_path }}"
 
 - name: Install plugins.
+  become_user: "{{ userid }}"
   git:
     repo: "https://github.com/zsh-users/{{ item }}.git"
     dest: "{{ _ohmyzsh_install_path }}/plugins/{{ item }}"
   loop:
-    "{{ ohmyzsh.user_plugins }}"
+    "{{ machine.ohmyzsh.user_plugins }}"
 
 - name: Update configfiles for oh-my-zsh
   block:
     - ansible.builtin.set_fact:
         _ohmyzsh_config:
           ohmyzsh:
-            plugins: "{{ ohmyzsh.plugins + ohmyzsh.user_plugins }}"
+            plugins: "{{ machine.ohmyzsh.plugins + machine.ohmyzsh.user_plugins }}"
             ZSH: "{{ _ohmyzsh_install_path|replace(home, '${HOME}') }}"
 
     - ansible.utils.update_fact:

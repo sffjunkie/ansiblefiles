@@ -1,0 +1,7 @@
+---
+- name: Install xmonad
+  ansible.builtin.package:
+    name:
+      - xmonad
+      - xmonad-contrib
+    state: present

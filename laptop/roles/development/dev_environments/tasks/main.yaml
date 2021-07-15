@@ -1,0 +1,24 @@
+---
+- name: "Create development directories in /home/{{ userid }}"
+  ansible.builtin.file:
+    path: "/home/{{ userid }}/{{ item }}"
+    state: directory
+    mode: 0750
+    access_time: preserve
+    modification_time: preserve
+    owner: "{{ userid }}"
+    group: "{{ userid }}"
+  loop: "{{ machine.development.dirs }}"
+
+- name: Install common development packages
+  ansible.builtin.include_role:
+    name: install_packages
+  vars:
+    install: "{{ machine.development.common }}"
+
+- name: Install development environments.
+  ansible.builtin.include_role:
+    name: "dev_{{ language }}"
+  loop: "{{ machine.development.roles }}"
+  loop_control:
+    loop_var: language

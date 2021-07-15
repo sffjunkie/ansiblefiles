@@ -1,0 +1,28 @@
+---
+- name: Install bat
+  ansible.builtin.package:
+    name: bat
+    state: present
+
+- name: Update aliases for bat
+  block:
+    - name: Add alias as the executable is named batcat on debian
+      when: os_family == 'debian'
+      ansible.builtin.set_fact:
+        _bat_aliases: ['cat', 'batcat']
+
+    - name: Otherwise add alias to bat
+      when: os_family != 'debian'
+      ansible.builtin.set_fact:
+        _bat_aliases: ['cat', 'bat']
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.aliases
+            value: "{{ configfiles.aliases + [_bat_aliases] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

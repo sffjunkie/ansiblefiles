@@ -10,6 +10,7 @@
   ansible.builtin.copy:
     src: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
     dest: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bkp
+    mode: preserve
     remote_src: true
 
 - name: Disable prompt
@@ -22,9 +23,4 @@
     firstmatch: true
     state: present
   register: _disabled
-
-- name: Restart pveproxy
-  when: _disabled.changed
-  ansible.builtin.systemd:
-    name: pveproxy.service
-    state: restarted
+  notify: restart pveproxy

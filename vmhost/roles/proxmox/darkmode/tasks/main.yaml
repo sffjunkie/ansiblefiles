@@ -14,7 +14,7 @@
   changed_when: false
 
 - name: Run darkmode script
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: "{{ _tmp_directory.path }}/PVEDiscordDark.sh install"
     chdir: "{{ _tmp_directory.path }}"
   register: _darkmode_result

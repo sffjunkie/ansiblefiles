@@ -9,6 +9,7 @@
   ansible.builtin.copy:
     src: /etc/apt/sources.list.d/pve-enterprise.list
     dest: /etc/apt/sources.list.d/pve-enterprise.list.disabled
+    mode: preserve
     remote_src: true
 
 - name: Delete old enterprise.list

@@ -5,12 +5,20 @@
             "batcat"
         ],
         [
-            "cat",
-            "batcat"
+            "ls",
+            "exa -al --color=always --group-directories-first"
         ],
         [
-            "cat",
-            "batcat"
+            "la",
+            "exa -a --color=always --group-directories-first"
+        ],
+        [
+            "ll",
+            "exa -l --color=always --group-directories-first"
+        ],
+        [
+            "lt",
+            "exa -aT --color=always --group-directories-first"
         ]
     ],
     "configs": {
@@ -32,63 +40,345 @@
         "pyenv": {
             "PYENV_ROOT": "${HOME}/.local/pyenv"
         },
-        "qtile": {},
+        "rust": {
+            "CARGO_HOME": "${HOME}/.local/cargo",
+            "RUSTUP_HOME": "${HOME}/.local/rust"
+        },
+        "vscode": {
+            "settings": {
+                "material-icon-theme.saturation": 0,
+                "workbench.colorTheme": "Nord",
+                "workbench.iconTheme": "material-icon-theme",
+                "workbench.productIconTheme": "fluent-icons"
+            }
+        },
         "zsh": {
             "ZDOTDIR'": "${XDG_CONFIG_HOME:-${HOME}/.config}/zsh",
             "ZSH_CACHE_DIR": "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
         }
     },
     "envvars": {},
+    "machine": {
+        "apps": {
+            "name": "Applications",
+            "packages": [
+                "pulsemixer",
+                "firefox",
+                "vscode",
+                "picom",
+                "neovim",
+                "ranger",
+                "sxiv",
+                "ncmpcpp",
+                "dunst",
+                "zathura",
+                "alacritty",
+                "mpv",
+                "sxhkd",
+                "bat",
+                "exa",
+                "mpd",
+                "nitrogen",
+                "pavucontrol"
+            ],
+            "pip": [
+                "pywal"
+            ]
+        },
+        "color_scheme": "nord",
+        "development": {
+            "ansible": {
+                "location": "user",
+                "name": "Ansible Development Packages",
+                "pipx": [
+                    "ansible-base",
+                    "ansible-lint",
+                    "molecule",
+                    "yamllint"
+                ]
+            },
+            "common": {
+                "name": "Common Development Packages",
+                "packages": [
+                    "cmake",
+                    "ninja-build",
+                    "vagrant",
+                    "virtualbox"
+                ],
+                "pip": [
+                    "meson"
+                ]
+            },
+            "dirs": [
+                "development",
+                "development/gist",
+                "development/incubator",
+                "development/project",
+                "development/source",
+                "development/venv"
+            ],
+            "go": {
+                "location": "user",
+                "name": "Go Development Packages",
+                "version": "latest"
+            },
+            "pyenv": {
+                "plugins": {
+                    "git": [
+                        {
+                            "dest": "/home/sdk/.local/pyenv/plugins/pyenv-virtualenv",
+                            "repo": "https://github.com/pyenv/pyenv-virtualenv"
+                        },
+                        {
+                            "dest": "/home/sdk/.local/pyenv/plugins/pyenv-doctor",
+                            "repo": "https://github.com/pyenv/pyenv-doctor"
+                        }
+                    ]
+                }
+            },
+            "python": {
+                "location": "user",
+                "name": "Python Development Packages",
+                "pip": [
+                    "black",
+                    "mypy",
+                    "poetry",
+                    "pylint",
+                    "pytest",
+                    "sphinx",
+                    "tox"
+                ],
+                "pipx": [
+                    "cookiecutter"
+                ]
+            },
+            "roles": [
+                "ansible",
+                "go",
+                "python",
+                "pyenv",
+                "rust",
+                "typescript"
+            ],
+            "rust": {
+                "location": "user",
+                "name": "Rust Development Packages",
+                "toolchain": "stable"
+            },
+            "typescript": {
+                "location": "global",
+                "name": "Typescript Development Packages",
+                "npm": [
+                    "@types/node",
+                    "typescript",
+                    "typedoc"
+                ],
+                "npm_global_is_local": true,
+                "packages": [
+                    "nodejs",
+                    "npm"
+                ]
+            }
+        },
+        "directories": [
+            "~/.local",
+            "~/.local/bin",
+            "~/.local/share",
+            "~/.config"
+        ],
+        "font_size": 10,
+        "fonts": [
+            {
+                "name": "Hack",
+                "style": "monospace",
+                "url": "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
+            }
+        ],
+        "gtk_theme": "Arc",
+        "ohmyzsh": {
+            "location": "user",
+            "plugins": [
+                "docker",
+                "docker-compose",
+                "git",
+                "sudo",
+                "web-search"
+            ],
+            "user_plugins": [
+                "zsh-completions",
+                "zsh-syntax-highlighting"
+            ]
+        },
+        "shell": "zsh",
+        "vscode": {
+            "colors": {
+                "arcticicestudio.nord-visual-studio-code": {
+                    "id": "Nord",
+                    "name": "Nord Color Theme"
+                }
+            },
+            "extensions": {
+                "2gua.rainbow-brackets": {
+                    "name": "Rainbow Brackets"
+                },
+                "DavidAnson.vscode-markdownlint": {
+                    "name": "Markdown File Linting"
+                },
+                "avli.clojure": {
+                    "name": "Clojure Language"
+                },
+                "golang.go": {
+                    "name": "Go Language"
+                },
+                "hashicorp.terraform": {
+                    "name": "Terraform File Handling"
+                },
+                "jakeboone02.mediawiki": {
+                    "name": "MediaWiki File Handling"
+                },
+                "mathiasfrohlich.Kotlin": {
+                    "name": "Kotlin Language"
+                },
+                "ms-dotnettools.csharp": {
+                    "name": "C# Language"
+                },
+                "ms-python.python": {
+                    "name": "Python Language"
+                },
+                "ms-python.vscode-pylance": {
+                    "name": "Python Language Server"
+                },
+                "ms-toolsai.jupyter": {
+                    "name": "Jupyter Notebook"
+                },
+                "ms-vscode-remote.remote-containers": {
+                    "name": "VSCode Remote Support - Containers"
+                },
+                "ms-vscode-remote.remote-ssh": {
+                    "name": "VSCode Remote Support - SSH"
+                },
+                "ms-vscode-remote.remote-ssh-edit": {
+                    "name": "VSCode Remote Support - SSH Edit"
+                },
+                "ms-vscode-remote.vscode-remote-extensionpack": {
+                    "name": "VSCode Remote Support"
+                },
+                "nico-castell.linux-desktop-file": {
+                    "name": ".desktop File Handling"
+                },
+                "oderwat.indent-rainbow": {
+                    "name": "Indent Rainbow"
+                },
+                "rust-lang.rust": {
+                    "name": "Rust Language"
+                },
+                "samuelcolvin.jinjahtml": {
+                    "name": "Jinja2 File Handling"
+                },
+                "seanwu.vscode-qt-for-python": {
+                    "name": "QT for Python"
+                },
+                "siegebell.prettify-symbols-mode": {
+                    "name": "Prettify Symbols"
+                }
+            },
+            "icons": {
+                "pkief.material-icon-theme": {
+                    "id": "material-icon-theme",
+                    "name": "Material Icon Theme",
+                    "settings": {
+                        "material-icon-theme.saturation": 0
+                    }
+                },
+                "vscode-icons-team.vscode-icons": {
+                    "id": "vscode-icons",
+                    "name": "VSCode Icons",
+                    "settings": {
+                        "extension_vscode-icons.wibble": 0
+                    }
+                }
+            },
+            "product": "VSCode",
+            "productIcons": {
+                "miguelsolorio.fluent-icons": {
+                    "id": "fluent-icons",
+                    "name": "Fluent Icons"
+                }
+            }
+        },
+        "x11": {
+            "bar": null,
+            "display_manager": "lightdm",
+            "greeter": "lightdm-gtk-greeter",
+            "video_card_driver": null,
+            "window_manager": "qtile"
+        }
+    },
     "packages": [
         "accountsservice",
+        "ansible",
+        "ansible-base",
+        "ansible-lint",
         "apt-transport-https",
+        "autoconf",
+        "automake",
+        "black",
         "build-essential",
         "ca-certificates",
+        "cmake",
+        "cookiecutter",
+        "dunst",
+        "firefox",
+        "go",
+        "lightdm",
+        "meson",
+        "molecule",
+        "mpd",
+        "mpv",
+        "mypy",
+        "ncmpcpp",
+        "neovim",
+        "ninja-build",
+        "nitrogen",
+        "nodejs",
+        "npm",
+        "pavucontrol",
+        "pipx",
+        "pkg-config",
+        "poetry",
+        "pulsemixer",
+        "pyenv",
+        "pylint",
+        "pytest",
         "python3",
         "python3-apt",
         "python3-pip",
-        "software-properties-common",
-        "unattended-upgrades",
-        "unzip",
         "python3.8-venv",
-        "pulsemixer",
-        "firefox",
-        "neovim",
-        "ranger",
-        "sxiv",
-        "ncmpcpp",
-        "dunst",
-        "zathura",
-        "mpv",
-        "sxhkd",
-        "mpd",
-        "nitrogen",
-        "pavucontrol",
-        "pipx",
         "pywal",
-        "cmake",
-        "ninja-build",
+        "qtile",
+        "ranger",
+        "rust",
+        "software-properties-common",
+        "sphinx",
+        "sxhkd",
+        "sxiv",
+        "tox",
+        "typescript",
+        "unattended-upgrades",
+        "unity-tweak-tool",
+        "unzip",
         "vagrant",
         "virtualbox",
-        "meson",
-        "ansible-base",
-        "ansible-lint",
-        "molecule",
+        "vscode",
+        "xdg-utils",
         "yamllint",
-        "black",
-        "cookiecutter",
-        "mypy",
-        "poetry",
-        "pylint",
-        "pytest",
-        "sphinx",
-        "tox",
-        "nodejs",
-        "npm"
+        "zathura",
+        "zstd"
     ],
     "pathend": [
         "${HOME}/.local/bin",
-        "${HOME}/.local/go/bin"
+        "${HOME}/.local/go/bin",
+        "${HOME}/.local/cargo/bin"
     ],
     "pathstart": [
         "${HOME}/.local/pyenv/bin"

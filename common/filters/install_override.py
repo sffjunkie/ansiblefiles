@@ -9,6 +9,9 @@ class FilterModule(object):
         }
 
     def overrides_by_name(self, overrides, os_family, distribution):
+        if not overrides:
+            return {}
+
         result = dict()
         for key, value in overrides.items():
             r = {}

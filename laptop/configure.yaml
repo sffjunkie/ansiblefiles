@@ -4,33 +4,34 @@
   vars:
     ansible_port: "{{ ssh_port }}"
   vars_files:
-    - ../common/vars/install_overrides.yaml
+    - ./vars/install_overrides.yaml
     - ../common/vars/playbook.yaml
 
   roles:
-    # - base_packages
-    # - git
-    # - docker
-    # - dotlocal_directories
+    - playbook_packages
+    - git
+    - docker
+    - dotlocal_directories
 
-    # Install development environments before applications so we have
+    # Install Development Environments before applications so we have
     # compilers avaiable to build the applications if needed.
-    # - dev_environments
+    - dev_environments
 
-    - role: install_packages
-      install: "{{ machine.apps }}"
+    - role: zsh
+      when: machine.shell == 'zsh'
+      set_shell_for: "{{ userid }}"
 
-    # - x11
-    # - avatar
-    # - fonts
+    - role: install_group
+      group: "{{ machine.apps }}"
+      overrides: "{{ package_installation_overrides }}"
+
+    - x11
+    - avatar
+    - fonts
 # - role: arc_theme
 
-    # - role: zsh
-    #   when: machine.shell == 'zsh'
-    #   set_shell_for: "{{ userid }}"
-
-    # - role: ohmyzsh
-    #   when: machine.shell == 'zsh' and machine.ohmyzsh is defined
+    - role: ohmyzsh
+      when: machine.shell == 'zsh' and machine.ohmyzsh is defined
 
   tasks:
     - name: Sort packages
@@ -68,7 +69,7 @@
       delegate_to: localhost
       ansible.builtin.copy:
         dest: "{{ playbook_dir }}/../configfiles.json"
-        content: "{{ configfiles | to_nice_json }}"
+        content: "{{ configfiles | to_nice_json(indent=4) }}"
       changed_when: false
 
 # - name: Run configfiles playbook

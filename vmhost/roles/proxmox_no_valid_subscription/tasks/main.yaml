@@ -1,0 +1,30 @@
+---
+# https://johnscs.com/remove-proxmox51-subscription-notice/
+- name: Check if backup file exists
+  ansible.builtin.stat:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bkp
+  register: _backup_file
+
+- name: Backup js file
+  when: not _backup_file.stat.exists
+  ansible.builtin.copy:
+    src: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    dest: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bkp
+    remote_src: true
+
+- name: Disable prompt
+  ansible.builtin.lineinfile:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    insertafter: ".data.status.toLowerCase\\(\\) !== 'active'\\) {"
+    regexp: "(\\s+)Ext.Msg.show\\({"
+    line: "\\1void({"
+    backrefs: true
+    firstmatch: true
+    state: present
+  register: _disabled
+
+- name: Restart pveproxy
+  when: _disabled.changed
+  ansible.builtin.systemd:
+    name: pveproxy.service
+    state: restarted

@@ -1,0 +1,11 @@
+---
+- name: Set hostname
+  ansible.builtin.shell:
+    cmd: hostnamectl set-hostname "{{ hostname }}"
+
+- name: Change /etc/hosts
+  ansible.builtin.lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^127.0.1.1"
+        line: "127.0.1.1 {{ hostname }}"
+        state: present

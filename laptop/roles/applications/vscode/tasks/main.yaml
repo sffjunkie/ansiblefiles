@@ -10,11 +10,15 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-# Using custom filters
+- name: Calc config directory
+  ansible.builtin.set_fact:
+    _vscode_config_dir: "{{ (vscode.product | lower == 'vscode') | ternary('Code', 'VSCodium') }}"
+
+# Using custom filter plugins
 - name: Get VSCode extension list
   ansible.builtin.set_fact:
-    _vscode_extensions: "{{ machine.vscode | vscode_extension_install_strings }}"
-    _vscode_settings: "{{ machine.vscode | vscode_extension_settings }}"
+    _vscode_extensions: "{{ vscode | vscode_extension_install_strings }}"
+    _vscode_settings: "{{ vscode | vscode_extension_settings }}"
 
 - name: Install extensions
   become_user: "{{ userid }}"

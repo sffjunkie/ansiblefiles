@@ -1,0 +1,30 @@
+---
+# Used by the common `install_group` role
+# Allows to overriding installation to use roles on a per package basis
+# Each key is of the form
+#     <package>
+# or
+#     <package>.<osfamily_or_distribution>
+# where `os_or_distribution` is the ansible `ansible_os_family` or `ansible_distribution` facts
+package_installation_overrides:
+  alacritty:
+    install: role
+
+  bat:
+    install: role
+
+  docker:
+    install: role
+
+  exa:
+    install: role
+
+  inkscape.ubuntu:
+    install: role
+
+  picom.ubuntu:
+    install: role
+
+  vscode:
+    install: role
+    vars: "{{ machine.vscode }}"

@@ -12,7 +12,7 @@
   ansible.builtin.import_role:
     name: python3_gobject
 
-- name: QTile - install pypi dependencies
+- name: QTile - install pip dependencies
   ansible.builtin.pip:
     name:
       - xcffib
@@ -64,14 +64,10 @@
 
 - name: Update configfiles for qtile
   block:
-    - ansible.builtin.set_fact:
-        _qtile_config:
-          qtile: {}
-
     - ansible.utils.update_fact:
         updates:
-          - path: configfiles.configs
-            value: "{{ configfiles.configs | combine(_qtile_config) }}"
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['qtile'] }}"
       register: _updated_fact
       changed_when: false
 

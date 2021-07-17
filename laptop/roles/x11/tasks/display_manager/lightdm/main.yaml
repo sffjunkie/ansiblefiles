@@ -26,3 +26,16 @@
     src: templates/50-laptop.conf
     dest: /etc/lightdm/lightdm.conf.d/50-laptop.conf
     mode: 0644
+
+- name: Update configfiles for lightdm
+  block:
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['lightdm'] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

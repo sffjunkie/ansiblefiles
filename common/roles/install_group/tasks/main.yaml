@@ -1,0 +1,131 @@
+- name: Calc 'name'
+  ansible.builtin.set_fact:
+    _group_name: "{{ group.name | default('', True)}}"
+  changed_when: false
+
+- when: _group_name != ''
+  block:
+    - debug:
+        msg: "Install packages for group '{{ _group_name }}'"
+
+- name: Calc package overides by name
+  ansible.builtin.set_fact:
+    _package_overrides_by_name: "{{ overrides | install_overrides_by_name(os_family, distribution)}}"
+  changed_when: false
+
+- name: Install packages
+  when: group.packages is defined
+  block:
+    - name: Calc packages to install from os repository
+      ansible.builtin.set_fact:
+        _packages: "{{ group.packages | packages(_package_overrides_by_name) }}"
+      changed_when: false
+
+    - name: Install from os repositories
+      when: _packages | length > 0
+      block:
+        - name: Install package
+          ansible.builtin.package:
+            name: "{{ _packages }}"
+            state: present
+
+        - name: Update configfiles fact
+          ansible.utils.update_fact:
+            updates:
+              - path: configfiles.packages
+                value: "{{ (configfiles.packages + _packages) | unique }}"
+          register: _updated_fact
+          changed_when: false
+
+        - name: Set configfiles fact
+          ansible.builtin.set_fact:
+            configfiles: "{{ _updated_fact.configfiles }}"
+          changed_when: false
+
+    - name: Calc roles to use to install packages
+      ansible.builtin.set_fact:
+        _roles: "{{ group.packages | roles(_package_overrides_by_name) }}"
+      changed_when: false
+
+    - name: Install using roles
+      when: _roles | length > 0
+      block:
+        - ansible.builtin.include_role:
+            name: "{{ role_item }}"
+          loop: "{{ _roles }}"
+          loop_control:
+            loop_var: role_item
+          # Workaround https://github.com/ansible/ansible/issues/19084
+          vars:
+            _vars: "{{ _package_overrides_by_name[role_item]['vars'] | default(omit, True) }}"
+
+
+- name: Install from pip repository
+  when: group.pip is defined and group.pip | length > 0
+  block:
+    - name: Install package
+      become_user: "{{ (group.location is defined and group.location == 'user') | ternary(userid, 'root') }}"
+      ansible.builtin.pip:
+        name: "{{ group.pip }}"
+        state: present
+        extra_args: "{{ (group.location is defined and group.location == 'user') | ternary('--user', omit) }}"
+
+    - name: Calculate new configfiles fact
+      ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ (configfiles.packages + group.pip) | unique }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Update configfiles fact
+      ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false
+
+
+- name: Install pipx packages
+  when: group.pipx is defined and group.pipx | length > 0
+  block:
+    - name: Run pipx install
+      become_user: "{{ (group.location is defined and group.location == 'user') | ternary(userid, 'root') }}"
+      ansible.builtin.shell:
+        cmd: "pipx install {{ pipx_item }}"
+      loop: "{{ group.pipx }}"
+      loop_control:
+        loop_var: pipx_item
+      register: _pipx_result
+      changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
+      failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+
+    - name: Calculate new configfiles fact
+      ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ (configfiles.packages + group.pipx) | unique }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Update configfiles fact
+      ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false
+
+
+- name: Install git packages
+  when: group.git is defined and group.git | length > 0
+  ansible.builtin.git:
+    repo: "{{ git_item.repo }}"
+    dest: "{{ git_item.dest }}"
+  loop: "{{ group.git }}"
+  loop_control:
+    loop_var: git_item
+
+- name: "Install NPM packages"
+  when: group.npm is defined and group.npm | length > 0
+  community.general.npm:
+    name: "{{ npm_item }}"
+    global: "{{ (group.location is defined and group.location == 'global') | ternary(true, omit) }}"
+  loop: "{{ group.npm }}"
+  loop_control:
+    loop_var: npm_item

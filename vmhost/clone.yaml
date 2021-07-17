@@ -1,0 +1,8 @@
+---
+- hosts: furrball
+  become: true
+  vars_files:
+    - ../common/vars/playbook.yaml
+
+  tasks:
+    - name:

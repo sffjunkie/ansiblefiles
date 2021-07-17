@@ -1,0 +1,13 @@
+---
+- name: Ensure each item is a dict with 'env' and 'version' keys
+  ansible.builtin.set_fact:
+    _package_list: "{{ package_list|to_pip_dict }}"
+  when: package_list | length > 0
+
+- name: pip package
+  ansible.builtin.pip:
+    name: "{{ item.name }}{{ (';' + item.env) | default('', True) }}"
+    version: "{{ item.version | default(omit) }}"
+    state: present
+  loop: "{{ _package_list  }}"
+  when: _package_list | length > 0

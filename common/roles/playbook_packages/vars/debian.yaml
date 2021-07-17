@@ -1,0 +1,11 @@
+---
+base:
+  packages:
+    - apt-transport-https
+    - build-essential
+    - ca-certificates
+    - pkg-config
+    - python3-apt
+    - python3-pip
+    - software-properties-common
+    - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"

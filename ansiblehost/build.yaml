@@ -5,7 +5,7 @@
   vars_files:
     - ../vars/_playbook.yaml
     - ../vars/secrets.yaml
-    - ./vars/pypi.yaml
+    - ./vars/pip.yaml
 
   pre_tasks:
     - name: Debug
@@ -38,11 +38,11 @@
       vars:
         custom_os_packages: "{{ os_packages }}"
 
-    - name: Install Pypi packages
+    - name: Install pip packages
       ansible.builtin.include_role:
-        name: pypi_package
+        name: pip_package
       vars:
-        package_list: "{{ pypi_packages }}"
+        package_list: "{{ pip_packages }}"
 
     # - name: Copy playbooks
     #   ansible.builtin.git:

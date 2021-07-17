@@ -4,3 +4,4 @@ secrets.yaml
 inventory.yaml
 configfiles/templates
 roles/galaxy
+configfiles.json

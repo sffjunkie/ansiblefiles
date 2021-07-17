@@ -1,8 +1,21 @@
 ---
-- name: Install git
+- name: Install xmonad
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:
       - "{{ distribution }}.yaml"
       - "{{ os_family }}.yaml"
       - "default.yaml"
+
+- name: Update configfiles for xmonad
+  block:
+    - ansible.utils.update_fact:
+        updates:
+          - path: configfiles.packages
+            value: "{{ configfiles.packages + ['xmonad'] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

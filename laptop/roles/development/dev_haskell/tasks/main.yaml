@@ -1,0 +1,46 @@
+---
+- ansible.builtin.debug:
+    msg: Building Haskell Development Environment
+
+- name: Check if stack binary already exists
+  ansible.builtin.stat:
+    path: "{{ '~/.local/bin/stack' | expanduser }}"
+  register: _stack_exists
+
+- name: Install stack
+  when: not _stack_exists.stat.exists
+  block:
+    - name: Create temporary directory to download script to
+      become_user: "{{ userid }}"
+      ansible.builtin.tempfile:
+        prefix: haskell
+        state: directory
+      register: _tmp_directory
+      changed_when: false
+
+    - name: Download stack install script
+      become_user: "{{ userid }}"
+      ansible.builtin.uri:
+        url: https://get.haskellstack.org/
+        dest: "{{ _tmp_directory.path }}/hellstack.sh"
+        mode: 0700
+      changed_when: false
+
+    - name: Run stack install script
+      become_user: "{{ userid }}"
+      ansible.builtin.shell:
+        cmd: "{{ _tmp_directory.path }}/hellstack.sh --quiet --force -d ~/.local/bin"
+        chdir: "{{ _tmp_directory.path }}"
+        creates: "{{ '~/.local/bin/stack' | expanduser }}"
+
+    - name: Delete temporary directory
+      become_user: "{{ userid }}"
+      ansible.builtin.file:
+        path: "{{ _tmp_directory.path }}"
+        state: absent
+      changed_when: false
+
+- name: Update stack
+  become_user: "{{ userid }}"
+  ansible.builtin.command:
+    cmd: stack update

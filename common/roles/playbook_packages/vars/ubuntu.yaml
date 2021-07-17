@@ -1,0 +1,14 @@
+---
+base:
+  packages:
+    - accountsservice
+    - apt-transport-https
+    - build-essential
+    - ca-certificates
+    - pkg-config
+    - python3-apt
+    - python3-pip
+    - software-properties-common
+    - unattended-upgrades
+    - unity-tweak-tool
+    - "python{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}-venv"

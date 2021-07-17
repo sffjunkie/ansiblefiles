@@ -1,0 +1,7 @@
+---
+- name: VSCodium Install
+  when: machine.vscode.product | lower == 'vscodium'
+  block:
+    - ansible.builtin.package:
+        name: vscodium-bin
+        state: present

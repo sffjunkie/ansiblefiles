@@ -50,8 +50,7 @@ machine:
       - nitrogen
       - pavucontrol
 
-    pypi:
-      - pipx
+    pip:
       - pywal
 
   # linkhandler:
@@ -98,12 +97,13 @@ machine:
       - development/source
       - development/venv
 
-    # Roles to set up development environments
+    # Roles to set up Development Environments
     # The actual roles are named `development_<role_name>` e.g. `development_go`
     # and are called from the `development` role
     roles:
       - ansible
       - go
+      # - haskell
       - python
       - pyenv
       - rust
@@ -117,7 +117,7 @@ machine:
         - vagrant
         - virtualbox
 
-      pypi:
+      pip:
         - meson
 
     ansible:
@@ -138,15 +138,17 @@ machine:
       name: Python Development Packages
       location: user
 
-      pypi:
+      pip:
         - black
-        - cookiecutter
         - mypy
         - poetry
         - pylint
         - pytest
         - sphinx
         - tox
+
+      pipx:
+        - cookiecutter
 
     pyenv:
       plugins:

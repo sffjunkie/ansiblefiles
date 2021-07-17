@@ -1,0 +1,17 @@
+---
+- hosts: furrball
+  become: true
+  vars_files:
+    - ../common/vars/playbook.yaml
+
+  roles:
+    - proxmox_configure_updates
+    - role: update
+      reboot_after_update: false
+    - role: playbook_packages
+      extra:
+        pip:
+          - proxmoxer
+          - requests
+    - proxmox_no_valid_subscription
+    - darkmode

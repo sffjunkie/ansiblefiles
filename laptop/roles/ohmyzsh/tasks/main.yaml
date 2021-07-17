@@ -1,7 +1,7 @@
 ---
 - name: Run install script
   become_user: "{{ userid }}"
-  shell:
+  ansible.builtin.shell:
     cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     creates: "{{ _ohmyzsh_install_path }}/oh-my-zsh.sh"
   environment:
@@ -9,7 +9,7 @@
 
 - name: Install plugins.
   become_user: "{{ userid }}"
-  git:
+  ansible.builtin.git:
     repo: "https://github.com/zsh-users/{{ item }}.git"
     dest: "{{ _ohmyzsh_install_path }}/plugins/{{ item }}"
   loop:

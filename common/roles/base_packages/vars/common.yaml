@@ -1,8 +1,0 @@
----
-common_packages:
-  - autoconf
-  - automake
-  - python3
-  - unzip
-  - xdg-utils
-  - zstd

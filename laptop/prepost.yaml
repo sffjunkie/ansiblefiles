@@ -5,6 +5,8 @@
     - ../common/vars/playbook.yaml
 
   roles:
+    - hostname
+      tags: preconfigure
     - role: user_add
       tags: preconfigure
     - role: user_ssh

@@ -12,11 +12,11 @@
 
 - name: Install common development packages
   ansible.builtin.include_role:
-    name: install_packages
+    name: install_group
   vars:
-    install: "{{ machine.development.common }}"
+    group: "{{ machine.development.common }}"
 
-- name: Install development environments.
+- name: Install Development Environments.
   ansible.builtin.include_role:
     name: "dev_{{ language }}"
   loop: "{{ machine.development.roles }}"

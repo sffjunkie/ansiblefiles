@@ -1,9 +1,9 @@
 ---
 - ansible.builtin.debug:
-    msg: Building python development environment
+    msg: Building Python Development Environment
 
 - name: "Python: Install packages"
   ansible.builtin.include_role:
-    name: install_packages
+    name: install_group
   vars:
-    install: "{{ machine.development.python }}"
+    group: "{{ machine.development.python }}"

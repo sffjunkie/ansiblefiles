@@ -1,0 +1,3 @@
+---
+# Workaround https://github.com/ansible/ansible/issues/19084
+vscode: "{{ _vars }}"

@@ -9,7 +9,7 @@
         line: "{{ item.line }}"
         state: present
         validate: 'sshd -t -f %s'
-      with_items:
+      loop:
         - regexp: "^PasswordAuthentication"
           line: "PasswordAuthentication no"
         - regexp: "^PermitRootLogin"

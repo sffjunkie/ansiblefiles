@@ -46,9 +46,9 @@
         name: "{{ _pre_reqs.packages }}"
         state: present
 
-    - name: Install pre-requisites - pypi
+    - name: Install pre-requisites - pip
       ansible.builtin.pip:
-        name: "{{ _pre_reqs.pypi }}"
+        name: "{{ _pre_reqs.pip }}"
         state: present
 
     - name: Create temporary directory

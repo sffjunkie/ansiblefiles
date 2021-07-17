@@ -6,3 +6,8 @@
       package:
         name: qemu-guest-agent
         state: present
+
+    - name: Start service
+      ansible.builtin.systemd:
+        name: qemu-guest-agent
+        state: enabled

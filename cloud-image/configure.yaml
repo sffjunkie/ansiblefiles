@@ -1,0 +1,38 @@
+---
+- name: Build image
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - ./vars/main.yaml
+    - ./vars/secrets.yaml
+
+  roles:
+    - build_cloud_config
+    - role: build_cloud_config_image
+      tags: image
+
+- name: Copy image
+  hosts: furrball
+  become: true
+  vars_files:
+    - ./vars/main.yaml
+    - ./vars/secrets.yaml
+  tasks:
+    - name: Get date
+      ansible.builtin.command:
+        cmd: date +"%Y-%m-%d"
+      register: _date
+      changed_when: false
+      tags: image
+
+    - name: Copy images
+      ansible.builtin.copy:
+        src: "./images/cloud-config-{{ config_name }}-{{ _date.stdout }}.qcow2"
+        dest: ~/images/
+      tags: image
+
+    - name: Copy cloud config
+      ansible.builtin.copy:
+        src: ./configs/{{ config_name }}.yaml
+        dest: ~/snippets/
+      tags: config

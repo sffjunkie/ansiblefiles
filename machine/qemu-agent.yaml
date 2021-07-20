@@ -10,4 +10,5 @@
     - name: Start service
       ansible.builtin.systemd:
         name: qemu-guest-agent
-        state: enabled
+        state: started
+        daemon_reload: true

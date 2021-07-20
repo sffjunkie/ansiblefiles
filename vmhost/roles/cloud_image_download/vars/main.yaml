@@ -1,0 +1,5 @@
+---
+cloud_distribution: ubuntu
+cloud_version:
+  ubuntu: focal
+  fedora: 34

@@ -1,0 +1,11 @@
+#cloud-config
+users:
+  - default
+  - name: {{ user }}
+    groups: sudo
+    sudo: ALL=(ALL:ALL) ALL
+    ssh_authorized_keys:
+      - "{{ ssh_key }}"
+    password: {{ password | default(omit, True) }}
+packages: {{ packages }}
+package_upgrade: true

@@ -1,0 +1,7 @@
+---
+config_name: looniversity
+packages:
+  - qemu-guest-agent
+  - nano
+  - wget
+  - curl

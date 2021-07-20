@@ -1,0 +1,11 @@
+#cloud-config
+users:
+  - default
+  - name: looniversity
+    groups: sudo
+    sudo: ALL=(ALL:ALL) ALL
+    ssh_authorized_keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL9AThT6JmgxpQtfbQKCV1RfNwHYVAyFhk1BWEcoTA1v Looniversity"
+    password: $6$rounds=4096$qIIOE1mcfmKKBpbe$brB/1xAfO47BAx9.Pwb3nt9ZTn9zZXfjUgHlsHS9knasz9zglQEoJSRdnnt2Ype5.tZuLqskViTivph2dVHJx0
+packages: ['qemu-guest-agent', 'nano', 'wget', 'curl']
+package_upgrade: true

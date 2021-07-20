@@ -1,0 +1,7 @@
+- name: Get image info
+  ansible.builtin.command: qemu-img info --output=json "{{ img }}"
+  register: _img_info
+
+- name: Get disk size
+  ansible.builtin.set_fact:
+    img_size: "{{ _img_info.stdout | from_json | extract('virtual-size') }}"

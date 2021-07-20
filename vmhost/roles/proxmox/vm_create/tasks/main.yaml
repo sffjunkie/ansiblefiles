@@ -1,0 +1,117 @@
+---
+- name: Download main cloud disk image
+  when: cloud_distribution == 'ubuntu'
+  ansible.builtin.include_role:
+    name: cloud_image_download
+  vars:
+    version: "{{ cloud_version[cloud_distribution] }}"
+
+# region Main Drive Image
+- name: Requested disk Size
+  ansible.builtin.set_fact:
+    vm_disk_size_number: vm_disk_size | upper | replace('M', '') | replace('MB', '') | replace('G', '') | replace('GB', '') | float
+    vm_disk_size_units: vm_disk_size | regex_replace('\d+\.\d+', '')
+
+- name: Convert disk size GB to MB
+  when: (vm_disk_size_units[0] | upper) == 'G'
+  ansible.builtin.set_fact:
+    vm_disk_size: (vm_disk_size_number * 1024) | int
+
+- name: Actual Disk Size
+  ansible.builtin.command:
+    cmd: "qemu-img info --output=json {{ disk_image_main }}"
+  register: _main_image_qemu
+  changed_when: false
+
+- name: Get current disk size in MB
+  ansible.builtin.set_fact:
+    _main_image_disk_size: "{{ (_main_image_qemu.stdout | from_json | extract('virtual-size')) / (1024 * 1024) }}"
+
+- name: Resize image
+  when: vm_disk_size > _main_image_disk_size
+  block:
+    - name: Calc additional disk size in MB
+      ansible.builtin.set_fact:
+        _main_image_additional_space: vm_disk_size - _main_image_disk_size
+
+    - name: Resize disk image
+      ansible.builtin.command:
+        cmd: "qemu-img resize {{ disk_image_main }} +{{ _main_image_additional_space }}M"
+
+- name: Import main disk into local-lvm
+  ansible.builtin.command:
+    cmd: "qm importdisk {{ vm_id }} {{ disk_image_main }} local-lvm"
+  register: _import_main_disk
+
+# unused0:local-lvm:vm-9000-disk-0
+- name: Calc main disk name
+  ansible.builtin.set_fact:
+    disk_image_main: "local-lvm:{{ _import_main_disk.stdout | split(':') | last }}"
+# endregion
+
+
+# region Custom Cloud Init Drive Image
+- name: Configure custom cloud init image
+  when: disk_image_cloud_init != 'local:cloudinit'
+  block:
+    - name: Import cloud init image
+      ansible.builtin.command:
+        cmd: "qm importdisk {{ vm_id }} {{ disk_image_cloud_init }} local-lvm"
+      register: _import_cloud_init_disk
+
+    - name: Calc cloud init disk name
+      ansible.builtin.set_fact:
+        disk_image_cloud_init: "local-lvm:{{ _import_cloud_init_disk.stdout | split(':') | last }}"
+# endregion
+
+
+# region Standard Proxmox Cloud Init Drive Image
+# - name: Set cicustom if using local:cloudinit
+#   when: disk_image_cloud_init == 'local:cloudinit'
+#   ansible.builtin.copy:
+# endregion
+
+
+# region Calculate Memory
+- name: Get vm_memory_max number and units
+  ansible.builtin.set_fact:
+    vm_memory_max_number: vm_memory_max | upper | replace('M', '') | replace('MB', '') | replace('G', '') | replace('GB', '') | float
+    vm_memory_max_units: vm_memory_max | regex_replace('\d+\.\d+', '')
+
+- name: Convert memory GB to MB
+  when: vm_memory_max_units[0] == 'G'
+  ansible.builtin.set_fact:
+    vm_memory_max: (vm_memory_max_number * 1024) | int
+# endregion
+
+- name: Create VM
+  community.general.proxmox_kvm:
+    name: "{{ vm_name }}"
+    vmid: "{{ vm_id | default(omit, True) }}"
+    net:
+      net0: "{{ vm_net.net0 | default(omit, True) }}"
+      net1: "{{ vm_net.net1 | default(omit, True) }}"
+      net2: "{{ vm_net.net2 | default(omit, True) }}"
+      net3: "{{ vm_net.net3 | default(omit, True) }}"
+    ipconfig: "{{ vm_ip }}"
+    sockets: "{{ vm_cpu_count }}"
+    cores: "{{ vm_core_count }}"
+    scsihw: virtio-scsi-pci
+    scsi0: "local-lvm:{{ disk_image_main }}"
+    ide:
+      ide2: "local-lvm:{{ disk_image_cloud_init }}"
+    boot: c
+    bootdisk: scsi0
+    serial:
+      serial0: socket
+    vga: serial0
+
+# # Turn into a template
+# qm template {{ vm_id }}
+
+# - name: Create VM
+#   ansible.builtin.command:
+#     cmd: "qm create {{ vm_id }} -- --memory={{ vm_memory_max }} --net0={{ vm_net0 }} --sockets={{ vm_cpu_count }} --cores={{ vm_core_count }}"
+#   register: _create_vm
+#   failed_when: _create_vm.rc > 0 and "unable to create VM" in _create_vm.stdout and not "already exists" in _create_vm.stdout
+#   changed_when: _create_vm.rc == 0 and not "unable to create VM" in _create_vm.stdout and not "already exists" in _create_vm.stdout

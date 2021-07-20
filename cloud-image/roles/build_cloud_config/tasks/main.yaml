@@ -1,0 +1,5 @@
+---
+- name: Create cloud config
+  ansible.builtin.template:
+    src: user-config.yaml.j2
+    dest: "./configs/{{ config_name }}.yaml"

@@ -4,8 +4,9 @@
     cmd: hostnamectl set-hostname "{{ hostname }}"
 
 - name: Change /etc/hosts
+  when: os_family == 'debian'
   ansible.builtin.lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^127.0.1.1"
-        line: "127.0.1.1 {{ hostname }}"
-        state: present
+    dest: /etc/hosts
+    regexp: "^127.0.1.1"
+    line: "127.0.1.1 {{ hostname }}"
+    state: present

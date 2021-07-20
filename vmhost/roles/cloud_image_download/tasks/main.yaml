@@ -1,0 +1,21 @@
+---
+- name: Set Ubuntu cloud image
+  when: cloud_distribution == 'ubuntu'
+  ansible.builtin.set_fact:
+    _image_url: "https://cloud-images.ubuntu.com/{{ version }}/current/{{ version }}-server-cloudimg-amd64.img"
+
+- name: Set Fedora cloud image
+  when: cloud_distribution == 'fedora'
+  ansible.builtin.set_fact:
+    _image_url: "https://download.fedoraproject.org/pub/fedora/linux/releases/{{ version }}/Cloud/x86_64/images/Fedora-Cloud-Base-{{ version }}-1.2.x86_64.qcow2"
+
+- name: Set main disk image filename
+  ansible.builtin.set_fact:
+    disk_image_main: "~/images/{{ distribution }}-{{ version }}-cloud-base{{ disk_image_extension }}"
+
+- name: Download cloud image
+  ansible.builtin.uri:
+    url: "{{ _image_url }}"
+    dest: "{{ disk_image_main }}"
+    mode: 0644
+    status_code: [200, 304]

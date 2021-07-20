@@ -5,3 +5,5 @@ inventory.yaml
 configfiles/templates
 roles/galaxy
 configfiles.json
+*.qcow2
+*.img

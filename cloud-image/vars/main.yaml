@@ -1,7 +1,26 @@
 ---
 config_name: looniversity
-packages:
-  - qemu-guest-agent
-  - nano
-  - wget
-  - curl
+
+user:
+  use_default_user: true
+
+  # user-config
+  users:
+    - name: ""
+      password: ""
+      ssh_authorized_keys: []
+
+  packages:
+    - qemu-guest-agent
+    - nano
+    - wget
+    - curl
+
+# meta config
+meta:
+  instance-id: "" # if not specified a UUID will be generated
+  hostname: ""
+  nameserver: ""
+  searchdomain: ""
+  gateway4: ""
+  gateway6: ""

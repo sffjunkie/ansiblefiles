@@ -12,4 +12,4 @@
 
 - name: Create cloud-init image
   ansible.builtin.command:
-    cmd: "cloud-localds  -d qcow2 ./images/cloud-config-{{ config_name }}-{{ _date.stdout }}.qcow2 ./configs/{{ config_name }}.yaml"
+    cmd: "cloud-localds -f iso9660 ./images/cloud-config-{{ config_name }}-{{ _date.stdout }}.img ./configs/{{ config_name }}-user.yaml  ./configs/{{ config_name }}-meta.yaml"

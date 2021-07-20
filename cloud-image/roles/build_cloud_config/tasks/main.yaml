@@ -1,5 +1,28 @@
 ---
-- name: Create cloud config
+- name: If instance-id is empty
+  when: meta["instance-id"] == ""
+  block:
+    - name: Generate new instance-id
+      ansible.builtin.command:
+        cmd: uuidgen
+      register: _instance_id
+
+    - ansible.utils.update_fact:
+        updates:
+          - path: meta.instance-id
+            value: "{{ _instance_id.stdout }}"
+      register: _updated_fact
+      changed_when: false
+
+    - ansible.builtin.set_fact:
+        meta: "{{ _updated_fact.meta }}"
+
+- name: Create cloud-init user config
   ansible.builtin.template:
     src: user-config.yaml.j2
-    dest: "./configs/{{ config_name }}.yaml"
+    dest: "./configs/{{ config_name }}-user.yaml"
+
+- name: Create cloud-init meta config
+  ansible.builtin.template:
+    src: meta-config.yaml.j2
+    dest: "./configs/{{ config_name }}-meta.yaml"

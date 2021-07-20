@@ -7,3 +7,4 @@ roles/galaxy
 configfiles.json
 *.qcow2
 *.img
+**/configs/*.yaml

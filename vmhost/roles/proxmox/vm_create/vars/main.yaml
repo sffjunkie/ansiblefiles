@@ -1,5 +1,5 @@
 ---
-disk_image_cloud_init: /root/images/cloud-config-looniversity-2021-07-19.qcow2
+disk_image_cloud_init: ""
 storage_main: local-lvm
 storage_cloud_init: local-lvm
 snippet_cloud_init: ""

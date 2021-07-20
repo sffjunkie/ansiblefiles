@@ -1,12 +1,31 @@
 ---
+# disk_image_cloud_path = ../cloud-image/images/
+# disk_image_cloud_init - either local:cloudinit
+
+- name: Check disk_image_cloud_init is set
+  ansible.builtin.assert:
+    that: disk_image_cloud_init != ''
+
+# region Main Drive Image
 - name: Download main cloud disk image
-  when: cloud_distribution == 'ubuntu'
+  when: disk_image_main == ''
   ansible.builtin.include_role:
     name: cloud_image_download
   vars:
     version: "{{ cloud_version[cloud_distribution] }}"
+  # Sets fact 'disk_image_main' = path to disk image on remote host ~/images/...
 
-# region Main Drive Image
+- name: Copy disk_image_main
+  when: disk_image_main == ''
+  block:
+    - ansible.builtin.copy:
+        src: "{{ disk_image_main }}"
+        dest: ~/images/
+
+    - ansible.builtin.set_fact:
+
+
+
 - name: Requested disk Size
   ansible.builtin.set_fact:
     vm_disk_size_number: vm_disk_size | upper | replace('M', '') | replace('MB', '') | replace('G', '') | replace('GB', '') | float
@@ -20,12 +39,19 @@
 - name: Actual Disk Size
   ansible.builtin.command:
     cmd: "qemu-img info --output=json {{ disk_image_main }}"
+    chdir: ~/images/
   register: _main_image_qemu
   changed_when: false
 
 - name: Get current disk size in MB
   ansible.builtin.set_fact:
     _main_image_disk_size: "{{ (_main_image_qemu.stdout | from_json | extract('virtual-size')) / (1024 * 1024) }}"
+
+- name: Copy disk image to temporary file
+  ansible.builtin.copy:
+    src: {{ disk_image_main }}
+    dest: ~/images/tmp.qcow2
+    remote_src: true
 
 - name: Resize image
   when: vm_disk_size > _main_image_disk_size
@@ -36,17 +62,22 @@
 
     - name: Resize disk image
       ansible.builtin.command:
-        cmd: "qemu-img resize {{ disk_image_main }} +{{ _main_image_additional_space }}M"
+        cmd: "qemu-img resize ~/images/tmp.qcow2 +{{ _main_image_additional_space }}M"
 
 - name: Import main disk into local-lvm
   ansible.builtin.command:
-    cmd: "qm importdisk {{ vm_id }} {{ disk_image_main }} local-lvm"
+    cmd: "qm importdisk {{ vm_id }} ~/images/tmp.qcow2 local-lvm"
   register: _import_main_disk
 
 # unused0:local-lvm:vm-9000-disk-0
 - name: Calc main disk name
   ansible.builtin.set_fact:
     disk_image_main: "local-lvm:{{ _import_main_disk.stdout | split(':') | last }}"
+
+- name: Delete temporary image file
+  ansible.builtin.file:
+    path: ~/images/tmp.qcow2
+    state: absent
 # endregion
 
 
@@ -54,9 +85,14 @@
 - name: Configure custom cloud init image
   when: disk_image_cloud_init != 'local:cloudinit'
   block:
+    - name: Copy cloud init image
+      ansible.builtin.copy:
+        src: "../cloud-image/images/{{ disk_image_cloud_init }}"
+        dest: ~/images/
+
     - name: Import cloud init image
       ansible.builtin.command:
-        cmd: "qm importdisk {{ vm_id }} {{ disk_image_cloud_init }} local-lvm"
+        cmd: "qm importdisk {{ vm_id }} ~/images/{{ disk_image_cloud_init }} {{ storage_cloud_init }}"
       register: _import_cloud_init_disk
 
     - name: Calc cloud init disk name
@@ -108,10 +144,3 @@
 
 # # Turn into a template
 # qm template {{ vm_id }}
-
-# - name: Create VM
-#   ansible.builtin.command:
-#     cmd: "qm create {{ vm_id }} -- --memory={{ vm_memory_max }} --net0={{ vm_net0 }} --sockets={{ vm_cpu_count }} --cores={{ vm_core_count }}"
-#   register: _create_vm
-#   failed_when: _create_vm.rc > 0 and "unable to create VM" in _create_vm.stdout and not "already exists" in _create_vm.stdout
-#   changed_when: _create_vm.rc == 0 and not "unable to create VM" in _create_vm.stdout and not "already exists" in _create_vm.stdout

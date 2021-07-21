@@ -1,14 +1,12 @@
 ---
-config_name: looniversity
-
 user:
   use_default_user: true
 
   # user-config
-  users:
-    - name: ""
-      password: ""
-      ssh_authorized_keys: []
+  users: []
+    # - name: ""
+    #   password: ""
+    #   ssh_authorized_keys: []
 
   packages:
     - qemu-guest-agent
@@ -18,9 +16,18 @@ user:
 
 # meta config
 meta:
-  instance-id: "" # if not specified a UUID will be generated
+  instance-id: "" # if empty then a UUID will be generated
   hostname: ""
-  nameserver: ""
-  searchdomain: ""
-  gateway4: ""
-  gateway6: ""
+
+  network:
+    version: 2
+    # renderer: networkd
+    ethernets:
+      ens18:  # default proxmox ethernet device
+        dhcp4: true
+        gateway4: 10.44.0.1
+        nameservers:
+          addresses:
+            - 10.44.0.1
+            - 8.8.8.8
+          search: [looniversity.net]

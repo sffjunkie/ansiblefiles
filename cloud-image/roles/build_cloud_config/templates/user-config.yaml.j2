@@ -19,6 +19,7 @@ packages:
 {{ user.packages | to_nice_yaml(indent=2) }}
 package_upgrade: true
 
+{# default_user defined in secrets.yaml #}
 {% if user.use_default_user and (default_user | default(False, True)) %}
 default_user:
 {% filter indent(width=2, first=True) %}

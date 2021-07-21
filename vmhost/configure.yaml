@@ -6,7 +6,7 @@
     - ../common/vars/playbook.yaml
 
   roles:
-    - configure_updates
+    - configure_apt_sources
     - role: update
       reboot_after_update: false
     - role: playbook_packages
@@ -16,7 +16,7 @@
           - requests
     - no_valid_subscription
     - darkmode
-    - image_download
+    - cloud_init_enabled_image_download
 
-    - role: vm_create:
-      disk_image_cloud_init: /root/images/cloud-config-looniversity-2021-07-19.qcow2
+    # - role: vm_create:
+    #   disk_image_cloud_init: /root/images/cloud-config-looniversity-2021-07-19.qcow2

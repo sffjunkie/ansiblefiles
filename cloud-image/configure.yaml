@@ -2,13 +2,21 @@
 - name: Build image
   hosts: localhost
   vars_files:
-    - ../common/vars/playbook.yaml
     - ./vars/main.yaml
-    - ./vars/secrets.yaml
 
   pre_tasks:
+    - name: Include secrets.yaml
+      ansible.builtin.include_vars:
+        file: secrets.yaml
+      register: _include_secrets
+      failed_when: false
+
+    - name: Assert default_user exists if user.use_default_user is true
+      assert:
+        that: not user.use_default_user or (user.use_default_user and default_user is defined)
+
     - name: Install whois
-      when: os_family == 'debian'
+      when: ansible_os_family == 'Debian'
       ansible.builtin.package:
         name: whois
         state: present
@@ -24,13 +32,32 @@
 #   vars_files:
 #     - ./vars/main.yaml
 #     - ./vars/secrets.yaml
-#   tasks:
 #     - name: Get date
 #       ansible.builtin.command:
 #         cmd: date +"%Y-%m-%d"
 #       register: _date
 #       changed_when: false
 #       tags: image
+
+  tasks:
+    - name: a
+      when: "'config_name' in hostvars[inventory_hostname]"
+      ansible.builtin.set_fact:
+        _config_name_str: "lklklkl"
+
+    - when: "not 'config_name' in hostvars[inventory_hostname]"
+      ansible.builtin.set_fact:
+        _config_name_str: "aaa"
+      register: _config_name_defined
+      failed_when: false
+
+    - name: Calc image name
+      ansible.builtin.set_fact:
+        img_src: "{{ './images/cloud-config' ~ _config_name_str ~ '.qcow2' }}"
+
+
+    - debug:
+        msg: "{{ img_src }}"
 
 #     - name: Copy images
 #       ansible.builtin.copy:

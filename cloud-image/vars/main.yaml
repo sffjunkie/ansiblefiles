@@ -17,11 +17,10 @@ user:
 # meta config
 meta:
   instance-id: "" # if empty then a UUID will be generated
-  hostname: ""
 
   network:
     version: 2
-    # renderer: networkd
+    renderer: networkd
     ethernets:
       ens18:  # default proxmox ethernet device
         dhcp4: true

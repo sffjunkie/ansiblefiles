@@ -2,10 +2,10 @@
 - hosts: laptop
   become: true
   vars:
-    ansible_host: "{{ ipv4 }}"
     ansible_port: "{{ ssh_port }}"
   vars_files:
     - ./vars/install_overrides.yaml
+    - ../common/vars/main.yaml
     - ../common/vars/playbook.yaml
 
   roles:

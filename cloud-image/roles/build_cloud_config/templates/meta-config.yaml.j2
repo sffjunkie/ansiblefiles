@@ -1,5 +1,3 @@
-{% for key, value in meta.items() %}
-{% if value != "" %}
-{{ key }}: {{ value }}
-{% endif %}
-{% endfor %}
+instance-id: {{ meta["instance-id"] }}
+local-hostname: {{ inventory_hostname }}
+{{ meta.network | to_nice_yaml(indent=2) }}

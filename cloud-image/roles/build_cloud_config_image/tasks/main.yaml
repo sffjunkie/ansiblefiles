@@ -22,6 +22,16 @@
   register: _date
   changed_when: false
 
+- name: Set config_name
+  when: config_name != ""
+  ansible.builtin.set_fact:
+    _config_image_config_name_str: "{{ config_name }}-"
+
+- name: Set config_name
+  when: config_name == ""
+  ansible.builtin.set_fact:
+    _config_image_config_name_str: ""
+
 - name: Create cloud-init image
   ansible.builtin.command:
-    cmd: "cloud-localds -f iso9660 ./images/cloud-config-{{ config_name }}-{{ _date.stdout }}.img ./configs/{{ config_name }}-user.yaml  ./configs/{{ config_name }}-meta.yaml"
+    cmd: "cloud-localds -f iso9660 {{ image_path }} {{ user_config_path }} {{ meta_config_path }}"

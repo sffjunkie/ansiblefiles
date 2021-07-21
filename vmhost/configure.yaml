@@ -17,6 +17,3 @@
     - no_valid_subscription
     - darkmode
     - cloud_init_enabled_image_download
-
-    # - role: vm_create:
-    #   disk_image_cloud_init: /root/images/cloud-config-looniversity-2021-07-19.qcow2

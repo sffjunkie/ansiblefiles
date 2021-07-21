@@ -1,10 +1,10 @@
 ---
-- name: Build image
+- name: Build nocloud image and configs
   hosts: localhost
   vars_files:
     - ./vars/main.yaml
 
-  pre_tasks:
+  tasks:
     - name: Include secrets.yaml
       ansible.builtin.include_vars:
         file: secrets.yaml
@@ -21,52 +21,59 @@
         name: whois
         state: present
 
-  roles:
-    - build_cloud_config
-    - role: build_cloud_config_image
-      tags: image
-
-# - name: Copy image
-#   hosts: furrball
-#   become: true
-#   vars_files:
-#     - ./vars/main.yaml
-#     - ./vars/secrets.yaml
-#     - name: Get date
-#       ansible.builtin.command:
-#         cmd: date +"%Y-%m-%d"
-#       register: _date
-#       changed_when: false
-#       tags: image
-
-  tasks:
-    - name: a
+    # Check for the existence of the variable config_name
+    # Checking if config_name is defined fails if config_name does not ezist at all
+    - name: Set config_name
       when: "'config_name' in hostvars[inventory_hostname]"
       ansible.builtin.set_fact:
-        _config_name_str: "lklklkl"
+        _image_config_name_str: "-{{ config_name }}"
+        _config_config_name_str: "{{ config_name }}-"
 
-    - when: "not 'config_name' in hostvars[inventory_hostname]"
+    - name: Set empty config_name
+      when: "not 'config_name' in hostvars[inventory_hostname]"
       ansible.builtin.set_fact:
-        _config_name_str: "aaa"
-      register: _config_name_defined
-      failed_when: false
+        _image_config_name_str: ""
+        _config_config_name_str: ""
+
+    - name: Get date
+      ansible.builtin.command:
+        cmd: date +"%Y-%m-%d"
+      register: _date
+      changed_when: false
 
     - name: Calc image name
       ansible.builtin.set_fact:
-        img_src: "{{ './images/cloud-config' ~ _config_name_str ~ '.qcow2' }}"
+        image_path: "./images/cloud-config{{ _image_config_name_str }}-{{ _date.stdout }}.img"
 
+    - ansible.builtin.set_fact:
+        user_config_path: ./configs/{{ _config_config_name_str }}user.yaml
+        meta_config_path: ./configs/{{ _config_config_name_str }}meta.yaml
 
-    - debug:
-        msg: "{{ img_src }}"
+    - ansible.builtin.include_role:
+        name: build_cloud_config
 
-#     - name: Copy images
-#       ansible.builtin.copy:
-#         src: "./images/cloud-config-{{ config_name }}-{{ _date.stdout }}.qcow2"
-#         dest: ~/images/
-#       tags: image
+    - ansible.builtin.include_role:
+        name: build_cloud_config_image
 
-#     - name: Copy cloud config
-#       ansible.builtin.copy:
-#         src: ./configs/{{ config_name }}.yaml
-#         dest: ~/snippets/
-#       tags: config
+- name: Copy nocloud image and configs
+  hosts: furrball
+  become: true
+  vars_files:
+    - ./vars/main.yaml
+    - ./vars/secrets.yaml
+
+  tasks:
+    - name: Copy images
+      ansible.builtin.copy:
+        src: "{{ hostvars['localhost']['image_path'] }}"
+        dest: ~/images/
+
+    - name: Copy user config
+      ansible.builtin.copy:
+        src: "{{ hostvars['localhost']['user_config_path'] }}"
+        dest: ~/snippets/
+
+    - name: Copy meta config
+      ansible.builtin.copy:
+        src: "{{ hostvars['localhost']['meta_config_path'] }}"
+        dest: ~/snippets/

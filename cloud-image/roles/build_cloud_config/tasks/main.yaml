@@ -20,9 +20,9 @@
 - name: Create cloud-init user config
   ansible.builtin.template:
     src: user-config.yaml.j2
-    dest: "./configs/{{ config_name }}-user.yaml"
+    dest: "{{ user_config_path }}"
 
 - name: Create cloud-init meta config
   ansible.builtin.template:
     src: meta-config.yaml.j2
-    dest: "./configs/{{ config_name }}-meta.yaml"
+    dest: "{{ meta_config_path }}"

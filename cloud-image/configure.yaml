@@ -19,7 +19,7 @@
         _config_name_str: "cloud-config"
 
     - name: Set config_name
-      when: cli_config_name is defined
+      when: cli_config_name | default('', True) != ''
       ansible.builtin.set_fact:
         _config_name_str: "{{ _config_name_str }}-{{ cli_config_name }}"
 

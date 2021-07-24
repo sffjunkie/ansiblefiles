@@ -1,0 +1,11 @@
+---
+update: false
+vmid: 100
+vm_node: mary
+vm_image: truenas:template/iso/pfSense-CE-2.5.1-RELEASE-amd64.iso
+fqdn: pinky.looniversity.net
+netmask: "/21"
+net_device:
+net_wan: vmbr1
+net_lan: vmbr2
+reboot_after_update: false

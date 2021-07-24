@@ -38,25 +38,25 @@ shift
 
 case "$stage" in
     config)
-        ansible-playbook configure.yaml -i ../inventory.yaml \
+        ansible-playbook configure.yaml -i ../inventory \
         -e cli_config_name=$NAME \
         --skip-tags=image,copy "$@"
         ;;
 
     image)
-        ansible-playbook configure.yaml -i ../inventory.yaml \
+        ansible-playbook configure.yaml -i ../inventory \
         -e cli_config_name=$NAME \
         --skip-tags=copy "$@"
         ;;
 
     copy)
-        ansible-playbook configure.yaml -i ../inventory.yaml \
+        ansible-playbook configure.yaml -i ../inventory \
         -e cli_config_name=$NAME \
         --skip-tags=config,image "$@"
         ;;
 
     *)
-        ansible-playbook configure.yaml -i ../inventory.yaml \
+        ansible-playbook configure.yaml -i ../inventory \
         -e cli_config_name=$NAME \
         "$@"
         ;;

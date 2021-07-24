@@ -1,4 +1,4 @@
 #!/bin/sh
-ansible-playbook configure.yaml \
+ansible-playbook proxmox.yaml \
     -e @./vars/secrets.yaml "$@"
     # --ask-vault-pass

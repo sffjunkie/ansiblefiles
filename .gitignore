@@ -1,6 +1,7 @@
 .vagrant
 files/ssh
 secrets.yaml
+inventory
 inventory.yaml
 configfiles/templates
 roles/galaxy

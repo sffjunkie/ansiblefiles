@@ -2,12 +2,12 @@
 
 > **Note**: This playbook only configures values useful for a Proxmox VM.
 
-Builds a basic cloud init image (and the yaml files that are used to generate the image)
+Builds a basic cloud-init nocloud data-source image (and the yaml files that are used to generate the image)
 
 The image created follows the
 [nocloud format ](https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html)
 
-There are 2 types of info stored in the image
+There are 2 categories of info stored in the image
 
 1. user - Allows configuration of user (name, password SSH keys etc)
 2. meta - Metadata about the instance including network configuration

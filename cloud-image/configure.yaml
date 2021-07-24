@@ -1,5 +1,5 @@
 ---
-- name: Build nocloud image and configs
+- name: Build nocloud configs and image
   hosts: localhost
   vars_files:
     - ./vars/main.yaml
@@ -15,52 +15,55 @@
       assert:
         that: not user.use_default_user or (user.use_default_user and default_user is defined)
 
-    - name: Install whois
-      when: ansible_os_family == 'Debian'
-      ansible.builtin.package:
-        name: whois
-        state: present
+    - ansible.builtin.set_fact:
+        _config_name_str: "cloud-config"
 
-    # Check for the existence of the variable config_name
-    # Checking if config_name is defined fails if config_name does not ezist at all
     - name: Set config_name
-      when: "'config_name' in hostvars[inventory_hostname]"
+      when: cli_config_name is defined
       ansible.builtin.set_fact:
-        _image_config_name_str: "-{{ config_name }}"
-        _config_config_name_str: "{{ config_name }}-"
+        _config_name_str: "{{ _config_name_str }}-{{ cli_config_name }}"
 
-    - name: Set empty config_name
-      when: "not 'config_name' in hostvars[inventory_hostname]"
+    - name: Set config_name
+      when: "'config_name' in hostvars[inventory_hostname] and not cli_config_name is defined"
       ansible.builtin.set_fact:
-        _image_config_name_str: ""
-        _config_config_name_str: ""
+        _config_name_str: "{{ _config_name_str }}-{{ hostvars[inventory_hostname]['config_name'] }}"
 
-    - name: Get date
-      ansible.builtin.command:
-        cmd: date +"%Y-%m-%d"
-      register: _date
-      changed_when: false
+    - name: If using date
+      when: use_date
+      block:
+        - name: Get date
+          ansible.builtin.command:
+            cmd: date +"%Y-%m-%d"
+          register: _date
+          changed_when: false
+
+        - name: Set date string
+          ansible.builtin.set_fact:
+            _config_name_str: "{{ _config_name_str }}-{{ _date.stdout }}"
 
     - name: Calc image name
       ansible.builtin.set_fact:
-        image_path: "./images/cloud-config{{ _image_config_name_str }}-{{ _date.stdout }}.img"
+        image_path: "./build/images/{{ _config_name_str }}.img"
 
     - ansible.builtin.set_fact:
-        user_config_path: ./configs/{{ _config_config_name_str }}user.yaml
-        meta_config_path: ./configs/{{ _config_config_name_str }}meta.yaml
+        user_config_path: ./build/configs/{{ _config_name_str }}-user.yaml
+        meta_config_path: ./build/configs/{{ _config_name_str }}-meta.yaml
 
     - ansible.builtin.include_role:
         name: build_cloud_config
+      tags: config
 
     - ansible.builtin.include_role:
         name: build_cloud_config_image
+      tags: image
 
 - name: Copy nocloud image and configs
-  hosts: furrball
+  hosts: vm_nodes_test  # FIXME: Replace with vm_nodes
   become: true
   vars_files:
     - ./vars/main.yaml
     - ./vars/secrets.yaml
+  tags: copy
 
   tasks:
     - name: Copy images

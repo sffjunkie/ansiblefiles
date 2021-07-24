@@ -1,12 +1,15 @@
 ---
+# config_name: see secrets.yaml
+use_date: true
+
 user:
   use_default_user: true
 
   # user-config
-  users: []
-    # - name: ""
-    #   password: ""
-    #   ssh_authorized_keys: []
+  users:
+    - name: "joeb"
+      password: "bloggs"
+      ssh_authorized_keys: []
 
   packages:
     - qemu-guest-agent

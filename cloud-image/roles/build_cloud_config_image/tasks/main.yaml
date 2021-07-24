@@ -32,6 +32,6 @@
   ansible.builtin.set_fact:
     _config_image_config_name_str: ""
 
-- name: Create cloud-init image
+- name: Create cloud-init nocloud data-source image
   ansible.builtin.command:
     cmd: "cloud-localds -f iso9660 {{ image_path }} {{ user_config_path }} {{ meta_config_path }}"

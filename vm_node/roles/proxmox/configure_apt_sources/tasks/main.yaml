@@ -1,0 +1,26 @@
+---
+- name: Check if enterprise sources file exists
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/pve-enterprise.list
+  register: _enterprise
+
+- name: Copy enterprise.list to ...disabled
+  when: _enterprise.stat.exists
+  ansible.builtin.copy:
+    src: /etc/apt/sources.list.d/pve-enterprise.list
+    dest: /etc/apt/sources.list.d/pve-enterprise.list.disabled
+    mode: preserve
+    remote_src: true
+
+- name: Delete old enterprise.list
+  when: _enterprise.stat.exists
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/pve-enterprise.list
+    state: absent
+
+- name: Add no-subscription repository
+  ansible.builtin.lineinfile:
+    dest: /etc/apt/sources.list
+    regexp: "^deb http://download.proxmox.com/debian/pve"
+    line: "deb http://download.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-no-subscription"
+    state: present

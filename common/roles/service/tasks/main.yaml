@@ -1,0 +1,8 @@
+---
+- name: Create service directory
+  ansible.builtin.file:
+    name: "/srv/{{ service }}"
+
+- name: Copy docker compose file
+  ansible.builtin.copy:
+    src: hello

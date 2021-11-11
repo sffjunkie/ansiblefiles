@@ -1,0 +1,24 @@
+---
+- hosts: vm_nodes
+  become: true
+  vars_files:
+    - ../common/vars/playbook.yaml
+
+  # roles:
+  tasks:
+    - name: Create mount target
+      ansible.builtin.tempfile:
+        prefix: backup
+        state: directory
+      register: _backup_mount_dir
+      notify:
+        - Unmount backup target
+      changed_when: false
+
+    - name: Mount target
+      when: "{{ backup_target_type }} != 'directory'"
+      ansible.posix.mount:
+        src: "{{ backup_target }}"
+        path: "{{ _backup_mount_dir }}"
+        fstype: "{{ backup_target_type }}"
+        state: mounted

@@ -1,0 +1,20 @@
+---
+argument_specs:
+  # roles/myapp/tasks/main.yml entry point
+  main:
+    short_description: The main entry point for the backup_postgresql role.
+    options:
+      backup_databases:
+        type: "elements"
+        required: true
+        description: |
+          The databases to backup specified as a list of dictionaries
+          with the following keys
+            name: The database name
+            username: the username to access the database
+            password: The user's password
+
+      dest:
+        type: "str"
+        required: true
+        description: The destination for the dump files

@@ -1,0 +1,25 @@
+---
+- name: Ubuntu < 20.10
+  block:
+    - name: Add Kubic repository
+      ansible.builtin.copy:
+        dest: "/etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list"
+        content:
+          "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ ansible_distribution_version }}/ /"
+
+    - name: Add apt key
+      ansible.builtin.apt_key:
+        url: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ ansible_distribution_version }}/Release.key"
+
+  when: (ansible_distribution_major_version | int) < 20 or (ansible_distribution_version.split('.')[1] | int) >= 10
+
+- name: Install podman
+  ansible.builtin.package:
+    name: podman
+    state: present
+
+- name: Install podman-docker when docker-compose required
+  ansible.builtin.package:
+    name: podman-compose
+    state: present
+  when: docker_compose == true

@@ -1,0 +1,19 @@
+---
+# TODO: Change hosts to vmhosts
+- hosts: vm_nodes
+  become: true
+  vars_files:
+    - ../common/vars/playbook.yaml
+
+  roles:
+    - configure_apt_sources
+    - role: update
+      reboot_after_update: false
+    - role: playbook_packages
+      extra:
+        pip:
+          - proxmoxer
+          - requests
+    - no_valid_subscription
+    - darkmode
+    - cloud_init_enabled_image_download

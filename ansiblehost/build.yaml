@@ -1,10 +1,11 @@
+# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
 ---
 - hosts: ansible
   become: true
   become_method: sudo
   vars_files:
-    - ../vars/_playbook.yaml
-    - ../vars/secrets.yaml
+    - ../common/vars/playbook.yaml
+    - ../common/vars/secrets.yaml
     - ./vars/pip.yaml
 
   pre_tasks:

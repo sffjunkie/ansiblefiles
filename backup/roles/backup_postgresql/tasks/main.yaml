@@ -1,0 +1,44 @@
+---
+- name: Get Postgresql version
+  community.postgresql.postgresql_info:
+    filter: version
+  register: _pg_server_version
+
+- name: Install postgresql tools
+  ansible.builtin.include_role:
+    name: postgresql_tools
+    vars:
+      postgresql_version: "{{ _pg_server_version.full }}"
+
+- name: Create backup directory
+  ansible.builtin.tempfile:
+    prefix: postgresql
+    state: directory
+  register: _pg_tmp_dir
+  notify:
+    - Delete temporary files
+  changed_when: false
+
+- name: Backup databases
+  block:
+    - name: Create .pgpass file
+      ansible.builtin.copy:
+        path: "~/.pgpass"
+        state: present
+        content: "{{ host }}:*:{{ item.name }}:{{ item.username }}:{{ item.password }}"
+        force: true
+
+    - ansible.builtin.debug:
+        msg: "Backing up PostgreSQL database {{ item.name }}"
+
+    - name: Dump database
+      ansible.builtin.shell:
+        cmd: "pg_dump --host=127.0.0.1 --username={{ item.username }} {{ item.name }} > {{ _pg_tmp_dir.path }}/pgdump/{{ item.name }}.dump"
+
+    - name: Copy dump to destination
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ _pg_tmp_dir.path }}/pgdump/{{ item.name }}.dump"
+        dest: "{{ dest }}"
+
+  loop: {{ backup_databases }}

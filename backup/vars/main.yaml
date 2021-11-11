@@ -1,0 +1,3 @@
+---
+backup_target: 10.44.0.230:/backup
+backup_target_type: nfs

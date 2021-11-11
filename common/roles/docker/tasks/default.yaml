@@ -1,0 +1,8 @@
+---
+- name: Install docker from package manager
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present

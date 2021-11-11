@@ -1,0 +1,26 @@
+services:
+  {{ service }}:
+    container_name: {{ service }}
+    image: {{ image }}
+    restart: unless-stopped
+    volumes: {{ volumes }}
+
+    ports:
+{% for port in ports %}
+      - 'port'
+{% endfor %}
+
+    volumes:
+{% for volume in bind_volumes %}
+      - type: bind
+        source: {{ network.source }}
+        target: {{ network.target }}
+{% end for %}
+
+{% if external_networks %}
+networks:
+{% for network in networks %}
+  {{ network }}:
+    external: true
+{% end for %}
+{% endif %}

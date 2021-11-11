@@ -1,0 +1,66 @@
+---
+argument_specs:
+  # roles/myapp/tasks/main.yml entry point
+  main:
+    short_description: The main entry point for the vm_create role.
+    options:
+      vm_name:
+        type: "string"
+        required: true
+        description: The name of the new VM
+      vm_id:
+        type: "int"
+        required: false
+        description: The new id number for the VM
+      vm_disk_size:
+        type: "string"
+        required: false
+        description: The disk size of the new VM. In either bytes, megabytes (M/MB) or gigabytes (G/GB). Default is 20G
+      vm_disk_cloud_enabled:
+        type: "string"
+        required: true
+        description: The cloud-init enabled disk image to use as a base
+      vm_disk_cloud_init:
+        type: "string"
+        required: true
+        description: The nocloud cloud-init disk image to use to configure the VM
+      vm_cpu_count:
+        type: "int"
+        required: false
+        description: The number of CPUs to allocate to the VM. Default is 1
+      vm_cores_count:
+        type: "int"
+        required: false
+        description: The number of cores to allocate to the VM. Default is 1
+      vm_memory_max:
+        type: "string"
+        required: false
+        description: The maximum amount of RAM to allocate to the VM. In either bytes, megabytes (M/MB) or gigabytes (G/GB). Default is 1024M
+      vm_memory_default:
+        type: "string"
+        required: false
+        description: The amount of RAM to allocate to the VM. In either bytes, megabytes (M/MB) or gigabytes (G/GB). Default is 512M
+      vm_machine_type:
+        type: "string"
+        required: false
+        description: The machine type of the VM
+      vm_net0:
+        type: "string"
+        required: false
+        description: Network configuration for the first network device. {mac} if present is replaced by a random MAC address. Default is 'virtio={mac},bridge=vmbr0'
+      vm_net1:
+        type: "string"
+        required: false
+        description: Network configuration for the second network device
+      vm_net2:
+        type: "string"
+        required: false
+        description: Network configuration for the third network device
+      vm_net3:
+        type: "string"
+        required: false
+        description: Network configuration for the fourth network device
+      vm_ip:
+        type: "string"
+        required: true
+        description: VM IP Address. Either 'dhcp' or IP/netmask

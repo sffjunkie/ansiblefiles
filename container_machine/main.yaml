@@ -1,0 +1,17 @@
+---
+# TODO: Change hosts to vmhosts
+- hosts: container_machines
+  become: true
+  vars_files:
+    - ../common/vars/playbook.yaml
+
+  roles:
+    - role: docker
+      when: "{{ backend == 'docker' }}"
+
+    - role: podman
+      vars:
+        use_compose: true
+      when: "{{ backend == 'podman' }}"
+
+    - docker_compose

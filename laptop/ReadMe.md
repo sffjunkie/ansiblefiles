@@ -34,3 +34,38 @@ The folowing roles are provided here
     * display manager - Currently lightdm
     * window manager - currently [QTile](http://www.qtile.org/)
 <!-- * xdg_user_dirs - Configures XDG user directories -->
+
+## License
+
+These ansible files are under the CC-BY-4.0 license
+
+
+
+
+
+<!--
+system
+    flatpak
+
+applications
+    alacritty
+    base16-shell
+    bat
+    exa
+    picom
+    vagrant
+
+development
+
+themes
+
+shell
+    zsh
+    ohmyzsh
+development
+x11
+
+playbook
+    aliases
+    copyconfig
+-->

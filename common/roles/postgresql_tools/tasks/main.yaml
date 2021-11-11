@@ -1,0 +1,8 @@
+---
+- name: Install Backup Tools
+  ansible.builtin.package:
+    name:
+      - postgresql-client-common
+      - "postgresql-client-{{ postgresql_version }}"
+      - python3-psycopg2
+    state: present

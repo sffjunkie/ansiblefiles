@@ -1,0 +1,21 @@
+---
+- name: Create temporary directory
+  ansible.builtin.tempfile:
+    prefix: compose
+    state: directory
+  register: _tmp_dir
+  notify:
+    - Delete temporary files
+  changed_when: false
+
+- name: Download compose binary
+  ansible.builtin.uri:
+    url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-linux-x86_64"
+    dest: "{{ _tmp_dir.path }}"
+    attributes: "+x"
+
+- name: Copy compose file
+  ansible.builtin.copy:
+    src: "{{ _compose_tmp_dir.path }}/docker-compose-linux-x86_64"
+    dest: "/usr/local/bin/docker-compose"
+    remote_src: true

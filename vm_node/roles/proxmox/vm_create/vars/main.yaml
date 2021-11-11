@@ -1,0 +1,21 @@
+---
+vm_name: ""
+vm_id: -1
+vm_disk_size: 20G
+vm_disk_cloud_enabled: ""
+vm_disk_cloud_init: ""
+vm_snippet_cloud_init: ""
+vm_cpu_count: 1
+vm_core_count: 1
+vm_memory_max: 1024M  # memory
+vm_memory_default: 512M  # balloon
+vm_machine_type: ""
+vm_net0: "virtio={mac},bridge=vmbr0"
+vm_net1: ""
+vm_net2: ""
+vm_net3: ""
+vm_ip: "dhcp"
+
+vm_image_format: qcow2
+storage_main: local-lvm
+storage_cloud_init: local-lvm

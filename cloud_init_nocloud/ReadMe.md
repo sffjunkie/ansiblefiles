@@ -1,4 +1,4 @@
-# cloud-image
+# cloud-init-nocloud
 
 > **Note**: This playbook only configures values useful for a Proxmox VM.
 

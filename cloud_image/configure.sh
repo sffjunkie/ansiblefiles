@@ -49,12 +49,14 @@ case "$stage" in
 
     copy)
         ansible-playbook configure.yaml -i ../inventory \
+        -e @../common/vars/secrets.yaml \
         -e cli_config_name=$NAME \
         --skip-tags=config,image "$@"
         ;;
 
     *)
         ansible-playbook configure.yaml -i ../inventory \
+        -e @../common/vars/secrets.yaml \
         -e cli_config_name=$NAME \
         "$@"
         ;;

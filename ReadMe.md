@@ -24,3 +24,8 @@
 
 config file templates -> config files
 docker compose templates -> docker compose files
+
+
+## Packages
+
+nfs-common to mount NFS share

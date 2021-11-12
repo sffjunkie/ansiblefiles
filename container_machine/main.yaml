@@ -4,14 +4,21 @@
   become: true
   vars_files:
     - ../common/vars/playbook.yaml
+    - ./vars/main.yaml
+
+  pre_tasks:
+    - name: Install pip3
+      ansible.builtin.package:
+        name: python3-pip
+        state: present
 
   roles:
     - role: docker
-      when: "{{ backend == 'docker' }}"
+      when: backend == 'docker'
 
     - role: podman
       vars:
         use_compose: true
-      when: "{{ backend == 'podman' }}"
+      when: backend == 'podman'
 
     - docker_compose

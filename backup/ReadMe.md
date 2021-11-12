@@ -10,6 +10,12 @@ Backs up data from the laptop and
 * OneDrive
 * Google Drive
 * Directory
+* TrueNAS
+* Offsite
+* USB HD
+
+* Encrypt before uploading
+
 
 ## Services to backup
 
@@ -37,3 +43,14 @@ Backs up data from the laptop and
 * Music
 * Videos
 * Service files
+
+
+* Laptop
+
+* Google Drive
+* OneDrive
+
+* Documents
+* Development
+* Pictures
+* Music

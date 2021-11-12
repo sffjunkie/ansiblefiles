@@ -9,15 +9,8 @@
     repo: "deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
 
-- name: Update apt and install docker-ce
+- name: Update apt cache and install pip
   ansible.builtin.apt:
+    name: python3-pip
+    state: present
     update_cache: true
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    state: latest
-
-- name: Install Docker Module for Python
-  ansible.builtin.pip:
-    name: docker

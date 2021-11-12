@@ -1,8 +1,19 @@
 ---
-- name: Install docker
+- name: Setup docker repository
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:
       - "{{ distribution }}.yaml"
       - "{{ os_family }}.yaml"
-      - "default.yaml"
+
+- name: Install docker from package manager
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Install Docker Module for Python
+  ansible.builtin.pip:
+    name: docker

@@ -1,0 +1,700 @@
+{
+    "_meta": {
+        "hostvars": {
+            "ansible_vm": {
+                "ansible_host": "10.44.0.123",
+                "ansible_port": 22,
+                "dhcp4": true,
+                "fqdn": "ansible.looniversity.net",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true
+            },
+            "babs": {
+                "ansible_host": "10.44.0.211",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true
+            },
+            "config": {
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "userid": "sdk"
+            },
+            "development": {
+                "ansible_host": "10.44.0.213",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true
+            },
+            "dizzy": {
+                "ansible_host": "10.44.0.202",
+                "bridge": "vmbr0",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "type": "proxmox",
+                "vm": [
+                    "barky"
+                ]
+            },
+            "fifi": {
+                "ansible_host": "10.44.0.203",
+                "bridge": "vmbr0",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "type": "proxmox",
+                "vm": [
+                    "truenas",
+                    "jellyfin"
+                ]
+            },
+            "firewall": {
+                "ansible_host": "10.44.0.1",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "update": false
+            },
+            "furrball": {
+                "ansible_host": "10.44.0.205",
+                "bridge": "vmbr0",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "type": "proxmox",
+                "vm": [
+                    "laptop"
+                ]
+            },
+            "gitlab_runner1": {
+                "ansible_host": "10.44.0.241",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true
+            },
+            "laptop": {
+                "ansible_host": "10.44.0.128",
+                "app_definitions": {
+                    "audio_mixer": "pulsemixer",
+                    "browser": "firefox",
+                    "code_editor": "vscode",
+                    "compositor": "picom",
+                    "editor": "neovim",
+                    "file_manager": "ranger",
+                    "hot_keys": "sxhkd",
+                    "image_viewer": "sxiv",
+                    "music_player": "ncmpcpp",
+                    "notifier": "dunst",
+                    "pdf_viewer": "zathura",
+                    "terminal": "alacritty",
+                    "video_player": "mpv"
+                },
+                "dhcp4": true,
+                "fqdn": "bustervm.looniversity.net",
+                "machine": {
+                    "apps": {
+                        "name": "Applications",
+                        "packages": [
+                            "{{ app_definitions.audio_mixer }}",
+                            "{{ app_definitions.browser }}",
+                            "{{ app_definitions.code_editor }}",
+                            "{{ app_definitions.compositor }}",
+                            "{{ app_definitions.editor }}",
+                            "{{ app_definitions.file_manager }}",
+                            "{{ app_definitions.image_viewer }}",
+                            "{{ app_definitions.music_player }}",
+                            "{{ app_definitions.notifier }}",
+                            "{{ app_definitions.pdf_viewer }}",
+                            "{{ app_definitions.terminal }}",
+                            "{{ app_definitions.video_player }}",
+                            "{{ app_definitions.hot_keys }}",
+                            "bat",
+                            "exa",
+                            "mpd",
+                            "nitrogen",
+                            "pavucontrol"
+                        ],
+                        "pip": [
+                            "pywal"
+                        ]
+                    },
+                    "color_scheme": "nord",
+                    "development": {
+                        "ansible": {
+                            "location": "user",
+                            "name": "Ansible Development Packages",
+                            "pipx": [
+                                "ansible-base",
+                                "ansible-lint",
+                                "molecule",
+                                "yamllint"
+                            ]
+                        },
+                        "common": {
+                            "name": "Common Development Packages",
+                            "packages": [
+                                "cmake",
+                                "ninja-build",
+                                "vagrant",
+                                "virtualbox"
+                            ],
+                            "pip": [
+                                "meson"
+                            ]
+                        },
+                        "dirs": [
+                            "development",
+                            "development/gist",
+                            "development/incubator",
+                            "development/project",
+                            "development/source",
+                            "development/venv"
+                        ],
+                        "go": {
+                            "location": "user",
+                            "name": "Go Development Packages",
+                            "version": "latest"
+                        },
+                        "pyenv": {
+                            "plugins": {
+                                "git": [
+                                    {
+                                        "dest": "{{ local_home }}/pyenv/plugins/pyenv-virtualenv",
+                                        "repo": "https://github.com/pyenv/pyenv-virtualenv"
+                                    },
+                                    {
+                                        "dest": "{{ local_home }}/pyenv/plugins/pyenv-doctor",
+                                        "repo": "https://github.com/pyenv/pyenv-doctor"
+                                    }
+                                ]
+                            }
+                        },
+                        "python": {
+                            "location": "user",
+                            "name": "Python Development Packages",
+                            "pip": [
+                                "black",
+                                "mypy",
+                                "poetry",
+                                "pylint",
+                                "pytest",
+                                "sphinx",
+                                "tox"
+                            ],
+                            "pipx": [
+                                "cookiecutter"
+                            ]
+                        },
+                        "roles": [
+                            "ansible",
+                            "go",
+                            "python",
+                            "pyenv",
+                            "rust",
+                            "typescript"
+                        ],
+                        "rust": {
+                            "location": "user",
+                            "name": "Rust Development Packages",
+                            "toolchain": "stable"
+                        },
+                        "typescript": {
+                            "location": "global",
+                            "name": "Typescript Development Packages",
+                            "npm": [
+                                "@types/node",
+                                "typescript",
+                                "typedoc"
+                            ],
+                            "npm_global_is_local": true,
+                            "packages": [
+                                "nodejs",
+                                "npm"
+                            ]
+                        }
+                    },
+                    "directories": [
+                        "~/.local",
+                        "~/.local/bin",
+                        "~/.local/share",
+                        "~/.config"
+                    ],
+                    "font_size": 10,
+                    "fonts": [
+                        {
+                            "name": "Hack",
+                            "style": "monospace",
+                            "url": "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
+                        }
+                    ],
+                    "gtk_theme": "Arc",
+                    "ohmyzsh": {
+                        "location": "user",
+                        "plugins": [
+                            "docker",
+                            "docker-compose",
+                            "git",
+                            "sudo",
+                            "web-search"
+                        ],
+                        "user_plugins": [
+                            "zsh-completions",
+                            "zsh-syntax-highlighting"
+                        ]
+                    },
+                    "shell": "zsh",
+                    "vscode": {
+                        "colors": {
+                            "arcticicestudio.nord-visual-studio-code": {
+                                "id": "Nord",
+                                "name": "Nord Color Theme"
+                            }
+                        },
+                        "extensions": {
+                            "2gua.rainbow-brackets": {
+                                "name": "Rainbow Brackets"
+                            },
+                            "DavidAnson.vscode-markdownlint": {
+                                "name": "Markdown File Linting"
+                            },
+                            "avli.clojure": {
+                                "name": "Clojure Language"
+                            },
+                            "golang.go": {
+                                "name": "Go Language"
+                            },
+                            "hashicorp.terraform": {
+                                "name": "Terraform File Handling"
+                            },
+                            "jakeboone02.mediawiki": {
+                                "name": "MediaWiki File Handling"
+                            },
+                            "mathiasfrohlich.Kotlin": {
+                                "name": "Kotlin Language"
+                            },
+                            "ms-dotnettools.csharp": {
+                                "name": "C# Language"
+                            },
+                            "ms-python.python": {
+                                "name": "Python Language"
+                            },
+                            "ms-python.vscode-pylance": {
+                                "name": "Python Language Server"
+                            },
+                            "ms-toolsai.jupyter": {
+                                "name": "Jupyter Notebook"
+                            },
+                            "ms-vscode-remote.remote-containers": {
+                                "name": "VSCode Remote Support - Containers"
+                            },
+                            "ms-vscode-remote.remote-ssh": {
+                                "name": "VSCode Remote Support - SSH"
+                            },
+                            "ms-vscode-remote.remote-ssh-edit": {
+                                "name": "VSCode Remote Support - SSH Edit"
+                            },
+                            "ms-vscode-remote.vscode-remote-extensionpack": {
+                                "name": "VSCode Remote Support"
+                            },
+                            "nico-castell.linux-desktop-file": {
+                                "name": ".desktop File Handling"
+                            },
+                            "oderwat.indent-rainbow": {
+                                "name": "Indent Rainbow"
+                            },
+                            "rust-lang.rust": {
+                                "name": "Rust Language"
+                            },
+                            "samuelcolvin.jinjahtml": {
+                                "name": "Jinja2 File Handling"
+                            },
+                            "seanwu.vscode-qt-for-python": {
+                                "name": "QT for Python"
+                            },
+                            "siegebell.prettify-symbols-mode": {
+                                "name": "Prettify Symbols"
+                            }
+                        },
+                        "icons": {
+                            "pkief.material-icon-theme": {
+                                "id": "material-icon-theme",
+                                "name": "Material Icon Theme",
+                                "settings": {
+                                    "material-icon-theme.saturation": 0
+                                }
+                            },
+                            "vscode-icons-team.vscode-icons": {
+                                "id": "vscode-icons",
+                                "name": "VSCode Icons",
+                                "settings": {
+                                    "extension_vscode-icons.wibble": 0
+                                }
+                            }
+                        },
+                        "product": "VSCode",
+                        "productIcons": {
+                            "miguelsolorio.fluent-icons": {
+                                "id": "fluent-icons",
+                                "name": "Fluent Icons"
+                            }
+                        }
+                    },
+                    "x11": {
+                        "bar": null,
+                        "display_manager": "lightdm",
+                        "greeter": "lightdm-gtk-greeter",
+                        "video_card_driver": null,
+                        "window_manager": "qtile"
+                    }
+                },
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "user": {
+                    "avatar": "{{ playbook_dir }}/../files/avatar96x96.png"
+                },
+                "vm_image": "file:/root/images/focal-server-cloudimg-amd64.img",
+                "vm_name": "laptop",
+                "vm_node": "furrball"
+            },
+            "mary": {
+                "ansible_host": "10.44.0.201",
+                "bridge": "vmbr0",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "type": "proxmox",
+                "vm": [
+                    "firewall",
+                    "thebrain",
+                    "montana"
+                ]
+            },
+            "netbox": {
+                "ansible_host": "10.44.0.101",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true
+            },
+            "scripts": {
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "userid": "sdk"
+            },
+            "shirley": {
+                "ansible_host": "10.44.0.204",
+                "bridge": "vmbr0",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "type": "proxmox",
+                "vm": null
+            },
+            "thebrain": {
+                "ansible_host": "10.44.0.210",
+                "fqdn": "thebrain.looniversity.net",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "vm_image": "file:/root/images/focal-server-cloudimg-amd64.img",
+                "vm_node": "mary"
+            },
+            "truenas": {
+                "ansible_host": "10.44.0.230",
+                "fqdn": "truenas.looniversity.net",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true,
+                "vm_image": "truenas:template/iso/TrueNAS-12.0-U3.iso",
+                "vm_node": "fifi",
+                "vmid": 100
+            },
+            "unifi": {
+                "ansible_host": "10.44.0.213",
+                "net_device": "ens18",
+                "network": {
+                    "dhcp4": true,
+                    "gateway4": "10.44.0.1",
+                    "nameservers": {
+                        "addresses": [
+                            "10.44.0.1",
+                            "8.8.8.8"
+                        ],
+                        "search": [
+                            "looniversity.net"
+                        ]
+                    },
+                    "netmask": "/21"
+                },
+                "reboot_after_update": true
+            }
+        }
+    },
+    "all": {
+        "children": [
+            "ansible",
+            "container_machines",
+            "local",
+            "qemu",
+            "ungrouped",
+            "vm",
+            "vm_nodes",
+            "vm_nodes_test"
+        ]
+    },
+    "ansible": {
+        "hosts": [
+            "ansible_vm"
+        ]
+    },
+    "container_machines": {
+        "hosts": [
+            "development",
+            "gitlab_runner1",
+            "netbox",
+            "thebrain"
+        ]
+    },
+    "local": {
+        "hosts": [
+            "config",
+            "scripts"
+        ]
+    },
+    "qemu": {
+        "hosts": [
+            "laptop"
+        ]
+    },
+    "vm": {
+        "hosts": [
+            "babs",
+            "development",
+            "firewall",
+            "gitlab_runner1",
+            "laptop",
+            "netbox",
+            "thebrain",
+            "truenas",
+            "unifi"
+        ]
+    },
+    "vm_nodes": {
+        "hosts": [
+            "dizzy",
+            "fifi",
+            "furrball",
+            "mary",
+            "shirley"
+        ]
+    },
+    "vm_nodes_test": {
+        "hosts": [
+            "furrball"
+        ]
+    }
+}

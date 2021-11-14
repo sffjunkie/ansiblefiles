@@ -1,0 +1,15 @@
+# https://docs.docker.com/engine/install/ubuntu/
+---
+- name: Add Hashicorp GPG apt Key
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: Add Docker Repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com  {{ ansible_distribution_release }} main"
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true

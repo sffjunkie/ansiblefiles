@@ -1,30 +1,36 @@
 ---
 - name: Create and set permissions for .ssh directory
   ansible.builtin.file:
-    path: "/home/{{ userid }}/.ssh"
+    path: "/home/{{ user.id }}/.ssh"
     mode: 0700
     state: directory
-    owner: "{{ userid }}"
-    group: "{{ userid }}"
+    owner: "{{ user.id }}"
+    group: "{{ user.id }}"
     access_time: preserve
     modification_time: preserve
+  loop: "{{ users }}"
+  loop_control: "user"
 
 - name: create authorized_keys file
   ansible.builtin.file:
-    path: "/home/{{ userid }}/.ssh/authorized_keys"
+    path: "/home/{{ user.id }}/.ssh/authorized_keys"
     state: touch
     mode: 0644
-    owner: "{{ userid }}"
-    group: "{{ userid }}"
+    owner: "{{ user.id }}"
+    group: "{{ user.id }}"
     access_time: preserve
     modification_time: preserve
+  loop: "{{ users }}"
+  loop_control: "user"
 
 - name: Add id to authorized_keys
-  become_user: "{{ userid }}"
+  become_user: "{{ user.id }}"
   vars:
-    pub_content: "{{ lookup('file', '/home/{{ userid }}/.ssh/{{ public_key }}') }}"
+    pub_content: "{{ lookup('file', '/home/{{ user.id }}/.ssh/{{ user.public_key }}') }}"
   ansible.builtin.lineinfile:
-    dest: /home/{{ userid }}/.ssh/authorized_keys
+    dest: /home/{{ user.id }}/.ssh/authorized_keys
     regexp: "^{{ pub_content }}"
     line: "{{ pub_content }}"
     state: present
+  loop: "{{ users }}"
+  loop_control: "user"

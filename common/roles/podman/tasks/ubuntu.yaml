@@ -22,4 +22,4 @@
   ansible.builtin.package:
     name: podman-compose
     state: present
-  when: docker_compose == true
+  when: use_docker_compose == true

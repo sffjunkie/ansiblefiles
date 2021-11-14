@@ -1,2 +1,2 @@
 ---
-use_compose: true
+use_docker_compose: true

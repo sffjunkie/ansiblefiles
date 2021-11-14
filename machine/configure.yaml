@@ -1,1 +1,29 @@
 ---
+# TODO: Change hosts to vmhosts
+- hosts: vm_nodes
+  become: true
+  vars_files:
+    - ../common/vars/playbook.yaml
+
+  roles:
+    - role: firewall
+      vars:
+        ssh_port: "{{ ssh_port }}"
+
+    - name: Configure ssh server.
+      role: ssh
+      vars:
+        ssh_port: "{{ ssh_port }}"
+
+    - name: Add users.
+      role: user_add
+      vars:
+        users: "{{ users }}"
+
+    - name: Configure ssh for users.
+      role: user_ssh
+      vars:
+        users: "{{ users }}"
+
+    - name: Configure SELinux
+      role: selinux

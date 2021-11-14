@@ -1,0 +1,14 @@
+---
+country_code: ""
+ppa: {} # key: { source: "", keyid: "" }
+early_commands: []
+late_commands: []
+
+keyboard:
+  layout: ""
+  variant: ""
+  toggle: null
+
+locale: "en_US.UTF-8"
+
+network: {}

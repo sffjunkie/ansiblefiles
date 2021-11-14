@@ -1,0 +1,20 @@
+---
+- name: Calc hashed password
+  when: user.password[0] != '$'
+  ansible.builtin.shell:
+    cmd: mkpasswd --method=SHA-512 --rounds=4096
+  register: _passwd
+  changed_when: false
+  delegate_to: 127.0.0.1
+
+- name: Get hashed passwd
+  when: user.password[0] != '$'
+  ansible.builtin.set_fact:
+    user_passwd: "{{ _passwd.stdout }}"
+  changed_when: false
+
+- name: Get passwd
+  when: user.password[0] == '$'
+  ansible.builtin.set_fact:
+    user_passwd: "{{ user.password }}"
+  changed_when: false

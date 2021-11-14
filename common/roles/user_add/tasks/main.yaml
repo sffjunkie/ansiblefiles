@@ -1,12 +1,22 @@
 ---
-- name: Add user.
-  ansible.builtin.user:
-    name: "{{ userid }}"
-    state: present
+- name: Create user
+  block:
+    - name: Get password.
+      include_tasks: ../common/tasks/mkpasswd
 
-- name: Add sudo rights for user.
-  ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ userid }}"
-    content: "{{ userid }} ALL=(ALL:ALL) ALL"
-    mode: 0644
-    validate: "visudo -cf %s"
+    - name: Add user.
+      ansible.builtin.user:
+        name: "{{ user.id }}"
+        password: "{{ user_passwd }}"
+        state: present
+      loop: "{{ users }}"
+      loop_control: "user"
+
+    - name: Add sudo rights for user.
+      ansible.builtin.copy:
+        dest: "/etc/sudoers.d/{{ user.id }}"
+        content: "{{ user.id }} {{ sudo_entry }}"
+        mode: 0644
+        validate: "visudo -cf %s"
+      loop: "{{ users }}"
+      loop_control: "user"

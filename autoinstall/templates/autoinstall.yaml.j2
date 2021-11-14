@@ -1,0 +1,10 @@
+autoinstall:
+  version: 1
+  apt:
+    geoip: {{ geoip }}
+    preserve_sources_list: false
+    primary:
+    - arches: [amd64, i386]
+      uri: http://{{ country_code }}archive.ubuntu.com/ubuntu
+    - arches: [default]
+      uri: http://ports.ubuntu.com/ubuntu-ports

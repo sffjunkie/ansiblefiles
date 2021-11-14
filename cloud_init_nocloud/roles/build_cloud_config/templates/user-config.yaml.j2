@@ -1,14 +1,15 @@
 #cloud-config
 users:
-{% if user.use_default_user %}
+{% if user_data.use_default %}
   - default
 {% else %}
 {% endif %}
-{% for user in user.users %}
-{% if user.name %}
-  - name: {{ user.name }}
+
+{% for user in users %}
+{% if user.id %}
+  - name: {{ user.id }}
     ssh_authorized_keys:
-{% for key in user.ssh_authorized_keys %}
+{% for key in user.public_key %}
       - "{{ key }}"
 {% endfor %}
     password: {{ user.password | default(omit, True) }}
@@ -16,13 +17,16 @@ users:
 {% endfor %}
 
 packages:
-{{ user.packages | to_nice_yaml(indent=2) }}
+{{ user_data.packages | to_nice_yaml(indent=2) }}
 package_upgrade: true
 
 {# default_user defined in secrets.yaml #}
-{% if user.use_default_user and (default_user | default(False, True)) %}
+{% if user_data.use_default and (default_user | default(False, True)) %}
 default_user:
 {% filter indent(width=2, first=True) %}
 {{ default_user | to_nice_yaml(indent=2, width=1000) }}
 {% endfilter %}
+{% endif %}
+{%- if extra_user_config | length > 0 %}
+{{ extra_user_config | to_nice_yaml(indent=2) }}
 {% endif %}

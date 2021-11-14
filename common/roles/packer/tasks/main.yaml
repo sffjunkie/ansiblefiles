@@ -1,0 +1,13 @@
+---
+- name: Setup packer repository
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
+
+- name: Install packer from package manager
+  ansible.builtin.package:
+    name:
+      - packer
+    state: present

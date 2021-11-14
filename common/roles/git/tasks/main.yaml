@@ -7,29 +7,35 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-- name: Configure git email
-  when: git.email | length > 0
-  become_user: "{{ userid }}"
-  community.general.git_config:
-    name: user.email
-    scope: global
-    value: "{{ git.email }}"
-    state: present
-
 - name: Configure git name
   when: git.name | length > 0
-  become_user: "{{ userid }}"
+  become_user: "{{ user.id }}"
   community.general.git_config:
     name: user.name
     scope: global
-    value: "{{ git.name }}"
+    value: "{{ user.name }}"
     state: present
+  loop: "{{ users }}"
+  loop_control: "user"
+
+- name: Configure git email
+  when: user.git.email | length > 0
+  become_user: "{{ user.id }}"
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ user.git.email }}"
+    state: present
+  loop: "{{ users }}"
+  loop_control: "user"
 
 - name: Configure git GPG Key
   when: git.gpg_key | default("", True) | length > 0
-  become_user: "{{ userid }}"
+  become_user: "{{ user.id }}"
   community.general.git_config:
     name: user.signingKey
     scope: global
-    value: "{{ machine.git.gpg_key }}"
+    value: "{{ user.git.gpg_key }}"
     state: present
+  loop: "{{ users }}"
+  loop_control: "user"

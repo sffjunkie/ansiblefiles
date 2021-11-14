@@ -1,6 +1,6 @@
 ---
-- name: If instance-id is empty
-  when: meta["instance-id"] == ""
+- name: Generate new instance-id if instance-id is empty
+  when: meta_data["instance-id"] == ""
   block:
     - name: Generate new instance-id
       ansible.builtin.command:
@@ -9,13 +9,13 @@
 
     - ansible.utils.update_fact:
         updates:
-          - path: meta.instance-id
+          - path: meta_data.instance-id
             value: "{{ _instance_id.stdout }}"
       register: _updated_fact
       changed_when: false
 
     - ansible.builtin.set_fact:
-        meta: "{{ _updated_fact.meta }}"
+        meta_data: "{{ _updated_fact.meta_data }}"
 
 - name: Create cloud-init user config
   ansible.builtin.template:

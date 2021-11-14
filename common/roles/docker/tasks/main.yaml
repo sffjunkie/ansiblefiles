@@ -14,6 +14,12 @@
       - containerd.io
     state: present
 
+- name: Start docker.socket
+  ansible.builtin.systemd:
+    name: docker.socket
+    state: started
+    enabled: true
+
 - name: Install Docker Module for Python
   ansible.builtin.pip:
     name: docker

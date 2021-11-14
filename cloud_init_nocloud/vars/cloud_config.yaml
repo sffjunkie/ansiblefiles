@@ -1,0 +1,25 @@
+---
+# config_name: see secrets.yaml
+use_date: false
+
+user_data:
+  use_default: true
+
+  packages:
+    - qemu-guest-agent
+    - nano
+    - wget
+    - curl
+
+# meta config
+meta_data:
+  instance-id: "" # if empty then a UUID will be generated
+
+  network:
+    version: 2
+    renderer: networkd
+    ethernets:
+      ens18:  # default proxmox ethernet device
+        dhcp4: "hostvars['localhost']['network']['dhcp4']"
+        gateway4: "{{ hostvars['localhost']['network']['gateway4'] }}"
+        nameservers: "{{ hostvars['localhost']['network']['nameservers'] }}"

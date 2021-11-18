@@ -25,7 +25,31 @@
 config file templates -> config files
 docker compose templates -> docker compose files
 
+## License
 
-## Packages
+These ansible files are under the CC-BY-4.0 license
+
+
+## Required Packages
 
 nfs-common to mount NFS share
+
+## Variables
+
+The playbooks use various variables defined in ./common/vars/global.yaml
+
+Of particular note are
+
+* distribution - Converts `ansible_distribution` to lower case and removes
+  spaces. This it to use as a filename to `include_tasks` from.
+
+## Notes
+
+* Comments like `# yaml-language-server: $schema=./[insert filename here]`
+  are used to bypass YAML schema validation for the file.
+
+  This is because the YAML language server from RedHat automatically matches
+  schemas to file names. So if we want to have a file `build.yaml` this
+  would normally be recognized as a `Hammerkit YAML schema` and this throws
+  up lots of errors as that's not what we're using and there's currently no
+  other way to disable this.

@@ -5,6 +5,7 @@
     update_cache: true
     upgrade: dist
     autoremove: yes
+    cache_valid_time: 86400
   notify: reboot machine
 
 - name: yum updgrade all
@@ -12,8 +13,8 @@
   ansible.builtin.yum:
     name: "*"
     state: latest
-    update_cache: true
     autoremove: true
+    cache_valid_time: 86400
   notify: reboot machine
 
 - name: dnf updgrade all
@@ -21,7 +22,6 @@
   ansible.builtin.dnf:
     name: "*"
     state: latest
-    update_cache: true
   notify: reboot machine
 
 - name: pacman update all

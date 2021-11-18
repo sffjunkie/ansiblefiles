@@ -3,7 +3,8 @@
     _group_name: "{{ group.name | default('', True)}}"
   changed_when: false
 
-- when: _group_name != ''
+- name: Install package info
+  when: _group_name != ''
   block:
     - debug:
         msg: "Install packages for group '{{ _group_name }}'"
@@ -89,8 +90,9 @@
   block:
     - name: Run pipx install
       become_user: "{{ (group.location is defined and group.location == 'user') | ternary(userid, 'root') }}"
-      ansible.builtin.shell:
-        cmd: "pipx install {{ pipx_item }}"
+      community.general.pipx:
+        name: "{{ pipx_item }}"
+        install_deps: true
       loop: "{{ group.pipx }}"
       loop_control:
         loop_var: pipx_item

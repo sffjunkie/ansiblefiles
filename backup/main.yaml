@@ -2,7 +2,7 @@
 - hosts: vm_nodes
   become: true
   vars_files:
-    - ../common/vars/playbook.yaml
+    - ../common/vars/global.yaml
 
   # roles:
   tasks:

@@ -3,9 +3,10 @@
   ansible.builtin.set_fact:
     _overrides: "{{ _install_overrides|_install_types(os_family, distribution) }}"
 
-- name: dbg
+- name: Display overrides
   ansible.builtin.debug:
     msg: "{{ _overrides }}"
+    verbosity: 1
 
 # - name: Compile items
 #   when: _overrides['compile'] is defined and _overrides['compile'] | length > 0

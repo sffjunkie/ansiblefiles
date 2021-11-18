@@ -1,6 +1,12 @@
-.PHONY: build configfiles
+.PHONY: preconfigure configure postconfigure configfiles
 
-all: build
+all: preconfigure configure postconfigure
 
-build:
-	@. ./build.sh
+preconfigure:
+	@. ./preconfigure.sh
+
+configure:
+	@. ./configure.sh
+
+postconfigure:
+	@. ./postconfigure.sh

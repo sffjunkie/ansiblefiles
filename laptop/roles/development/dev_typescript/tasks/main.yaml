@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: Typescript Dev
+  ansible.builtin.debug:
     msg: Building Typescript Development Environment
+    verbosity: 1
 
 - name: "Typescript: Install packages"
   ansible.builtin.include_role:

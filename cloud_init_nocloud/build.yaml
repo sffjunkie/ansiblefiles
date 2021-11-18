@@ -1,13 +1,12 @@
-# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
+# yaml-language-server: $schema=./build.yaml
 ---
 - name: Build nocloud configs and image
   hosts: localhost
   vars_files:
-    - ../common/vars/secrets.yaml
     - ./vars/cloud_config.yaml
     - ./vars/extra_config.yaml
 
-  tasks:
+  pre_tasks:
     - name: Install genisoimage and whois (for the mkpasswd command)
       become: true
       ansible.builtin.package:
@@ -15,7 +14,35 @@
           - genisoimage
           - whois
         state: present
+      tags:
+        - image
 
+    - name: Set the required cloud-utils packages on OSs that are not Redhat
+      when: ansible_os_family != 'Redhat'
+      ansible.builtin.set_fact:
+        cloud_image_utils_packages:
+          - cloud-utils
+      tags:
+        - image
+
+    - name: Set the required cloud-utils packages for Redhat
+      when: ansible_os_family == 'Redhat'
+      ansible.builtin.set_fact:
+        cloud_image_utils_packages:
+          - cloud-utils
+          - cloud-utils-growpart
+      tags:
+        - image
+
+    - name: Install cloud-image-utils
+      become: true
+      ansible.builtin.package:
+        name: "{{ cloud_image_utils_packages }}"
+        state: present
+      tags:
+        - image
+
+  tasks:
     - name: Extra user_config from file
       block:
         - name: Get extra user_config file name
@@ -80,8 +107,13 @@
         _config_name_str: "{{ _config_name_str }}-{{ hostvars[inventory_hostname]['config_name'] }}"
       changed_when: false
 
+    - name: Determine whether to use date
+      when: cli_use_date is defined and cli_use_date | bool == true
+      ansible.builtin.set_fact:
+        use_date: true
+
     - name: If using date
-      when: cli_use_date == "1"
+      when: use_date == true
       block:
         - name: Get date
           ansible.builtin.command:
@@ -92,15 +124,18 @@
         - name: Set date string
           ansible.builtin.set_fact:
             _config_name_str: "{{ _config_name_str }}-{{ _date.stdout }}"
+          changed_when: false
 
     - name: Calc image name
       ansible.builtin.set_fact:
         image_path: "./build/images/{{ _config_name_str }}.img"
+      changed_when: false
 
     - name: Set config paths
       ansible.builtin.set_fact:
         user_config_path: ./build/configs/{{ _config_name_str }}-user.yaml
         meta_config_path: ./build/configs/{{ _config_name_str }}-meta.yaml
+      changed_when: false
 
     - name: Build cloud config
       ansible.builtin.include_role:
@@ -118,11 +153,8 @@
         - image
 
 - name: Copy nocloud image and configs
-  hosts: vm_nodes_test  # FIXME: Replace with vm_nodes
+  hosts: vm_nodes_test  # TODO: Replace with vm_nodes when ready
   become: true
-  # vars_files:
-  #   - ./vars/main.yaml
-  #   - ./vars/secrets.yaml
   tags:
     - copy
 

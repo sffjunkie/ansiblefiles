@@ -1,0 +1,40 @@
+---
+- name: VSCode Install
+  when: (machine.vscode.product | lower) == 'vscode'
+  block:
+    # https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04
+    - name: Add GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add VS Code Repository
+      ansible.builtin.apt_repository:
+        repo: deb https://packages.microsoft.com/repos/code stable main
+        state: present
+
+    - name: Update apt and install VS Code
+      ansible.builtin.apt:
+        update_cache: true
+        name: code
+        state: latest
+        cache_valid_time: 86400
+
+- name: VSCodium Install
+  when: machine.vscode.product | lower == 'vscodium'
+  block:
+    - name: Install snap
+      ansible.builtin.command: snap install codium --classic
+
+    - name: Add alias to codium
+      ansible.utils.update_fact:
+        updates:
+          - path: configfiles.aliases
+            value: "{{ configfiles.aliases + [['code', 'codium']] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Set configfiles fact
+      ansible.builtin.set_fact:
+        configfiles: "{{ _updated_fact.configfiles }}"
+      changed_when: false

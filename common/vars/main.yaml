@@ -1,3 +1,0 @@
----
-ssh_port: 22
-# ipv4: "{{ ansible_host }}{{ netmask }}"

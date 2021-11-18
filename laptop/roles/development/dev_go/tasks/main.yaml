@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: Go Dev
+  ansible.builtin.debug:
     msg: Building Go Development Environment
+    verbosity: 1
 
 - name: "Go: Calculate filename prefix with latest version"
   ansible.builtin.set_fact:

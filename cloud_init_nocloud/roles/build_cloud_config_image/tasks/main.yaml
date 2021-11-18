@@ -1,27 +1,4 @@
 ---
-- when: ansible_os_family != 'Redhat'
-  ansible.builtin.set_fact:
-    cloud_image_utils_packages:
-      - cloud-utils
-
-- when: ansible_os_family == 'Redhat'
-  ansible.builtin.set_fact:
-    cloud_image_utils_packages:
-      - cloud-utils
-      - cloud-utils-growpart
-
-- name: Install cloud-image-utils
-  when: ansible_os_family == 'Debian'
-  ansible.builtin.package:
-    name: "{{ cloud_image_utils_packages }}"
-    state: present
-
-- name: Get date
-  ansible.builtin.command:
-    cmd: date +"%Y-%m-%d"
-  register: _date
-  changed_when: false
-
 - name: Set config_name
   when: config_name != ""
   ansible.builtin.set_fact:

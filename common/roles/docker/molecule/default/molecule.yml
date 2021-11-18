@@ -1,0 +1,17 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu2004-ansible
+    pre_build_image: true
+    privileged: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+lint: |
+  yamllint .
+  ansible-lint .

@@ -1,0 +1,25 @@
+---
+- name: Create temporary directory
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: veracrypt
+  register: _tmp_veracrypt_directory
+  changed_when: false
+  notify: Delete veracrypt temp directory
+
+- name: Calc install type
+  when: veracrypt_install_type == "console"
+  ansible.builtin.set_fact:
+    _veracrypt_type_str: "console-"
+
+- name: Calc install type
+  when: veracrypt_install_type != "console"
+  ansible.builtin.set_fact:
+    _veracrypt_type_str: ""
+
+- name: Install veracrypt
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"

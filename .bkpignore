@@ -1,0 +1,11 @@
+ansible_collections
+ansible_roles
+.vagrant
+.git
+node_modules
+
+# Visual Studio
+.vs
+obj
+bin
+

@@ -1,0 +1,11 @@
+---
+- name: Create base directories
+  ansible.builtin.file:
+    path: "{{ item|expanduser }}"
+    state: directory
+    mode: 0755
+    owner: "{{ userid }}"
+    group: "{{ userid }}"
+    access_time: preserve
+    modification_time: preserve
+  loop: "{{ machine.dotdirs }}"

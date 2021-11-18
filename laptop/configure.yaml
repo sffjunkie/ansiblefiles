@@ -5,8 +5,7 @@
     ansible_port: "{{ ssh_port }}"
   vars_files:
     - ./vars/install_overrides.yaml
-    - ../common/vars/main.yaml
-    - ../common/vars/playbook.yaml
+    - ../common/vars/global.yaml
 
   roles:
     - playbook_packages
@@ -62,14 +61,15 @@
             configfiles: "{{ _updated_fact.configfiles }}"
           changed_when: false
 
-    # - name: Final configuration
-    #   ansible.builtin.debug:
-    #     msg: "{{ configfiles }}"
+    - name: Final configuration
+      ansible.builtin.debug:
+        msg: "{{ configfiles }}"
+        verbosity: 2
 
-    - name: Store final configuration
+    - name: Store final config file information to be used by ../config_files
       delegate_to: localhost
       ansible.builtin.copy:
-        dest: "{{ playbook_dir }}/../configfiles.json"
+        dest: "{{ playbook_dir }}/../build/configfiles.json"
         content: "{{ configfiles | to_nice_json(indent=4) }}"
       changed_when: false
 

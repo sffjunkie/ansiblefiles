@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
+---
+- hosts: ansible
+  become: true
+  become_method: sudo
+  vars_files:
+    - ../common/vars/global.yaml
+    - ../common/vars/secrets.yaml
+    - ./vars/pip.yaml
+
+  pre_tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Computed stats"
+          - "  Configuration file home directory: {{ config_home }}"
+          - "  Shell: {{ shell }}"
+          - "  Distribution: {{ distribution }}"
+          - "  OS Family: {{ os_family }}"
+          - "  Architecture: {{ ansible_architecture }}"
+        verbosity: 1
+
+  roles:
+    - git
+
+  tasks:
+    - name: Load os package list
+      ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+      vars:
+        params:
+          files:
+            - '{{distribution}}.yaml'
+            - '{{os_family}}.yaml'
+          paths:
+            - 'vars'
+
+    - name: Install OS packages
+      ansible.builtin.include_role:
+        name: os_package
+      vars:
+        custom_os_packages: "{{ os_packages }}"
+
+    - name: Install pip packages
+      ansible.builtin.include_role:
+        name: pip_package
+      vars:
+        package_list: "{{ pip_packages }}"
+
+    # - name: Copy playbooks
+    #   ansible.builtin.git:
+    #     repo: https://github.com/sffjunkie/ansiblefiles
+    #     dest: ~/ansible/
+    #     version: develop
+
+    - name: "Disable pi user"
+      when: distribution == 'raspbian'
+      ansible.builtin.user:
+        name: pi
+        expires: 1
+        password_lock: true

@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: Ansible Dev
+  ansible.builtin.debug:
     msg: Building ansible Development Environment
+    verbosity: 1
 
 - name: "Ansible: Load default os package list"
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
@@ -9,8 +11,9 @@
       files:
         - '{{distribution}}.yaml'
         - '{{os_family}}.yaml'
+        - 'all.yaml'
       paths:
-        - 'defaults'
+        - 'packages'
 
 - name: "Ansible: Install default os packages"
   when: ansible_development_os_packages | length > 0

@@ -1,0 +1,9 @@
+---
+- name: Gtk Theme Dev
+  ansible.builtin.debug:
+    msg: Building Gtk Theme Development Environment
+    verbosity: 1
+
+- name: Install oomox
+  ansible.builtin.include_role:
+    name: oomox

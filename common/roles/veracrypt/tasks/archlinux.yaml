@@ -1,0 +1,13 @@
+---
+- name: Enable the community repository in pacman
+  community.general.ini_file:
+    path: /etc/pacman.conf
+    section: community
+    option: Include
+    value: /etc/pacman.d/mirrorlist
+    backup: yes
+
+- name: Install veracrypt
+  community.general.pacman:
+    name: veracrypt
+    state: present

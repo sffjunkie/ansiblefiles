@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: Haskell Dev
+  ansible.builtin.debug:
     msg: Building Haskell Development Environment
+    verbosity: 1
 
 - name: Check if stack binary already exists
   ansible.builtin.stat:

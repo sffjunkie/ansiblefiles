@@ -1,25 +1,30 @@
+# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
 ---
 - hosts: localhost
   connection: local
   gather_facts: false
   vars_files:
-    - ../common/vars/playbook.yaml
-    - ./vars/main.yaml
+    - ../common/vars/global.yaml
 
   pre_tasks:
     - name: Import configuration
       ansible.builtin.set_fact:
-        configfiles: "{{ lookup('file', playbook_dir + '/../configfiles.json') | from_json }}"
+        configfiles: "{{ lookup('file', playbook_dir + '/../build/configfiles.json') | from_json }}"
 
     - name: Display info
       ansible.builtin.debug:
         msg:
           - "Config files: {{ configfiles }}"
+        verbosity: 1
 
   roles:
     - mnussbaum.base16-builder-ansible
 
   tasks:
+    - name: Development
+      ansible.builtin.debug:
+        msg: Development Configuration
+
     - name: Go config
       ansible.builtin.include_tasks: tasks/development/go.yaml
       when: '"go" in configfiles.configs'

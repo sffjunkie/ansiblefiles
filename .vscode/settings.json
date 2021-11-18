@@ -1,0 +1,6 @@
+{
+    "search.exclude": {
+        "**/ansible_collections": true,
+        "**/ansible-roles": true
+    }
+}

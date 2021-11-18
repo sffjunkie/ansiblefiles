@@ -3,7 +3,7 @@
 - hosts: container_machines
   become: true
   vars_files:
-    - ../common/vars/playbook.yaml
+    - ../common/vars/global.yaml
     - ./vars/main.yaml
 
   pre_tasks:

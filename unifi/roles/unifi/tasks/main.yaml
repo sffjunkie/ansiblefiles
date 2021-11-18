@@ -12,7 +12,8 @@
 - name: Install
   ansible.builtin.package:
     name: unifi
-    update_cache: True
+    update_cache: true
+    cache_valid_time: 86400
 
 - name: Start Unifi controller
   ansible.builtin.systemd:

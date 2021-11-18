@@ -1,5 +1,4 @@
 ---
-# config_name: see secrets.yaml
 use_date: false
 
 user_data:

@@ -1,20 +1,23 @@
 # Backup
 
-Backs up data from the laptop and
+Backs up data from
 
 * Laptop
+    * music, pictures etc.
 * Servers
+    * Service configuration
+    * Service data
 
 ## Targets
 
-* OneDrive
-* Google Drive
-* Directory
-* TrueNAS
-* Offsite
+* OneDrive - Via TrueNAS NFS mount
+* Google Drive - Via TrueNAS NFS mount
+* TrueNAS - NFS mount
+* Offsite - Backup server
 * USB HD
 
 * Encrypt before uploading
+    * veracrypt
 
 
 ## Services to backup
@@ -32,25 +35,10 @@ Backs up data from the laptop and
 
 ## Data to backup
 
-### Laptop
-
 * Pictures
 * Documents
 * Development
-
-### Server
-
 * Music
 * Videos
 * Service files
-
-
-* Laptop
-
-* Google Drive
-* OneDrive
-
-* Documents
-* Development
-* Pictures
-* Music
+* Service data

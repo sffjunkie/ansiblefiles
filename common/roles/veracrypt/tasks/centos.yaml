@@ -1,0 +1,9 @@
+---
+- name: Get veracrypt
+  ansible.builtin.uri:
+    url: "https://launchpad.net/veracrypt/trunk/{{ veracrypt_version }}/+download/veracrypt-{{ _veracrypt_type_str }}{{ veracrypt_version }}-CentOS-{{ ansible_distribution_version }}-x86_64.rpm"
+    dest: _tmp_veracrypt_directory/veracrypt.rpm
+
+- name: Install veracrypt
+  ansible.builtin.apt:
+    name: _tmp_veracrypt_directory/veracrypt.rpm

@@ -2,10 +2,10 @@
 - hosts: laptop
   become: true
   vars_files:
-    - ../common/vars/playbook.yaml
+    - ../common/vars/global.yaml
 
   roles:
-    - hostname
+    - role: hostname
       tags: preconfigure
     - role: user_add
       tags: preconfigure

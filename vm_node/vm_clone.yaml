@@ -2,7 +2,7 @@
 - hosts: furrball
   become: true
   vars_files:
-    - ../common/vars/playbook.yaml
+    - ../common/vars/global.yaml
 
   tasks:
     - name: Check source vm exists

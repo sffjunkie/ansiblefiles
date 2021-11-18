@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: Python Dev
+  ansible.builtin.debug:
     msg: Building Python Development Environment
+    verbosity: 1
 
 - name: "Python: Install packages"
   ansible.builtin.include_role:

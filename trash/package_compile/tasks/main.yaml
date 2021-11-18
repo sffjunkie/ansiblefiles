@@ -26,9 +26,10 @@
     chdir: "{{ _tmp_directory.path }}"
   register: _build_result
 
-- name: dbg
+- name: Build Result
   ansible.builtin.debug:
     msg: "{{ _build_result }}"
+    verbosity: 1
 
 - name: Run install
   ansible.builtin.shell:

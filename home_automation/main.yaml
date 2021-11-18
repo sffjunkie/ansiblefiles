@@ -16,6 +16,7 @@
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
           - "  Development Environments: {{ dev_roles | join(', ') }}"
+        verbosity: 1
 
   roles:
     - git

@@ -3,11 +3,11 @@
 > **Note**: This playbook only configures values useful for a Proxmox VM.
 
 Builds a basic cloud-init nocloud data-source image (and the yaml files that
-are used to generate the image so you can see what's defined )
+are used to generate the image so you can see what's defined.)
 
 These images are used to perform initial configuration of a vendors cloud-init
 enabled image. For example
-[Ubuntu's can be found here](https://cloud-images.ubuntu.com/) and
+[Ubuntu's images can be found here](https://cloud-images.ubuntu.com/) and
 [Fedora's here](https://alt.fedoraproject.org/cloud/)
 
 The image created follows the
@@ -26,10 +26,32 @@ and the EC2 metadata keys can be found [here](https://docs.aws.amazon.com/AWSEC2
 
 Requires python3 apt package (e.g. `python3-apt` on Ubuntu)
 
+## Script Info
+
+The script has two required arguments
+
+* `hostname` which is the host name contained within the generated image.
+* `target` the target host name as defined in the inventiry
+
+The second argument determines which stages of the cloud-init generation are to be run. These can be one of the following
+
+* `config` - Creates the cloud-init configuration files
+* `image` - Creates the configuration files and puts them into a cloud-init nnocloud image
+* `copy` - Copies the resulting config files and image to the target host
+
+### Options
+
+* `-c | --config` - Specifies a name to be used as part of the cloud-init configuration files and image output by this script and playbook
+* `-d | --date` - Specifies whether todays date is to be used as part of the cloud-init configuration files and image output by this script and playbook
+* `-i | --inventory` - Specifies the location of the ansible inventory
+* `-u | --user` - Specifies any extra user configuration information to be included
+* `-m | --meta` - Specifies any extra meta configuration information to be included
+* `-v | --verbose` - Displays extra information during the run.
+
 ## Secrets
 
 * Secret variables used to create the image and configuration are read
-  from `./vars/secrets.yaml`
+  from the file
 
   Currently this file defines the following keys:
 

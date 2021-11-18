@@ -30,6 +30,7 @@
 
     - ansible.builtin.debug:
         msg: "Backing up PostgreSQL database {{ item.name }}"
+        verbosity: 1
 
     - name: Dump database
       ansible.builtin.shell:

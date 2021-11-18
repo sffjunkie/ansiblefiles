@@ -1,0 +1,4 @@
+---
+# Note: Not used for Arch Linux
+veracrypt_version: 1.24-update7
+veracrypt_install_type: console  # gui

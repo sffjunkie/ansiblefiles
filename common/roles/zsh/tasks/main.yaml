@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: ZSH
+  ansible.builtin.debug:
     msg: Building ZSH environment
+    verbosity: 1
 
 - name: Install zsh
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"

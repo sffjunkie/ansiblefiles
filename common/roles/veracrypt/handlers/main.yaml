@@ -1,0 +1,5 @@
+---
+- name: Delete veracrypt temp directory
+  ansible.builtin.file:
+    path: _tmp_veracrypt_directory
+    state: absent

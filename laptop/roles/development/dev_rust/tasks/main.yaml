@@ -1,6 +1,8 @@
 ---
-- ansible.builtin.debug:
+- name: Rust Dev
+  ansible.builtin.debug:
     msg: Building Rust Development Environment
+    verbosity: 1
 
 - name: "Rust: Calculate CARGO_HOME"
   ansible.builtin.set_fact:

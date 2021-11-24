@@ -1,7 +1,7 @@
 ---
 - name: Calc hashed password
   when: user.password[0] != '$'
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: mkpasswd --method=SHA-512 --rounds=4096
   register: _passwd
   changed_when: false

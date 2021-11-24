@@ -5,17 +5,18 @@
     subtasks:
       - "{{ distribution }}.yaml"
       - "{{ os_family }}.yaml"
-      - "default.yaml"
 
 - name: Update configfiles for xmonad
   block:
-    - ansible.utils.update_fact:
+    - name: Calc new configfiles.packages
+      ansible.utils.update_fact:
         updates:
           - path: configfiles.packages
             value: "{{ configfiles.packages + ['xmonad'] }}"
       register: _updated_fact
       changed_when: false
 
-    - ansible.builtin.set_fact:
+    - name: Update configfiles
+      ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false

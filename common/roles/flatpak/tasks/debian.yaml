@@ -1,0 +1,7 @@
+---
+- name: Flatpak | Install flatpak | Debian
+  ansible.builtin.package:
+    name:
+      - flatpak
+      - gnome-software-plugin-flatpak
+    state: present

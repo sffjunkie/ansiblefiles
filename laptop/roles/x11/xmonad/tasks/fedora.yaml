@@ -1,0 +1,8 @@
+---
+- name: Install OS packages
+  ansible.builtin.dnf:
+    name:
+      - xmonad
+      - ghc-xmonad-devel
+      - ghc-xmonad-contrib-devel
+    state: present

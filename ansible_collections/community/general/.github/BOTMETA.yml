@@ -163,6 +163,8 @@ files:
     keywords: opennebula dynamic inventory script
   $inventories/proxmox.py:
     maintainers: $team_virt ilijamt
+  $inventories/xen_orchestra.py:
+    maintainers: shinuza
   $inventories/icinga2.py:
     maintainers: bongoeadgc6
   $inventories/scaleway.py:
@@ -223,6 +225,8 @@ files:
     maintainers: konstruktoid
   $lookups/redis.py:
     maintainers: $team_ansible_core jpmens
+  $lookups/revbitspss.py:
+    maintainers: RevBits
   $lookups/shelvefile.py: {}
   $lookups/tss.py:
     maintainers: amigus endlesstrax
@@ -1207,7 +1211,7 @@ macros:
   team_cyberark_conjur: jvanderhoof ryanprior
   team_e_spirit: MatrixCrawler getjack
   team_flatpak: JayKayy oolongbrothers
-  team_gitlab: Lunik Shaps dj-wasabi marwatk waheedi zanssa scodeman metanovii
+  team_gitlab: Lunik Shaps dj-wasabi marwatk waheedi zanssa scodeman metanovii sh0shin
   team_hpux: bcoca davx8342
   team_huawei: QijunPan TommyLike edisonxiang freesky-edward hwDCN niuzhenguo xuxiaowei0512 yanzhangi zengchen1024 zhongjun2
   team_ipa: Akasurde Nosmoht fxfitz justchris1

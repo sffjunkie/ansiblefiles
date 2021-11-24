@@ -1,7 +1,7 @@
 ---
 - name: Ensure each item is a dict with 'env' and 'version' keys
   ansible.builtin.set_fact:
-    _package_list: "{{ package_list|to_pip_dict }}"
+    _package_list: "{{ package_list | to_pip_dict }}"
   when: package_list | length > 0
 
 - name: pip package

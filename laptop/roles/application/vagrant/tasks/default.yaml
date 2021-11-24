@@ -1,5 +1,5 @@
 ---
-- name: "{{ _role_title }}: Install with package manager"
+- name: "Vagrant: Install with package manager"
   ansible.builtin.package:
     name: vagrant
     state: present

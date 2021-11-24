@@ -4,7 +4,14 @@
     msg: Building ZSH environment
     verbosity: 1
 
-- name: Install zsh
+- name: Test if installed
+  ansible.builtin.command:
+    cmd: zsh --version
+  register: _zsh_installed
+  changed_when: false
+
+- name: ZSH | Install
+  when: _zsh_installed.rc == 0
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:
@@ -12,26 +19,28 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-- name: listify set_shell_for
+- name: ZSH | listify set_shell_for
   ansible.builtin.set_fact:
     _set_shell_for: "{{ set_shell_for | listify }}"
 
-- name: "Configure user's shell"
+- name: ZSH | Configure user's shell
   when: _set_shell_for | length > 0
   ansible.builtin.user:
     name: "{{ item }}"
     shell: "{{ zsh_shell }}"
   loop: "{{ _set_shell_for }}"
 
-- name: Update configfiles for ZSH
+- name: ZSH | Update configfiles
   block:
-    - ansible.builtin.set_fact:
+    - name: ZSH | Calc config
+      ansible.builtin.set_fact:
         _zsh_config:
           zsh:
             ZSH_CACHE_DIR: '${XDG_CACHE_HOME:-$HOME/.cache}/zsh'
             ZDOTDIR': "{{ config_home_replacement_text + '/zsh' }}"
 
-    - ansible.utils.update_fact:
+    - name: ZSH | Calc new configfiles fact
+      ansible.utils.update_fact:
         updates:
           - path: configfiles.pathend
             value: "{{ configfiles.pathend }}"
@@ -40,6 +49,7 @@
       register: _updated_fact
       changed_when: false
 
-    - ansible.builtin.set_fact:
+    - name: ZSH | Update configfiles fact
+      ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false

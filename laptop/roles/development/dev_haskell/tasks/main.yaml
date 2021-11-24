@@ -4,45 +4,78 @@
     msg: Building Haskell Development Environment
     verbosity: 1
 
-- name: Check if stack binary already exists
+- name: Haskell | Check if ghcup bin directory present
   ansible.builtin.stat:
-    path: "{{ '~/.local/bin/stack' | expanduser }}"
-  register: _stack_exists
+    path: "{{ '~/.ghcup/bin' | expanduser }}"
+  register: _ghcup_installed
 
-- name: Install stack
-  when: not _stack_exists.stat.exists
+- name: Haskell | Install ghcup if not already installed
   block:
-    - name: Create temporary directory to download script to
+    - name: Haskell | Install ghcup required packages
+      ansible.builtin.package:
+        name:
+          - gcc
+          - gmp
+          - gmp-devel
+          - make
+          - ncurses
+          - ncurses-compat-libs
+          - xz
+          - perl
+        state: present
+
+    - name: Haskell | Create temporary directory to download script to
       become_user: "{{ userid }}"
       ansible.builtin.tempfile:
         prefix: haskell
         state: directory
-      register: _tmp_directory
+      register: _tmp_ghcup_directory
+      notify: Delete temporary ghcup script file
       changed_when: false
 
-    - name: Download stack install script
+    - name: Haskell | Download ghcup script
       become_user: "{{ userid }}"
       ansible.builtin.uri:
-        url: https://get.haskellstack.org/
-        dest: "{{ _tmp_directory.path }}/hellstack.sh"
+        url: https://get-ghcup.haskell.org
+        dest: "{{ _tmp_ghcup_directory.path }}/ghcup-install"
         mode: 0700
       changed_when: false
 
-    - name: Run stack install script
-      become_user: "{{ userid }}"
+    - name: Haskell | Get /tmp directory available size
       ansible.builtin.shell:
-        cmd: "{{ _tmp_directory.path }}/hellstack.sh --quiet --force -d ~/.local/bin"
-        chdir: "{{ _tmp_directory.path }}"
-        creates: "{{ '~/.local/bin/stack' | expanduser }}"
-
-    - name: Delete temporary directory
-      become_user: "{{ userid }}"
-      ansible.builtin.file:
-        path: "{{ _tmp_directory.path }}"
-        state: absent
+        cmd: df --output=avail /tmp | tail -n 1
+      register: _tmp_avail
       changed_when: false
 
-- name: Update stack
+    - name: Haskell | Create dir for ghcup files for systems with /tmp less than 5000MB
+      when: _tmp_avail.stdout | int < 5000000
+      ansible.builtin.tempfile:
+        path: ~/.cache
+        state: directory
+      register: _ghcup_tmp_dir
+
+    - name: Haskell | Run ghcup install script
+      become_user: "{{ userid }}"
+      ansible.builtin.command:
+        cmd: "{{ _tmp_ghcup_directory.path }}/ghcup-install"
+        chdir: "{{ _tmp_ghcup_directory.path }}"
+        creates: "{{ '~/.ghcup/bin' | expanduser }}"
+      environment:
+        BOOTSTRAP_HASKELL_NONINTERACTIVE: 1
+        BOOTSTRAP_HASKELL_INSTALL_STACK: 1
+        BOOTSTRAP_HASKELL_INSTALL_HLS: 1
+        TMPDIR: "{{ _ghcup_tmp_dir.path | default(omit) }}"
+  when: not _ghcup_installed.stat.exists
+
+- name: Haskell | Run ghcup upgrade
+  ansible.builtin.command:
+    cmd: ghcup upgrade
+  register: _ghcup_upgrade
+  changed_when: not 'No GHCup update available' in _ghcup_upgrade.stdout
+
+- name: Haskell | Run stack upgrade
   become_user: "{{ userid }}"
   ansible.builtin.command:
     cmd: stack update
+  register: _stack_upgrade
+  changed_when: not 'you are already running' in _stack_upgrade.stdout

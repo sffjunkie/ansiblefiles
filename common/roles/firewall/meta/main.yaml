@@ -1,3 +1,19 @@
 ---
-role_name: UFW Configuration
-dependencies: []
+galaxy_info:
+  author: Simon Kennedy <sffjunkie+code@gmail.com>
+  description: Configure firewall
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+
+  galaxy_tags:
+    - firewall
+    - ufw
+
+dependencies:
+  - community.general

@@ -1,17 +1,9 @@
 ---
-- hosts: furrball
-  become: true
-  vars_files:
-    - ../common/vars/global.yaml
-
-  tasks:
-    - name: Check source vm exists
-
-    - name: Clone VM
-      community.general.proxmox_kvm:
-        api_user: "{{ proxmox_ssh_user }}@pam"
-        api_password: "{{ proxmox_pass }}"
-        api_host: "{{ host }}"
-        clone: "{{ source_vmid }}"
-        name: "{{ target_name }}"
-        newid: "{{ target_vmid | default(omit) }}"
+- name: Clone VM
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_ssh_user }}@pam"
+    api_password: "{{ proxmox_pass }}"
+    api_host: "{{ host }}"
+    clone: "{{ source_vmid }}"
+    name: "{{ target_name }}"
+    newid: "{{ target_vmid | default(omit) }}"

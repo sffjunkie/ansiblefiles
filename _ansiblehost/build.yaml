@@ -29,8 +29,8 @@
       vars:
         params:
           files:
-            - '{{distribution}}.yaml'
-            - '{{os_family}}.yaml'
+            - '{{ distribution }}.yaml'
+            - '{{ os_family }}.yaml'
           paths:
             - 'vars'
 

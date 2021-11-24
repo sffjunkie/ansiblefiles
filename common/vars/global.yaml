@@ -33,6 +33,15 @@ configfiles:
 
 distribution: "{{ ansible_distribution | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
-os: "{{ 'macos' if os_family == 'darwin' else 'windows' if os_family == 'windows' else 'linux' }}"
-is_musl: "{{ true if os_family in ['alpine', 'gentoo', 'openwrt'] else false }}"
+os: >
+  "{{ 'macos' if os_family == 'darwin'
+  else 'windows' if os_family == 'windows'
+  else 'linux' }}"
+is_musl: >
+  "{{ true if os_family in ['alpine', 'gentoo', 'openwrt']
+  else false }}"
 is_wsl: "{{ lookup('env', 'WSLENV')|default('') != '' }}"
+
+motd_dir: >
+  "{{ '/etc/update-motd.d' if distribution == 'ubuntu'
+  else '/etc/motd.d' }}"

@@ -1,2 +1,3 @@
 ---
-_picom_repo: https://github.com/yshui/picom
+picom_git_repo: https://github.com/yshui/picom
+picom_git_tag: vNext

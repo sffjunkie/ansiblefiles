@@ -2,5 +2,5 @@
 - name: go.sh
   ansible.builtin.template:
     src: templates/.config/sh/go.sh.j2
-    dest: output/.config/sh/go.sh
+    dest: "{{ _configfiles_output_dir }}/.config/sh/go.sh"
     mode: 0700

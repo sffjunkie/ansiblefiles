@@ -1,13 +1,15 @@
 ---
-- name: Calc path
+- name: Font Install | Calc path
   ansible.builtin.set_fact:
     _path: "{{ font_url | urlsplit('path') }}"
+  changed_when: false
 
-- name: Calc basename
+- name: Font Install | Calc basename
   ansible.builtin.set_fact:
     _basename: "{{ _path | basename }}"
+  changed_when: false
 
-- name: Create temporary directory
+- name: Font Install | Create temporary directory
   ansible.builtin.tempfile:
     prefix: font
     state: directory
@@ -16,42 +18,48 @@
     - Delete temporary files
   changed_when: false
 
-- name: Set font tmp dir
+- name: Font Install | Set font tmp dir
   ansible.builtin.set_fact:
     _font_tmp_dir: "{{ _tmp_dir.path }}"
+  changed_when: false
 
-- name: Download font
+- name: Font Install | Download font
   ansible.builtin.uri:
     url: "{{ font_url }}"
     dest: "{{ _font_tmp_dir }}/{{ _basename }}"
   register: _font_download
   changed_when: false
 
-- name: Process font file
+- name: Font Install | Process font file
   when: _font_download.status == 200
   block:
-    - name: Create folder for extraction
+    - name: Font Install | Create folder to extract font to
       ansible.builtin.file:
         path: "{{ _font_tmp_dir }}/expanded/"
         state: directory
+        mode: 0700
       changed_when: false
 
-    - name: Extract files
+    - name: Font Install | Extract files
       ansible.builtin.unarchive:
         src: "{{ _font_tmp_dir }}/{{ _basename }}"
         dest: "{{ _font_tmp_dir }}/expanded/"
         remote_src: true
       changed_when: false
 
-    - name: Calc destination
+    - name: Font Install | Calc destination
       ansible.builtin.set_fact:
-        _font_destination: "{{ '/usr/local/share/fonts' if install == 'system' else ('~/.local/share/fonts' | expanduser) }}"
+        _font_destination: >
+          "{{ '/usr/local/share/fonts' if install == 'system' else"
+          "('~/.local/share/fonts' | expanduser) }}"
+      changed_when: false
 
-    - name: Calc file owner
+    - name: Font Install | Calc file owner
       ansible.builtin.set_fact:
         owner: "{{ 'root' if install == 'system' else userid }}"
+      changed_when: false
 
-    - name: Create output directory
+    - name: Font Install | Create output directory
       ansible.builtin.file:
         path: "{{ _font_destination }}"
         state: directory
@@ -61,7 +69,7 @@
         access_time: preserve
         modification_time: preserve
 
-    - name: Find font files to copy
+    - name: Font Install | Find font files to copy
       ansible.builtin.find:
         paths: "{{ _font_tmp_dir }}/expanded/"
         patterns:
@@ -70,7 +78,7 @@
         recurse: true
       register: _font_files
 
-    - name: Copy font files to {{ _font_destination }}
+    - name: Font Install | Copy font files to {{ _font_destination }}
       when: _font_files.matched > 0
       ansible.builtin.copy:
         src: "{{ font_file.path }}"
@@ -78,6 +86,7 @@
         remote_src: true
         owner: "{{ owner }}"
         group: "{{ owner }}"
+        mode: 0640
       loop: "{{ _font_files.files }}"
       loop_control:
         loop_var: font_file

@@ -1,11 +1,12 @@
-.vagrant
-files/ssh
+ansible_collections
+ansible_roles
 secrets.yaml
 inventory
 inventory.yaml
+build
+.vagrant
+files/*.png
 configfiles/templates
-roles/galaxy
-configfiles.json
+configfiles/files
 *.qcow2
 *.img
-**/configs/*.yaml

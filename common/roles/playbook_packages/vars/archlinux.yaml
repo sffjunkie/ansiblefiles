@@ -3,3 +3,5 @@ base:
   packages:
     - base-devel
     - curl
+    - python
+    - python-pip

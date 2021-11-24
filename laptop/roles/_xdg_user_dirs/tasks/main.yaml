@@ -1,7 +1,8 @@
 ---
 - name: Update xdg_user_dirs with custom values
   set_fact:
-    xdg_user_dirs: "{{ xdg_user_dirs | default('') | combine({ item.key : item.value }) }}"
+    xdg_user_dirs: >
+      "{{ xdg_user_dirs | default('') | combine({ item.key : item.value }) }}"
   loop: "{{ custom_xdg_user_dirs | dict2items }}"
 
 - name: Create XDG user directories

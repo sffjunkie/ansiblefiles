@@ -4,6 +4,6 @@
   ansible.builtin.include_tasks: "{{ lookup('first_found', params) }}"
   vars:
     params:
-      - "{{distribution}}.yaml"
-      - "{{os_family}}.yaml"
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
       - "default.yaml"

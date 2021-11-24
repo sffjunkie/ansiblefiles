@@ -1,0 +1,9 @@
+---
+default_outgoing_rule: allow
+default_incoming_rule: deny
+default_ports:
+  - { rule: allow, port: 53, proto: tcp }
+  - { rule: allow, port: 53, proto: udp }
+  - { rule: allow, port: 80, proto: tcp }
+  - { rule: allow, port: 443, proto: tcp }
+default_ssh_port: 22

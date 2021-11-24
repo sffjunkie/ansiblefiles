@@ -12,6 +12,6 @@
 - name: Ensure httpd can connect to the network.
   seboolean:
     name: httpd_can_network_connect
-    state: yes
-    persistent: yes
+    state: true
+    persistent: true
   when: ansible_selinux.status == 'enabled'

@@ -1,12 +1,21 @@
 ---
-- name: Set hostname
-  ansible.builtin.shell:
-    cmd: hostnamectl set-hostname "{{ hostname }}"
+- name: Get current hostname
+  ansible.builtin.command:
+    cmd: hostnamectl get-hostname
+  register: _hostname_current
+  changed_when: false
 
-- name: Change /etc/hosts
-  when: os_family == 'debian'
-  ansible.builtin.lineinfile:
-    dest: /etc/hosts
-    regexp: "^127.0.1.1"
-    line: "127.0.1.1 {{ hostname }}"
-    state: present
+- name: Update hostname
+  block:
+    - name: Set hostname
+      ansible.builtin.command:
+        cmd: hostnamectl set-hostname "{{ hostname }}"
+
+    - name: Change /etc/hosts
+      when: os_family == 'debian'
+      ansible.builtin.lineinfile:
+        dest: /etc/hosts
+        regexp: "^127.0.1.1"
+        line: "127.0.1.1 {{ hostname }}"
+        state: present
+  when: _hostname_current.stdout != hostname

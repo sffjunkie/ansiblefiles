@@ -1,5 +1,5 @@
 ---
-- name: QTile - install qtile os dependencies
+- name: QTile | Install qtile os dependencies
   ansible.builtin.package:
     name:
       - libcairo2
@@ -8,69 +8,42 @@
       - libxcb-render0-dev
     state: present
 
-- name: Install python3 gobject
+- name: QTile | Install python3 gobject
   ansible.builtin.import_role:
     name: python3_gobject
 
-- name: QTile - install pip dependencies
+- name: QTile | install pip dependencies
   ansible.builtin.pip:
     name:
       - xcffib
       - dbus-next
     state: present
 
-- name: Check for cairocffi
-  ansible.builtin.stat:
-    path: "{{ '/usr/local/lib/python' ~ ansible_python.version.major ~ '.' ~ ansible_python.version.minor ~ '/dist-packages/cairocffi/__init__.py' }}"
-  register: _cairocffi_init
-  changed_when: false
+- name: QTile | Install cairocffi with --no-cache-dir
+  ansible.builtin.include_tasks: ./cairocffi.yaml
 
-- name: Check for .ansible marker file in cairocffi to determine if built by ansible
-  ansible.builtin.stat:
-    path: "{{ '/usr/local/lib/python' ~ ansible_python.version.major ~ '.' ~ ansible_python.version.minor ~ '/dist-packages/cairocffi/.ansible' }}"
-  register: _cairocffi_built
-  changed_when: false
-
-- name: Uninstall cairocffi - exists but not built by ansible
-  when: _cairocffi_init.stat.exists and not _cairocffi_built.stat.exists
-  ansible.builtin.pip:
-    name: cairocffi
-    state: absent
-
-- name: QTile - install cairoffi with --no-cache-dir
-  when: not _cairocffi_built.stat.exists
-  ansible.builtin.pip:
-    name: cairocffi
-    state: present
-    extra_args: "--no-cache-dir"
-
-- name: Touch 'built by ansible' flag file
-  when: not _cairocffi_built.stat.exists
-  ansible.builtin.file:
-    path: "{{ '/usr/local/lib/python' ~ ansible_python.version.major ~ '.' ~ ansible_python.version.minor ~ '/dist-packages/cairocffi/.ansible' }}"
-    state: touch
-  changed_when: false
-
-- name: QTile - install package
+- name: QTile | Install package
   ansible.builtin.pip:
     name: qtile
     state: present
 
-- name: Create qtile .desktop file
+- name: QTile | Create .desktop file
   ansible.builtin.copy:
     src: files/qtile.desktop
     dest: /usr/share/xsessions/
-    mode: '0644'
+    mode: 0644
 
-- name: Update configfiles for qtile
+- name: QTile | Update configfiles
   block:
-    - ansible.utils.update_fact:
+    - name: QTile | Calc new configfiles fact
+      ansible.utils.update_fact:
         updates:
           - path: configfiles.packages
             value: "{{ configfiles.packages + ['qtile'] }}"
       register: _updated_fact
       changed_when: false
 
-    - ansible.builtin.set_fact:
+    - name: QTile | Update configfiles fact
+      ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false

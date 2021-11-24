@@ -1,18 +1,18 @@
 ---
-- name: -Load default os package list
+- name: Load default os package list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
-        - "{{distribution}}.yaml"
-        - "{{os_family}}.yaml"
+        - "{{ distribution }}.yaml"
+        - "{{ os_family }}.yaml"
       paths:
         - "vars"
 
-- name: -Load common package list
+- name: Load common package list
   ansible.builtin.include_vars: vars/common.yaml
 
-- name: -Ensure base.pip is a list
+- name: Ensure base.pip is a list
   ansible.builtin.set_fact:
     _base_pip: "{{ base.pip | default([], True) }}"
     _base_packages: "{{ base.packages | default([], True) }}"
@@ -21,7 +21,7 @@
     _extra_pip: "{{ extra.pip | default([], True) }}"
     _extra_packages: "{{ extra.packages | default([], True) }}"
 
-- name: -Update list with common packages
+- name: Update list with common packages
   ansible.utils.update_fact:
     updates:
       - path: base.packages
@@ -31,7 +31,7 @@
   register: _updated_fact
   changed_when: false
 
-- name: -Set updated 'base' fact
+- name: Set updated 'base' fact
   ansible.builtin.set_fact:
     base: "{{ _updated_fact.base }}"
   changed_when: false

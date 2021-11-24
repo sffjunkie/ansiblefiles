@@ -1,0 +1,5 @@
+---
+- name: Flatpak | Install flatpak | Arch Linux
+  community.general.pacman:
+    name: flatpak
+    state: present

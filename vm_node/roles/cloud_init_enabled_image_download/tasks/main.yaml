@@ -6,16 +6,23 @@
 - name: Set Ubuntu cloud image url
   when: cloud_distribution == 'ubuntu'
   ansible.builtin.set_fact:
-    _image_url: "https://cloud-images.ubuntu.com/{{ version }}/current/{{ version }}-server-cloudimg-amd64.img"
+    _image_url: >
+      https://cloud-images.ubuntu.com/
+      "{{ version }}/current/{{ version }}-server-cloudimg-amd64.img"
 
 - name: Set Fedora cloud image url
   when: cloud_distribution == 'fedora'
   ansible.builtin.set_fact:
-    _image_url: "https://download.fedoraproject.org/pub/fedora/linux/releases/{{ version }}/Cloud/x86_64/images/Fedora-Cloud-Base-{{ version }}-1.2.x86_64.qcow2"
+    _image_url: >
+      "https://download.fedoraproject.org/pub/fedora/linux/releases/\
+      {{ version }}/Cloud/x86_64/images/Fedora-Cloud-Base-{{ version }}\
+      -1.2.x86_64.qcow2"
 
 - name: Set main disk image filename
   ansible.builtin.set_fact:
-    disk_image_main: "~/images/{{ cloud_distribution }}-{{ version }}-cloud-init-enabled{{ disk_image_extension }}"
+    disk_image_main: >
+      "~/images/{{ cloud_distribution }}-{{ version }}-\
+      cloud-init-enabled{{ disk_image_extension }}"
 
 - name: Create target directory
   delegate_to: localhost
@@ -45,5 +52,5 @@
     access_time: preserve
     modification_time: preserve
 
-#https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.0/x86_64/product-downloads
-#https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64.qcow2
+# https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.0/x86_64/product-downloads
+# https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64.qcow2

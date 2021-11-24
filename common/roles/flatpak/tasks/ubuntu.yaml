@@ -1,0 +1,19 @@
+---
+- name: Flatpak | Add apt repository | Ubuntu < 18.10
+  block:
+    - name: Add apt repository
+      ansible.builtin.apt_repository:
+        repo: ppa:flatpak/stable
+
+    - name: Update cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 86400
+  when: ansible_distribution_version < '18.10'
+
+- name: Flatpak | Install flatpak | Ubuntu
+  ansible.builtin.package:
+    name:
+      - flatpak
+      - gnome-software-plugin-flatpak
+    state: present

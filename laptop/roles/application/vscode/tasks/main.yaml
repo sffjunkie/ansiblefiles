@@ -14,7 +14,9 @@
 
 - name: Calc config directory
   ansible.builtin.set_fact:
-    _vscode_config_dir: "{{ (vscode.product | lower == 'vscode') | ternary('Code', 'VSCodium') }}"
+    _vscode_config_dir: >
+      "{{ (vscode.product | lower == 'vscode') |
+      ternary('Code', 'VSCodium') }}"
 
 # Using custom filter plugins
 - name: Get VSCode extension list
@@ -25,11 +27,15 @@
 - name: Install extensions
   become_user: "{{ userid }}"
   ansible.builtin.command:
-    cmd: "code --install-extension '{{ item }}' --user-data-dir {{ config_home }}/Code/User/"
+    cmd: >
+      "code --install-extension '{{ item }}'
+      --user-data-dir {{ config_home }}/Code/User/"
     creates: "{{ item }}-*"
   loop: "{{ _vscode_extensions }}"
   register: _vscode_extension_install_result
-  changed_when: _vscode_extension_install_result.rc == 0 and 'already installed' not in _vscode_extension_install_result.stdout
+  changed_when: >
+    _vscode_extension_install_result.rc == 0 and
+    'already installed' not in _vscode_extension_install_result.stdout
 
 - name: Update configfiles for VS Code
   block:

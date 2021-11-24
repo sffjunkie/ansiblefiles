@@ -1,18 +1,13 @@
 ---
-# TODO: Change hosts to vmhosts
 - hosts: container_machines
   become: true
   vars_files:
     - ../common/vars/global.yaml
     - ./vars/main.yaml
 
-  pre_tasks:
-    - name: Install pip3
-      ansible.builtin.package:
-        name: python3-pip
-        state: present
-
   roles:
+    - role: playbook_packages
+
     - role: docker
       when: backend == 'docker'
 

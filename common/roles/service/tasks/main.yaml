@@ -2,7 +2,9 @@
 - name: Create service directory
   ansible.builtin.file:
     name: "/srv/{{ service }}"
+    mode: 0755
 
 - name: Copy docker compose file
   ansible.builtin.copy:
     src: hello
+    mode: 0644

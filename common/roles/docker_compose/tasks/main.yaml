@@ -1,29 +1,80 @@
 ---
-- name: Create temporary directory
-  ansible.builtin.tempfile:
-    prefix: compose
-    state: directory
-  register: _compose_tmp_dir
-  notify:
-    - Delete temporary files
-  changed_when: false
-
 - name: Check if docker-compose exists
   ansible.builtin.stat:
     path: "/usr/local/bin/"
   register: _compose_exists
 
-- name: Download compose binary
-  when: not _compose_exists.stat.exists
-  ansible.builtin.uri:
-    url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-linux-x86_64"
-    dest: "{{ _compose_tmp_dir.path }}/docker-compose"
-    mode: "+x"
-  changed_when: false
+- name: Get current version of docker-compose
+  when: _compose_exists.stat.exists
+  ansible.builtin.command:
+    cmd: /usr/local/bin/docker-compose --version --short
+  register: _compose_current_version
 
-- name: Copy compose file
+- name: Get latest release of docker-compose
+  when: docker_compose_version == 'latest'
+  community.general.github_release:
+    user: docker
+    repo: compose
+    action: latest_release
+  register: _compose_latest_version
+
+- name: No installation
+  block:
+    - name: Latest requested
+      when: docker_compose_version == 'latest'
+      ansible.builtin.set_fact:
+        _install_version = _compose_latest_version.latest_release
+
+    - name: Not latest version
+      when: docker_compose_version != 'latest'
+      ansible.builtin.set_fact:
+        _install_version = docker_compose_version
+  when: _compose_exists.stat.exists
+
+- name: Existing installation
+  block:
+    - name: Latest requested
+      when: >
+        docker_compose_version == 'latest' and
+        _compose_latest_version.latest_release > _compose_current_version.stdout
+      ansible.builtin.set_fact:
+        _install_version = _compose_latest_version.latest_release
+
+    - name: Not latest version
+      when: >
+        docker_compose_version != 'latest' and
+        docker_compose_version > _compose_current_version.stdout
+      ansible.builtin.set_fact:
+        _install_version = docker_compose_version
   when: not _compose_exists.stat.exists
-  ansible.builtin.copy:
-    src: "{{ _compose_tmp_dir.path }}/docker-compose"
-    dest: "/usr/local/bin/"
-    remote_src: true
+
+- name: If new version required
+  block:
+    - name: Create temporary directory
+      ansible.builtin.tempfile:
+        prefix: compose
+        state: directory
+      register: _compose_tmp_dir
+      notify:
+        - Delete temporary files
+      changed_when: false
+
+    - name: Download compose binary
+      when: not _compose_exists.stat.exists
+      ansible.builtin.uri:
+        url: >
+          https://github.com/docker/compose/releases/download/\
+          "{{ _install_version }}/docker-compose-linux-x86_64"
+        dest: "{{ _compose_tmp_dir.path }}/docker-compose"
+        mode: "+x"
+      changed_when: false
+
+    - name: Copy compose file
+      when: not _compose_exists.stat.exists
+      ansible.builtin.copy:
+        src: "{{ _compose_tmp_dir.path }}/docker-compose"
+        dest: "/usr/local/bin/"
+        remote_src: true
+        mode: preserve
+
+  when: _install_version is defined

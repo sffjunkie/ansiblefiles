@@ -22,12 +22,9 @@
 * ansiblehost - Configures a machine to manage these Ansible files run them
 * autoinstall - Ubuntu Autoinstall
 
-config file templates -> config files
-docker compose templates -> docker compose files
-
 ## License
 
-These ansible files are under the CC-BY-4.0 license
+These ansible files are under the MIT license
 
 
 ## Required Packages
@@ -46,7 +43,7 @@ Of particular note are
 ## Notes
 
 * Comments like `# yaml-language-server: $schema=./[insert filename here]`
-  are used to bypass YAML schema validation for the file.
+  are used to bypass YAML schema validation for the file within VS Code.
 
   This is because the YAML language server from RedHat automatically matches
   schemas to file names. So if we want to have a file `build.yaml` this

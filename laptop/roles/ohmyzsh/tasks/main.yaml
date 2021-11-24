@@ -1,35 +1,50 @@
 ---
-- name: Run install script
+- name: Oh-My-Zsh | Run install script
   become_user: "{{ userid }}"
   ansible.builtin.shell:
-    cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    cmd: >
+      sh -c
+      \"$(curl -fsSL
+      https://raw.githubusercontent.com\
+      /ohmyzsh/ohmyzsh/master/tools/install.sh)\"
+      \"\"
+      --unattended
     creates: "{{ _ohmyzsh_install_path }}/oh-my-zsh.sh"
   environment:
     ZSH: "{{ _ohmyzsh_install_path }}"
 
-- name: Install plugins.
+- name: Oh-My-Zsh | Install plugins.
   become_user: "{{ userid }}"
   ansible.builtin.git:
-    repo: "https://github.com/zsh-users/{{ item }}.git"
-    dest: "{{ _ohmyzsh_install_path }}/plugins/{{ item }}"
+    repo: "https://github.com/zsh-users/{{ item.name }}.git"
+    dest: "{{ _ohmyzsh_install_path }}/plugins/{{ item.name }}"
+    version: "{{ item.version }}"
   loop:
     "{{ machine.ohmyzsh.user_plugins }}"
 
-- name: Update configfiles for oh-my-zsh
+- name: Oh-My-Zsh | Update configfiles
   block:
-    - ansible.builtin.set_fact:
+    - name: Calc user plugin names
+      ansible.builtin.set_fact:
+        _ohmyzsh_user_plugins: >
+          "{{ machine.ohmyzsh.user_plugins | map(attribut='name') | list }}"
+
+    - name: Oh-My-Zsh | Calc config
+      ansible.builtin.set_fact:
         _ohmyzsh_config:
           ohmyzsh:
-            plugins: "{{ machine.ohmyzsh.plugins + machine.ohmyzsh.user_plugins }}"
+            plugins: "{{ machine.ohmyzsh.plugins + _ohmyzsh_user_plugins }}"
             ZSH: "{{ _ohmyzsh_install_path|replace(home, '${HOME}') }}"
 
-    - ansible.utils.update_fact:
+    - name: Oh-My-Zsh | Calc new configfiles fact
+      ansible.utils.update_fact:
         updates:
           - path: configfiles.configs
             value: "{{ configfiles.configs | combine(_ohmyzsh_config) }}"
       register: _updated_fact
       changed_when: false
 
-    - ansible.builtin.set_fact:
+    - name: Oh-My-Zsh | Update configfiles fact
+      ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false

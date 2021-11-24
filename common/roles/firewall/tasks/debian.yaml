@@ -1,0 +1,33 @@
+---
+- name: Ensure ufw is installed.
+  ansible.builtin.package:
+    name: ufw
+    state: present
+
+- name: Default firewall rules
+  community.general.ufw:
+    policy: "{{ item.policy }}"
+    direction: "{{ item.direction }}"
+  loop:
+    - direction: incoming
+      policy: "{{ default_incoming_rule }}"
+    - direction: outgoing
+      policy: "{{ default_outgoing_rule }}"
+
+- name: Standard firewall rules
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop: "{{ default_ports }}"
+
+- name: Custom firewall rules
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop: "{{ custom_ports }}"
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled

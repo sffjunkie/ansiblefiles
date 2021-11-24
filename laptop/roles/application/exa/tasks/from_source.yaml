@@ -9,11 +9,17 @@
 - name: possible urls
   ansible.builtin.set_fact:
     # Get urls matching os and architecture
-    _exa_files: "{{ exa_info.json|community.general.json_query('assets[*].browser_download_url')|select('match', '.*' + os + '.*' + ansible_architecture + '.*') }}"
+    _exa_files: >
+      "{{ exa_info.json |
+      community.general.json_query('assets[*].browser_download_url') |
+      select('match', '.*' + os + '.*' + ansible_architecture + '.*') }}"
 
 - name: url
   ansible.builtin.set_fact:
-    _exa_url: "{{ (_exa_files|select('match', '.*musl.*') if is_musl else _exa_files|select('match', '.*' + ansible_architecture + '-v.*'))[0] }}"
+    _exa_url: >
+      "{{ (_exa_files |
+      select('match', '.*musl.*') if is_musl else _exa_files |
+      select('match', '.*' + ansible_architecture + '-v.*'))[0] }}"
 
 - name: dbg
   ansible.builtin.debug:
@@ -31,6 +37,7 @@
   ansible.builtin.uri:
     url: "{{ _exa_url }}"
     dest: "{{ _tmp_directory.path }}/exa.zip"
+    mode: 0644
   register: exa_downloaded
   changed_when: false
 
@@ -38,6 +45,7 @@
   ansible.builtin.file:
     path: "{{ _tmp_directory.path }}/expanded/"
     state: directory
+    mode: 0755
   changed_when: false
 
 - name: Unarchive exa
@@ -59,7 +67,7 @@
   ansible.builtin.file:
     path: "/usr/local/share/man/{{ item }}"
     state: directory
-    # mode: 0755
+    mode: 0755
     access_time: preserve
     modification_time: preserve
   loop:

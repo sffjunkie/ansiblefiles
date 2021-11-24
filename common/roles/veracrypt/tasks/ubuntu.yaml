@@ -1,7 +1,9 @@
 ---
 - name: Get veracrypt
   ansible.builtin.uri:
-    url: "https://launchpad.net/veracrypt/trunk/{{ veracrypt_version }}/+download/veracrypt-{{ _veracrypt_type_str }}{{ veracrypt_version }}-Ubuntu-{{ ansible_distribution_version }}-amd64.deb"
+    url: https://launchpad.net/veracrypt/trunk/\
+      "{{ veracrypt_version }}/+download/veracrypt-{{ _veracrypt_type_str }}\
+      {{ veracrypt_version }}-Ubuntu-{{ ansible_distribution_version }}-amd64.deb"
     dest: _tmp_veracrypt_directory/veracrypt.deb
 
 - name: Install veracrypt

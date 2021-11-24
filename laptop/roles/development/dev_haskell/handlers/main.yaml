@@ -1,0 +1,9 @@
+- name: Delete temporary ghcup script file
+  ansible.builtin.file:
+    name: "{{ _tmp_ghcup_directory.path }}"
+    state: absent
+
+- name: Delete temporary ghcup files
+  ansible.builtin.file:
+    name: "{{ _ghcup_tmp_dir.path }}"
+    state: absent

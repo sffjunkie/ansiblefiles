@@ -1,5 +1,5 @@
 ---
-- name: {{ _role_title }}
+- name: Vagrant
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:

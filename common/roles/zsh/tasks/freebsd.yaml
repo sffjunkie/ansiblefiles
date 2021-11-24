@@ -1,3 +1,5 @@
 ---
 - name: Install zsh - FreeBSD
-  ansible.builtin.shell: "pkg install zsh"
+  community.general.pkgng:
+    name: zsh
+    state: present

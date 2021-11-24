@@ -24,23 +24,23 @@
     - name: Configure UFW
       when: os_family == 'debian'
       block:
-      - name: Check if ufw running
-        ansible.builtin.command:
-          cmd: ufw status
-        register: ufw_check
-        changed_when: false
+        - name: Check if ufw running
+          ansible.builtin.command:
+            cmd: ufw status
+          register: ufw_check
+          changed_when: false
 
-      - name: Configure ufw to allow sshd to listen on the new tcp port
-        community.general.ufw:
-          rule: allow
-          port: "{{ ssh_port }}"
-        when: "'inactive' not in ufw_check.stdout"
+        - name: Configure ufw to allow sshd to listen on the new tcp port
+          community.general.ufw:
+            rule: allow
+            port: "{{ ssh_port }}"
+          when: "'inactive' not in ufw_check.stdout"
 
-      - name: Configure ufw to disable default ssh port
-        community.general.ufw:
-          rule: deny
-          port: "22"
-        when: "'inactive' not in ufw_check.stdout"
+        - name: Configure ufw to disable default ssh port
+          community.general.ufw:
+            rule: deny
+            port: "22"
+          when: "'inactive' not in ufw_check.stdout"
 
     - name: Configure SELinux
       when: ansible_selinux.status == 'enabled'

@@ -2,5 +2,5 @@
 - name: python.sh
   ansible.builtin.template:
     src: templates/.config/sh/python.sh.j2
-    dest: output/.config/sh/python.sh
+    dest: "{{ _configfiles_output_dir }}/.config/sh/python.sh"
     mode: 0700

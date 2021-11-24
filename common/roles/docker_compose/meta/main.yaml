@@ -1,1 +1,25 @@
 ---
+galaxy_info:
+  author: Simon Kennedy <sffjunkie+code@gmail.com>
+  description: Install docker-compose
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - docker
+    - dockercompose
+
+dependencies:
+  - community.general

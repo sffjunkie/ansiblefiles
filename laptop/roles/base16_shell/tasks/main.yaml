@@ -7,6 +7,7 @@
   ansible.builtin.git:
     repo: https://github.com/chriskempson/base16-shell.git
     dest: "{{ base16_shell_path }}"
+    version: HEAD  # noqa: git-latest
 
 - name: Install base16-shell-preview
   ansible.builtin.pip:

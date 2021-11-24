@@ -1,6 +1,12 @@
 ---
+- name: Get /etc/machine-id info
+  ansible.builtin.stat:
+    path: /etc/machine-id
+  register: _machine_id
+
 - name: Truncate /etc/machine-id
-  ansible.builtin.shell:
+  when: _machine_id.stat.size == 0
+  ansible.builtin.command:
     cmd: truncate -s 0 /etc/machine-id
 
 - name: Get stat for /var/lib/dbus/machine-id
@@ -8,10 +14,12 @@
     path: /var/lib/dbus/machine-id
     follow: true
   register: _dbus_machine_id
-  changed_when:: false
 
 - name: Create symlink from /var/lib/dbus/machine-id to /etc/machine-id
-  when: not _dbus_machine_id.stat.exists or (_dbus_machine_id.stat.islnk and _dbus_machine_id.stat.path == '/etc/machine-id')
+  when: >
+    not _dbus_machine_id.stat.exists or
+    (_dbus_machine_id.stat.islnk and
+    _dbus_machine_id.stat.path == '/etc/machine-id')
   ansible.builtin.file:
     src: /var/lib/dbus/machine-id
     dest: /etc/machine-id

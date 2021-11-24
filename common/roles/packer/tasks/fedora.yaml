@@ -4,6 +4,15 @@
   ansible.builtin.package:
     name: dnf-plugins-core
 
-- name: Add docker repository
+- name: Check repolist
   ansible.builtin.shell:
-    cmd: dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+    cmd: dnf repolist | awk '{ print $1 }'
+  register: _current_repos
+  changed_when: false
+
+- name: Add docker repository
+  when: not 'hashicorp' in _current_repos.stdout_lines
+  ansible.builtin.command:
+    cmd: >
+      dnf config-manager --add-repo
+      https://rpm.releases.hashicorp.com/fedora/hashicorp.repo

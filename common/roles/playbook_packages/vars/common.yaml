@@ -3,7 +3,7 @@ common:
   packages:
     - autoconf
     - automake
-    - python3
+    - git
     - unzip
     - xdg-utils
     - zstd

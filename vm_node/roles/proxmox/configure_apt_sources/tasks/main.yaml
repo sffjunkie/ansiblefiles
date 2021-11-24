@@ -22,5 +22,7 @@
   ansible.builtin.lineinfile:
     dest: /etc/apt/sources.list
     regexp: "^deb http://download.proxmox.com/debian/pve"
-    line: "deb http://download.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-no-subscription"
+    line: >
+      deb http://download.proxmox.com/debian/pve
+      {{ ansible_distribution_release }} pve-no-subscription"
     state: present

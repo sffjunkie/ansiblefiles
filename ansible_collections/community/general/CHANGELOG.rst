@@ -6,6 +6,68 @@ Community General Release Notes
 
 This changelog describes changes after version 3.0.0.
 
+v4.1.0
+======
+
+Release Summary
+---------------
+
+Regular bugfix and feature release.
+
+Minor Changes
+-------------
+
+- gitlab - clean up modules and utils (https://github.com/ansible-collections/community.general/pull/3694).
+- ipmi_boot - add support for user-specified IPMI encryption key (https://github.com/ansible-collections/community.general/issues/3698).
+- ipmi_power - add support for user-specified IPMI encryption key (https://github.com/ansible-collections/community.general/issues/3698).
+- listen_ports_facts - add support for ``ss`` command besides ``netstat`` (https://github.com/ansible-collections/community.general/pull/3708).
+- lxd_container - adds ``type`` option which also allows to operate on virtual machines and not just containers (https://github.com/ansible-collections/community.general/pull/3661).
+- nmcli - add multiple addresses support for ``ip4`` parameter (https://github.com/ansible-collections/community.general/issues/1088, https://github.com/ansible-collections/community.general/pull/3738).
+- open_iscsi - extended module to allow rescanning of established session for one or all targets (https://github.com/ansible-collections/community.general/issues/3763).
+- pacman - add ``stdout`` and ``stderr`` as return values (https://github.com/ansible-collections/community.general/pull/3758).
+- redfish_command - add ``GetHostInterfaces`` command to enable reporting Redfish Host Interface information (https://github.com/ansible-collections/community.general/issues/3693).
+- redfish_command - add ``SetHostInterface`` command to enable configuring the Redfish Host Interface (https://github.com/ansible-collections/community.general/issues/3632).
+
+Bugfixes
+--------
+
+- github_repo - ``private`` and ``description`` attributes should not be set to default values when the repo already exists (https://github.com/ansible-collections/community.general/pull/2386).
+- terraform - fix command options being ignored during planned/plan in function ``build_plan`` such as ``lock`` or ``lock_timeout`` (https://github.com/ansible-collections/community.general/issues/3707, https://github.com/ansible-collections/community.general/pull/3726).
+
+New Plugins
+-----------
+
+Inventory
+~~~~~~~~~
+
+- xen_orchestra - Xen Orchestra inventory source
+
+Lookup
+~~~~~~
+
+- revbitspss - Get secrets from RevBits PAM server
+
+v4.0.2
+======
+
+Release Summary
+---------------
+
+Bugfix release for today's Ansible 5.0.0 beta 2.
+
+Deprecated Features
+-------------------
+
+- Support for Ansible 2.9 and ansible-base 2.10 is deprecated, and will be removed in the next major release (community.general 5.0.0) next spring. While most content will probably still work with ansible-base 2.10, we will remove symbolic links for modules and action plugins, which will make it impossible to use them with Ansible 2.9 anymore. Please use community.general 4.x.y with Ansible 2.9 and ansible-base 2.10, as these releases will continue to support Ansible 2.9 and ansible-base 2.10 even after they are End of Life (https://github.com/ansible-community/community-topics/issues/50, https://github.com/ansible-collections/community.general/pull/3723).
+
+Bugfixes
+--------
+
+- counter_enabled callback plugin - fix output to correctly display host and task counters in serial mode (https://github.com/ansible-collections/community.general/pull/3709).
+- ldap_search - allow it to be used even in check mode (https://github.com/ansible-collections/community.general/issues/3619).
+- lvol - allows logical volumes to be created with certain size arguments prefixed with ``+`` to preserve behavior of older versions of this module (https://github.com/ansible-collections/community.general/issues/3665).
+- nmcli - fixed falsely reported changed status when ``mtu`` is omitted with ``dummy`` connections (https://github.com/ansible-collections/community.general/issues/3612, https://github.com/ansible-collections/community.general/pull/3625).
+
 v4.0.1
 ======
 

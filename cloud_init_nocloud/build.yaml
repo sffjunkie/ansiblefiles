@@ -87,7 +87,9 @@
 
     - name: Assert default_user exists if user_data.use_default is true
       assert:
-        that: not user_data.use_default or (user_data.use_default and default_user is defined)
+        that: >
+          not user_data.use_default or
+          (user_data.use_default and default_user is defined)
       changed_when: false
 
     - name: Set default _config_name_str
@@ -96,19 +98,21 @@
       changed_when: false
 
     - name: Set config_name
-      when: cli_config_name | default('', True) != ''
+      when: cli_config_name is defined
       ansible.builtin.set_fact:
         _config_name_str: "{{ _config_name_str }}-{{ cli_config_name }}"
       changed_when: false
 
     - name: Set config_name
-      when: "'config_name' in hostvars[inventory_hostname] and not cli_config_name is defined"
+      when: >
+        'config_name' in hostvars[inventory_hostname] and
+        not cli_config_name is defined
       ansible.builtin.set_fact:
-        _config_name_str: "{{ _config_name_str }}-{{ hostvars[inventory_hostname]['config_name'] }}"
+        _config_name_str: "{{ _config_name_str }}-{{ hostvars[inventory_hostname]['config_name'] }}"  # noqa line-length
       changed_when: false
 
     - name: Determine whether to use date
-      when: cli_use_date is defined and cli_use_date | bool == true
+      when: cli_use_date is defined and cli_use_date | bool == true  # noqa literal-compare line-length
       ansible.builtin.set_fact:
         use_date: true
 
@@ -148,7 +152,7 @@
 
     - name: Build cloud config image
       ansible.builtin.include_role:
-        name: build_cloud_config_image
+        name: build_cloud_image
       tags:
         - image
 
@@ -163,13 +167,16 @@
       ansible.builtin.copy:
         src: "{{ hostvars['localhost']['image_path'] }}"
         dest: ~/images/
+        mode: 0640
 
     - name: Copy user config
       ansible.builtin.copy:
         src: "{{ hostvars['localhost']['user_config_path'] }}"
         dest: ~/snippets/
+        mode: 0640
 
     - name: Copy meta config
       ansible.builtin.copy:
         src: "{{ hostvars['localhost']['meta_config_path'] }}"
         dest: ~/snippets/
+        mode: 0640

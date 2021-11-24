@@ -4,31 +4,37 @@
     msg: Building Typescript Development Environment
     verbosity: 1
 
-- name: "Typescript: Install packages"
+- name: "Typescript | Install packages"
   ansible.builtin.include_role:
     name: install_group
   vars:
     group: "{{ machine.development.typescript }}"
 
-- name: "Typescript: Update configfiles"
+- name: Typescript | Update configfiles
   block:
-    - ansible.builtin.set_fact:
+    - name: Typescript | Calc config
+      ansible.builtin.set_fact:
         _ts_config:
           typescript: {}
 
-    - ansible.utils.update_fact:
+# TODO: dev_typescript | pathend, configs, envvars
+    - name: Typescript | Calc new configfiles fact
+      ansible.utils.update_fact:
         updates:
 #           - path: configfiles.pathend
 #             value: "{{ configfiles.pathend + [_npm_bin_path] }}"
 #           - path: configfiles.configs
 #             value: "{{ configfiles.configs }}"
 #           - path: configfiles.envvars
-#             value: "{{ configfiles.envvars | combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
+#             value: >
+#               "{{ configfiles.envvars |
+#               combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
           - path: configfiles.packages
             value: "{{ configfiles.packages + ['typescript'] }}"
       register: _updated_fact
       changed_when: false
 
-    - ansible.builtin.set_fact:
+    - name: Typescript | Update configfiles fact
+      ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false

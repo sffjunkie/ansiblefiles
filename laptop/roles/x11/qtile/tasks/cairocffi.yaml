@@ -1,0 +1,43 @@
+---
+- name: cairocffi | Calc cairocffi path
+  ansible.builtin.set_fact:
+    _cairo_path: /usr/local/lib/python\
+      "{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}"\
+      /dist-packages/cairocffi
+
+- name: cairocffi | Check for cairocffi
+  ansible.builtin.stat:
+    path: "{{ _cairo_path }}/__init__.py"
+  register: _cairocffi_init
+  changed_when: false
+
+- name: cairocffi | Calc marker file
+  ansible.builtin.set_fact:
+    _qtile_marker_file: "{{ _cairo_path }}/.ansible"
+
+- name: cairocffi | Check for cairoffi marker file to determine if built by ansible
+  ansible.builtin.stat:
+    path: "{{ _qtile_marker_file }}"
+  register: _cairocffi_built
+  changed_when: false
+
+- name: cairocffi | Uninstall if already exists but not built by ansible
+  when: _cairocffi_init.stat.exists and not _cairocffi_built.stat.exists
+  ansible.builtin.pip:
+    name: cairocffi
+    state: absent
+
+- name: cairocffi | Install cairoffi with --no-cache-dir
+  when: not _cairocffi_built.stat.exists
+  ansible.builtin.pip:
+    name: cairocffi
+    state: present
+    extra_args: "--no-cache-dir"
+
+- name: cairocffi | Touch 'built by ansible' marker file
+  when: not _cairocffi_built.stat.exists
+  ansible.builtin.file:
+    path: "{{ _qtile_marker_file }}"
+    state: touch
+    mode: 0640
+  changed_when: false

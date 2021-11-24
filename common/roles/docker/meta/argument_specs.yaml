@@ -1,0 +1,10 @@
+---
+argument_specs:
+  # roles/myapp/tasks/main.yml entry point
+  main:
+    short_description: The main entry point for the docker role.
+    options:
+      docker_users:
+        type: "elements"
+        required: false
+        description: List of users to add to the docker group

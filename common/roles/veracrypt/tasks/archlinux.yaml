@@ -5,7 +5,8 @@
     section: community
     option: Include
     value: /etc/pacman.d/mirrorlist
-    backup: yes
+    backup: true
+    mode: 0644
 
 - name: Install veracrypt
   community.general.pacman:

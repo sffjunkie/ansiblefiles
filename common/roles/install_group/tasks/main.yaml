@@ -1,17 +1,22 @@
+# Install packages in this order; os, pip and pipx
+---
 - name: Calc 'name'
   ansible.builtin.set_fact:
-    _group_name: "{{ group.name | default('', True)}}"
+    _group_name: "{{ group.name | default('', True) }}"
   changed_when: false
 
 - name: Install package info
   when: _group_name != ''
   block:
-    - debug:
+    - name: Installs for group
+      ansible.builtin.debug:
         msg: "Install packages for group '{{ _group_name }}'"
+        verbosity: 2
 
 - name: Calc package overides by name
   ansible.builtin.set_fact:
-    _package_overrides_by_name: "{{ overrides | install_overrides_by_name(os_family, distribution)}}"
+    _package_overrides_by_name: >
+      "{{ overrides | install_overrides_by_name(os_family, distribution) }}"
   changed_when: false
 
 - name: Install packages
@@ -19,7 +24,8 @@
   block:
     - name: Calc packages to install from os repository
       ansible.builtin.set_fact:
-        _packages: "{{ group.packages | packages(_package_overrides_by_name) }}"
+        _packages: >
+          "{{ group.packages | packages(_package_overrides_by_name) }}"
       changed_when: false
 
     - name: Install from os repositories
@@ -58,18 +64,23 @@
             loop_var: role_item
           # Workaround https://github.com/ansible/ansible/issues/19084
           vars:
-            _vars: "{{ _package_overrides_by_name[role_item]['vars'] | default(omit, True) }}"
-
+            _vars: >
+              "{{ _package_overrides_by_name[role_item]['vars'] |"
+              "default(omit, True) }}"
 
 - name: Install from pip repository
   when: group.pip is defined and group.pip | length > 0
   block:
     - name: Install package
-      become_user: "{{ (group.location is defined and group.location == 'user') | ternary(userid, 'root') }}"
+      become_user: >
+        "{{ (group.location is defined and group.location == 'user') |"
+        "ternary(userid, 'root') }}"
       ansible.builtin.pip:
         name: "{{ group.pip }}"
         state: present
-        extra_args: "{{ (group.location is defined and group.location == 'user') | ternary('--user', omit) }}"
+        extra_args: >
+          "{{ (group.location is defined and group.location == 'user') |"
+          "ternary('--user', omit) }}"
 
     - name: Calculate new configfiles fact
       ansible.utils.update_fact:
@@ -89,7 +100,9 @@
   when: group.pipx is defined and group.pipx | length > 0
   block:
     - name: Run pipx install
-      become_user: "{{ (group.location is defined and group.location == 'user') | ternary(userid, 'root') }}"
+      become_user: >
+        "{{ (group.location is defined and group.location == 'user') |"
+        "ternary(userid, 'root') }}"
       community.general.pipx:
         name: "{{ pipx_item }}"
         install_deps: true
@@ -97,8 +110,12 @@
       loop_control:
         loop_var: pipx_item
       register: _pipx_result
-      changed_when: _pipx_result.rc == 0 and not ('already seems to be installed' in _pipx_result.stdout)
-      failed_when: _pipx_result.rc > 0 and not ('already seems to be installed' in _pipx_result.stdout)
+      changed_when: >
+        _pipx_result.rc == 0 and
+        not ('already seems to be installed' in _pipx_result.stdout)
+      failed_when: >
+        _pipx_result.rc > 0 and
+        not ('already seems to be installed' in _pipx_result.stdout)
 
     - name: Calculate new configfiles fact
       ansible.utils.update_fact:
@@ -119,6 +136,7 @@
   ansible.builtin.git:
     repo: "{{ git_item.repo }}"
     dest: "{{ git_item.dest }}"
+    version: HEAD  # noqa: git-latest
   loop: "{{ group.git }}"
   loop_control:
     loop_var: git_item
@@ -127,7 +145,9 @@
   when: group.npm is defined and group.npm | length > 0
   community.general.npm:
     name: "{{ npm_item }}"
-    global: "{{ (group.location is defined and group.location == 'global') | ternary(true, omit) }}"
+    global: >
+      "{{ (group.location is defined and group.location == 'global') |"
+      "ternary(true, omit) }}"
   loop: "{{ group.npm }}"
   loop_control:
     loop_var: npm_item

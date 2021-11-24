@@ -8,7 +8,8 @@
 
 - name: Download darkmode script
   ansible.builtin.uri:
-    url: https://raw.githubusercontent.com/Weilbyte/PVEDiscordDark/master/PVEDiscordDark.sh
+    url: https://raw.githubusercontent.com/Weilbyte/\
+      PVEDiscordDark/master/PVEDiscordDark.sh
     dest: "{{ _tmp_directory.path }}/"
     mode: 0700
   changed_when: false
@@ -18,8 +19,12 @@
     cmd: "{{ _tmp_directory.path }}/PVEDiscordDark.sh install"
     chdir: "{{ _tmp_directory.path }}"
   register: _darkmode_result
-  failed_when: not "Theme already installed" in _darkmode_result.stdout and _darkmode_result.rc > 0
-  changed_when: not "Theme already installed" in _darkmode_result.stdout and _darkmode_result.rc == 0
+  failed_when: >
+    not "Theme already installed" in _darkmode_result.stdout and
+    _darkmode_result.rc > 0
+  changed_when: >
+    not "Theme already installed" in _darkmode_result.stdout and
+    _darkmode_result.rc == 0
 
 - name: Delete temporary directory
   ansible.builtin.file:

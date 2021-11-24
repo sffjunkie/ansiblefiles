@@ -27,7 +27,9 @@
 
     - x11
     - avatar
-    - fonts
+    - role: fonts
+      vars:
+        fonts: "{{ machine.fonts }}"
 # - role: arc_theme
 
     - role: ohmyzsh

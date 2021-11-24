@@ -2,7 +2,7 @@
 - name: Create user
   block:
     - name: Get password.
-      include_tasks: ../common/tasks/mkpasswd
+      include_tasks: ../../../tasks/mkpasswd.yaml
 
     - name: Add user.
       ansible.builtin.user:

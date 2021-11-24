@@ -4,19 +4,19 @@
     msg: Building Rust Development Environment
     verbosity: 1
 
-- name: "Rust: Calculate CARGO_HOME"
+- name: "Rust | Calculate CARGO_HOME"
   ansible.builtin.set_fact:
     _cargo_home: "{{ local_home }}/cargo"
 
-- name: "Rust: Calculate cargo bin directory"
+- name: "Rust | Calculate cargo bin directory"
   ansible.builtin.set_fact:
     _cargo_bin: "{{ _cargo_home }}/bin"
 
-- name: "Rust: Calculate RUSTUP_HOME"
+- name: "Rust | Calculate RUSTUP_HOME"
   ansible.builtin.set_fact:
     _rustup_home: "{{ local_home }}/rust"
 
-- name: Create temporary directory
+- name: Rust | Create temporary directory
   ansible.builtin.tempfile:
     prefix: rust
     state: directory
@@ -24,7 +24,7 @@
   register: _rust_tmp
   notify: Delete temporary rust directory
 
-- name: Set tmp directory owner to userid
+- name: Rust | Set tmp directory owner to userid
   ansible.builtin.file:
     path: "{{ _rust_tmp.path }}"
     mode: 0755
@@ -32,44 +32,48 @@
     group: "{{ userid }}"
   changed_when: false
 
-- name: Download rust install script
+- name: Rust | Download install script
   become_user: "{{ userid }}"
   ansible.builtin.uri:
     url: https://sh.rustup.rs
     dest: "{{ _rust_tmp.path }}/rustup.sh"
   changed_when: false
 
-- name: Set install script permissions
+- name: Rust | Set install script permissions
   ansible.builtin.file:
     path: "{{ _rust_tmp.path }}/rustup.sh"
     mode: 0755
   changed_when: false
 
-- name: Run rust install script
+- name: Rust | Run install script
   become_user: "{{ userid }}"
   ansible.builtin.command:
-    cmd: "bash -c '{{ _rust_tmp.path }}/rustup.sh -y --no-modify-path --default-toolchain {{ machine.development.rust.toolchain }}'"
+    cmd: >
+      "bash -c '{{ _rust_tmp.path }}/rustup.sh -y --no-modify-path
+      --default-toolchain {{ machine.development.rust.toolchain }}'"
     creates: "{{ local_home }}/cargo/env"
   register: _rust_install
   environment:
     CARGO_HOME: "{{ _cargo_home }}"
     RUSTUP_HOME: "{{ _rustup_home }}"
 
-- name: Delete temporary directory
+- name: Rust | Delete temporary directory
   ansible.builtin.file:
     path: "{{ _rust_tmp.path }}"
     state: absent
   changed_when: false
 
-- name: "Rust: Update configfiles"
+- name: Rust | Update configfiles
   block:
-    - ansible.builtin.set_fact:
+    - name: Rust | Calc config
+      ansible.builtin.set_fact:
         _rust_config:
           rust:
             CARGO_HOME: "{{ _cargo_home | replace(home, '${HOME}') }}"
             RUSTUP_HOME: "{{ _rustup_home | replace(home, '${HOME}') }}"
 
-    - ansible.utils.update_fact:
+    - name: Rust | Calc new configfiles fact
+      ansible.utils.update_fact:
         updates:
           - path: configfiles.pathend
             value: "{{ configfiles.pathend + [_cargo_bin | replace(home, '${HOME}')] }}"
@@ -80,6 +84,7 @@
       register: _updated_fact
       changed_when: false
 
-    - ansible.builtin.set_fact:
+    - name: Rust | Update configfiles fact
+      ansible.builtin.set_fact:
         configfiles: "{{ _updated_fact.configfiles }}"
       changed_when: false

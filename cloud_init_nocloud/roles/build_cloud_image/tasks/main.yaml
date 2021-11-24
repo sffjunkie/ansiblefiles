@@ -1,0 +1,50 @@
+---
+- name: Get user_config hash
+  ansible.builtin.stat:
+    path: "{{ user_config_path }}"
+    checksum_algorithm: sha256
+  register: _user_config_hash
+  changed_when: false
+
+- name: Get meta_config hash
+  ansible.builtin.stat:
+    path: "{{ meta_config_path }}"
+    checksum_algorithm: sha256
+  register: _meta_config_hash
+  changed_when: false
+
+- name: Calc cache filename
+  ansible.builtin.set_fact:
+    _cloud_init_cache_file: "{{ image_path | dirname }}/.cloud-init"
+  changed_when: false
+
+- name: Test if cache exists
+  ansible.builtin.stat:
+    path: "{{ _cloud_init_cache_file }}"
+  register: _cloud_init_cache
+  changed_when: false
+
+- name: Load previous hashes
+  when: _cloud_init_cache.stat.exists
+  ansible.builtin.include_vars: "{{ _cloud_init_cache_file }}"
+  changed_when: false
+
+- name: Create cloud-init nocloud data-source image
+  when: >
+    cloud_init_cache_user_config_hash != _user_config_hash.stdout and
+    cloud_init_cache_meta_config_hash != _meta_config_hash.stdout
+  ansible.builtin.command:
+    cmd: >
+      cloud-localds -f iso9660
+      "{{ image_path }} {{ user_config_path }} {{ meta_config_path }}"
+
+- name: Store hashes in cache
+  when: >
+    not _cloud_init_cache.stat.exists or
+    (cloud_init_cache_user_config_hash != _user_config_hash.stdout and
+    cloud_init_cache_meta_config_hash != _meta_config_hash.stdout)
+  ansible.builtin.file:
+    path: "{{ _cloud_init_cache_file }}"
+    content: |
+      cloud_init_cache_user_config_hash: "{{ _user_config_hash.stdout }}"
+      cloud_init_cache_meta_config_hash: "{{ _meta_config_hash }}"

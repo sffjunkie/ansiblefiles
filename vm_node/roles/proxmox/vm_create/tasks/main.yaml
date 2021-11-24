@@ -17,26 +17,31 @@
 
 - name: Get image format
   ansible.builtin.command:
-    cmd: qemu-img info --output json "{{ disk_image_main }}" | jq --raw-output .format
+    cmd: >
+      qemu-img info --output json
+      "{{ disk_image_main }}"
+      | jq --raw-output .format
   register: _img_format
+  changed_when: false
 
-- name: Convert image
-  when: _img_format != vm_image_format
+# - name: Convert image
+#   when: _img_format != vm_image_format
 
 - name: Copy disk_image_main
   when: disk_image_main == ''
   block:
-    - ansible.builtin.copy:
+    - name: Copy image
+      ansible.builtin.copy:
         src: "{{ vm_disk_image_base }}"
         dest: ~/images/
-
-    - ansible.builtin.set_fact:
-
-
+        mode: preserve
 
 - name: Requested disk Size
   ansible.builtin.set_fact:
-    vm_disk_size_number: vm_disk_size | upper | replace('M', '') | replace('MB', '') | replace('G', '') | replace('GB', '') | float
+    vm_disk_size_number: >
+      vm_disk_size | upper | replace('M', '') |
+      replace('MB', '') | replace('G', '') |
+      replace('GB', '') | float
     vm_disk_size_units: vm_disk_size | regex_replace('\d+\.\d+', '')
 
 - name: Convert disk size GB to MB
@@ -53,13 +58,16 @@
 
 - name: Get current disk size in MB
   ansible.builtin.set_fact:
-    _main_image_disk_size: "{{ (_main_image_qemu.stdout | from_json | extract('virtual-size')) / (1024 * 1024) }}"
+    _main_image_disk_size: >
+      "{{ (_main_image_qemu.stdout | from_json |
+      extract('virtual-size')) / (1024 * 1024) }}"
 
 - name: Copy disk image to temporary file
   ansible.builtin.copy:
-    src: {{ disk_image_main }}
+    src: "{{ disk_image_main }}"
     dest: ~/images/tmp.qcow2
     remote_src: true
+    mode: preserve
 
 - name: Resize image
   when: vm_disk_size > _main_image_disk_size
@@ -69,10 +77,19 @@
         _main_image_additional_space: vm_disk_size - _main_image_disk_size
 
     - name: Resize disk image
+      when: _main_image_additional_space > 0
       ansible.builtin.command:
-        cmd: "qemu-img resize ~/images/tmp.qcow2 +{{ _main_image_additional_space }}M"
+        cmd: >
+          qemu-img resize ~/images/tmp.qcow2
+          "{{ _main_image_additional_space }}M"
 
-- name: Import main disk into local-lvm
+- name: Get storage info
+  ansible.builtin.command:
+    cmd: "pvesm list --content images --vmid {{ vm_id }} local-lvm"
+  register: _local_lvm_images
+  changed_when: false
+
+- name: Import main disk into local-lvm  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: "qm importdisk {{ vm_id }} ~/images/tmp.qcow2 local-lvm"
   register: _import_main_disk
@@ -80,7 +97,8 @@
 # unused0:local-lvm:vm-9000-disk-0
 - name: Calc main disk name
   ansible.builtin.set_fact:
-    disk_image_main: "local-lvm:{{ _import_main_disk.stdout | split(':') | last }}"
+    disk_image_main: >
+      "local-lvm: {{ _import_main_disk.stdout | split(':') | last }}"
 
 - name: Delete temporary image file
   ansible.builtin.file:
@@ -97,15 +115,22 @@
       ansible.builtin.copy:
         src: "../cloud-image/images/{{ disk_image_cloud_init }}"
         dest: ~/images/
+        mode: preserve
 
     - name: Import cloud init image
       ansible.builtin.command:
-        cmd: "qm importdisk {{ vm_id }} ~/images/{{ disk_image_cloud_init }} {{ storage_cloud_init }}"
+        cmd: >
+          qm importdisk
+          "{{ vm_id }}"
+          "~/images/{{ disk_image_cloud_init }}"
+          "{{ storage_cloud_init }}"
       register: _import_cloud_init_disk
 
     - name: Calc cloud init disk name
       ansible.builtin.set_fact:
-        disk_image_cloud_init: "local-lvm:{{ _import_cloud_init_disk.stdout | split(':') | last }}"
+        disk_image_cloud_init: >
+          local-lvm:
+          "{{ _import_cloud_init_disk.stdout | split(':') | last }}"
 # endregion
 
 
@@ -119,7 +144,9 @@
 # region Calculate Memory
 - name: Get vm_memory_max number and units
   ansible.builtin.set_fact:
-    vm_memory_max_number: vm_memory_max | upper | replace('M', '') | replace('MB', '') | replace('G', '') | replace('GB', '') | float
+    vm_memory_max_number: >
+      vm_memory_max | upper | replace('M', '') | replace('MB', '')
+      | replace('G', '') | replace('GB', '') | float
     vm_memory_max_units: vm_memory_max | regex_replace('\d+\.\d+', '')
 
 - name: Convert memory GB to MB

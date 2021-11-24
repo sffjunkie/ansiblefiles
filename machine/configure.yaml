@@ -8,12 +8,16 @@
   roles:
     - role: firewall
       vars:
-        ssh_port: "{{ ssh_port }}"
+        custom_ports:
+          - rule: allow
+            port: "{{ ssh_port | default(default_ssh_port, True) }}"
+            proto: tcp
 
     - name: Configure ssh server.
       role: ssh
       vars:
-        ssh_port: "{{ ssh_port }}"
+        custom_ports:
+          ssh: "{{ ssh_port }}"
 
     - name: Add users.
       role: user_add

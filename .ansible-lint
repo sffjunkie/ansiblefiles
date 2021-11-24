@@ -1,3 +1,12 @@
+exclude_paths:
+  - ./ansible_collections
+  - ./ansible_roles
+  - ./trash
+  - ./build
 skip_list:
+  - empty-string-compare
   - package-latest
   - risky-shell-pipe
+  - role-name
+warn_list:
+  - experimental

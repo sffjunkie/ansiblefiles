@@ -5,7 +5,8 @@
 #     <package>
 # or
 #     <package>.<osfamily_or_distribution>
-# where `os_or_distribution` is the ansible `ansible_os_family` or `ansible_distribution` facts
+# where `os_or_distribution` is the ansible `ansible_os_family`
+# or `ansible_distribution` facts
 package_installation_overrides:
   alacritty:
     install: role

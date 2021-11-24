@@ -1,2 +1,2 @@
 ---
-install: user
+install: user  # or system

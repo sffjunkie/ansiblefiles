@@ -1,9 +1,0 @@
-sudo: required
-services:
-  - docker
-
-language: python
-script: ./ci
-
-notifications:
-  webhooks: https://galaxy.ansible.com/api/v1/notifications

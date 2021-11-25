@@ -1,31 +1,26 @@
 # Install packages in this order; os, pip and pipx
 ---
-- name: Calc 'name'
+- name: Calc become_user
   ansible.builtin.set_fact:
-    _group_name: "{{ group.name | default('', True) }}"
-  changed_when: false
+    _install_group_as_user: >
+      {{ (group.location is defined and group.location == 'user') |
+      ternary(userid, ansible_user) }}
 
-- name: Install package info
-  when: _group_name != ''
-  block:
-    - name: Installs for group
-      ansible.builtin.debug:
-        msg: "Install packages for group '{{ _group_name }}'"
-        verbosity: 2
 
-- name: Calc package overides by name
+- name: "Calc package overides by name"
   ansible.builtin.set_fact:
     _package_overrides_by_name: >
-      "{{ overrides | install_overrides_by_name(os_family, distribution) }}"
+      {{ overrides | install_overrides_by_name(os_family, distribution) }}
   changed_when: false
 
-- name: Install packages
+- name: Install os packages
   when: group.packages is defined
   block:
     - name: Calc packages to install from os repository
       ansible.builtin.set_fact:
-        _packages: >
-          "{{ group.packages | packages(_package_overrides_by_name) }}"
+        _packages: >-
+          {{ group.packages |
+          packages(_package_overrides_by_name) }}
       changed_when: false
 
     - name: Install from os repositories
@@ -39,8 +34,9 @@
         - name: Update configfiles fact
           ansible.utils.update_fact:
             updates:
-              - path: configfiles.packages
-                value: "{{ (configfiles.packages + _packages) | unique }}"
+              # FIXME: This here, [0], is wrong
+              - path: configfiles[0].packages
+                value: "{{ (configfiles[0].packages + _packages) | unique }}"
           register: _updated_fact
           changed_when: false
 
@@ -65,28 +61,27 @@
           # Workaround https://github.com/ansible/ansible/issues/19084
           vars:
             _vars: >
-              "{{ _package_overrides_by_name[role_item]['vars'] |"
-              "default(omit, True) }}"
+              {{ _package_overrides_by_name[role_item]['vars'] |
+              default(omit, True) }}
+
 
 - name: Install from pip repository
   when: group.pip is defined and group.pip | length > 0
   block:
-    - name: Install package
-      become_user: >
-        "{{ (group.location is defined and group.location == 'user') |"
-        "ternary(userid, 'root') }}"
+    - name: Install with pip
+      become_user: "{{ _install_group_as_user }}"
       ansible.builtin.pip:
         name: "{{ group.pip }}"
         state: present
-        extra_args: >
-          "{{ (group.location is defined and group.location == 'user') |"
-          "ternary('--user', omit) }}"
+        extra_args: >-
+          {{ (group.location is defined and group.location == 'user') |
+          ternary('--user', omit) }}
 
     - name: Calculate new configfiles fact
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.packages
-            value: "{{ (configfiles.packages + group.pip) | unique }}"
+          - path: configfiles[0].packages
+            value: "{{ (configfiles[0].packages + group.pip) | unique }}"
       register: _updated_fact
       changed_when: false
 
@@ -100,28 +95,19 @@
   when: group.pipx is defined and group.pipx | length > 0
   block:
     - name: Run pipx install
-      become_user: >
-        "{{ (group.location is defined and group.location == 'user') |"
-        "ternary(userid, 'root') }}"
+      # become_user: "{{ _install_group_as_user }}"
       community.general.pipx:
         name: "{{ pipx_item }}"
-        install_deps: true
+        # include_deps: true
       loop: "{{ group.pipx }}"
       loop_control:
         loop_var: pipx_item
-      register: _pipx_result
-      changed_when: >
-        _pipx_result.rc == 0 and
-        not ('already seems to be installed' in _pipx_result.stdout)
-      failed_when: >
-        _pipx_result.rc > 0 and
-        not ('already seems to be installed' in _pipx_result.stdout)
 
     - name: Calculate new configfiles fact
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.packages
-            value: "{{ (configfiles.packages + group.pipx) | unique }}"
+          - path: configfiles[0].packages
+            value: "{{ (configfiles[0].packages + group.pipx) | unique }}"
       register: _updated_fact
       changed_when: false
 
@@ -141,13 +127,15 @@
   loop_control:
     loop_var: git_item
 
+
 - name: "Install NPM packages"
   when: group.npm is defined and group.npm | length > 0
+  become_user: "{{ _install_group_as_user }}"
   community.general.npm:
     name: "{{ npm_item }}"
     global: >
-      "{{ (group.location is defined and group.location == 'global') |"
-      "ternary(true, omit) }}"
+      {{ (group.location is defined and group.location == 'global') |
+      ternary(true, omit) }}
   loop: "{{ group.npm }}"
   loop_control:
     loop_var: npm_item

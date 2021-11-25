@@ -6,7 +6,7 @@
 
 - name: "Rust | Calculate CARGO_HOME"
   ansible.builtin.set_fact:
-    _cargo_home: "{{ local_home }}/cargo"
+    _cargo_home: "$_LOCAL_HOME/cargo"
 
 - name: "Rust | Calculate cargo bin directory"
   ansible.builtin.set_fact:
@@ -14,7 +14,7 @@
 
 - name: "Rust | Calculate RUSTUP_HOME"
   ansible.builtin.set_fact:
-    _rustup_home: "{{ local_home }}/rust"
+    _rustup_home: "$_LOCAL_HOME/rust"
 
 - name: Rust | Create temporary directory
   ansible.builtin.tempfile:
@@ -51,7 +51,7 @@
     cmd: >
       "bash -c '{{ _rust_tmp.path }}/rustup.sh -y --no-modify-path
       --default-toolchain {{ machine.development.rust.toolchain }}'"
-    creates: "{{ local_home }}/cargo/env"
+    creates: "$_LOCAL_HOME/cargo/env"
   register: _rust_install
   environment:
     CARGO_HOME: "{{ _cargo_home }}"

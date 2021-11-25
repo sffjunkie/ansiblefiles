@@ -1,0 +1,54 @@
+---
+- name: Ansible Development Environment
+  block:
+    - name: Ansible
+      ansible.builtin.debug:
+        msg: Building ansible Development Environment
+        verbosity: 1
+
+    - name: Ansible | Load default os package list
+      ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+      vars:
+        params:
+          files:
+            - '{{ distribution }}.yaml'
+            - '{{ os_family }}.yaml'
+            - 'all.yaml'
+          paths:
+            - 'packages'
+
+    - name: Ansible | Install default os packages
+      when: ansible_development_os_packages | length > 0
+      ansible.builtin.package:
+        name: "{{ ansible_development_os_packages }}"
+        state: present
+
+    - name: Ansible | Install packages
+      ansible.builtin.include_role:
+        name: install_group
+      vars:
+        userid: "{{ system_users[0].id }}"
+        group: "{{ machine.development.ansible }}"
+
+    - name: Clone ansible git repository
+      ansible.builtin.git:
+        repo: https://github.com/ansible/ansible.git
+        dest: "~/development/source/ansible"
+        version: HEAD  # noqa: git-latest
+
+    - name: Ansible | Update configfiles
+      block:
+        - name: Ansible | Calc new configfiles fact
+          ansible.utils.update_fact:
+            updates:
+              - path: configfiles.packages
+                value: "{{ configfiles.packages + ['ansible'] }}"
+          register: _updated_fact
+          changed_when: false
+
+        - name: Ansible | Update configfiles fact
+          ansible.builtin.set_fact:
+            configfiles: "{{ _updated_fact.configfiles }}"
+          changed_when: false
+
+  when: machine.development.ansible.install | default(False, True) == True

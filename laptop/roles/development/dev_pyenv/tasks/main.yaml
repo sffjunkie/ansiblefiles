@@ -1,7 +1,7 @@
 ---
 - name: Pyenv | Set pyenv_root fact
   ansible.builtin.set_fact:
-    pyenv_root: "{{ local_home }}/pyenv"
+    pyenv_root: "$_LOCAL_HOME/pyenv"
 
 - name: Pyenv | Install pyenv
   become_user: "{{ userid }}"

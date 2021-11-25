@@ -8,5 +8,5 @@ common:
     - xdg-utils
     - zstd
 
-  pip:
-    - pipx
+  # pip:
+  #   - pipx

@@ -20,14 +20,14 @@
     dest: "{{ _ohmyzsh_install_path }}/plugins/{{ item.name }}"
     version: "{{ item.version }}"
   loop:
-    "{{ machine.ohmyzsh.user_plugins }}"
+    "{{ machine.ohmyzsh.zsh_users_plugins }}"
 
 - name: Oh-My-Zsh | Update configfiles
   block:
     - name: Calc user plugin names
       ansible.builtin.set_fact:
         _ohmyzsh_user_plugins: >
-          "{{ machine.ohmyzsh.user_plugins | map(attribut='name') | list }}"
+          "{{ machine.ohmyzsh.zsh_users_plugins | map(attribut='name') | list }}"
 
     - name: Oh-My-Zsh | Calc config
       ansible.builtin.set_fact:

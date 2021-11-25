@@ -8,8 +8,6 @@
     group: "{{ user.id }}"
     access_time: preserve
     modification_time: preserve
-  loop: "{{ users }}"
-  loop_control: "user"
 
 - name: create authorized_keys file
   ansible.builtin.file:
@@ -20,17 +18,13 @@
     group: "{{ user.id }}"
     access_time: preserve
     modification_time: preserve
-  loop: "{{ users }}"
-  loop_control: "user"
 
 - name: Add id to authorized_keys
   become_user: "{{ user.id }}"
   vars:
-    pub_content: "{{ lookup('file', '/home/{{ user.id }}/.ssh/{{ user.public_key }}') }}"
+    pub_content: "{{ lookup('file', '/home/{{ user.id }}/.ssh/{{ user.public_key_file }}') }}"
   ansible.builtin.lineinfile:
     dest: /home/{{ user.id }}/.ssh/authorized_keys
     regexp: "^{{ pub_content }}"
     line: "{{ pub_content }}"
     state: present
-  loop: "{{ users }}"
-  loop_control: "user"

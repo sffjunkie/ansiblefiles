@@ -11,7 +11,6 @@
       ansible.builtin.debug:
         msg:
           - "Computed stats"
-          - "  Configuration file home directory: {{ config_home }}"
           - "  Shell: {{ shell }}"
           - "  Distribution: {{ distribution }}"
           - "  OS Family: {{ os_family }}"
@@ -32,8 +31,3 @@
       when: machine.shell == 'zsh' and machine.ohmyzsh.path | length > 0
       include_role:
         name: ohmyzsh
-
-  #   - name: Install config files
-  #     ansible.builtin.git:
-  #       repo: 'https://github.com/sffjunkie/configfiles'
-  #       dest: "{{ config_home }}"

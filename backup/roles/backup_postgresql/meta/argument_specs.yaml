@@ -5,7 +5,8 @@ argument_specs:
     short_description: The main entry point for the backup_postgresql role.
     options:
       backup_databases:
-        type: "elements"
+        type: list
+        elements: str
         required: true
         description: |
           The databases to backup specified as a list of dictionaries

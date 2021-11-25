@@ -1,79 +1,89 @@
 ---
 - hosts: laptop
   become: true
-  vars:
-    ansible_port: "{{ ssh_port }}"
   vars_files:
     - ./vars/install_overrides.yaml
     - ../common/vars/global.yaml
 
+  pre_tasks:
+    - name: Build info
+      ansible.builtin.debug:
+        msg: "Ansible User: {{ ansible_user }}"
+
   roles:
     - playbook_packages
-    - git
-    - docker
-    - dotlocal_directories
+    # - git
+    # - docker
+    # - user_system
+    # - user_machine
 
     # Install Development Environments before applications so we have
     # compilers avaiable to build the applications if needed.
-    - dev_environments
+    # - dev_environments
 
-    - role: zsh
-      when: machine.shell == 'zsh'
-      set_shell_for: "{{ userid }}"
+    # - role: zsh
+    #   when: machine.shell == 'zsh'
+    #   vars:
+    #     set_shell_for: "{{ userid }}"
 
-    - role: install_group
-      group: "{{ machine.apps }}"
-      overrides: "{{ package_installation_overrides }}"
+    # - role: install_group
+    #   vars:
+    #     group: "{{ machine.apps }}"
+    #     overrides: "{{ package_installation_overrides }}"
 
-    - x11
-    - avatar
-    - role: fonts
-      vars:
-        fonts: "{{ machine.fonts }}"
-# - role: arc_theme
+    # - x11
+    # - role: fonts
+    #   vars:
+    #     fonts: "{{ machine.fonts }}"
+    # - role: arc_theme
 
-    - role: ohmyzsh
-      when: machine.shell == 'zsh' and machine.ohmyzsh is defined
+    # - role: ohmyzsh
+    #   when: machine.shell == 'zsh' and machine.ohmyzsh is defined
 
-  tasks:
-    - name: Sort packages
-      ansible.utils.update_fact:
-        updates:
-          - path: configfiles.packages
-            value: "{{ configfiles.packages | sort }}"
-      register: _updated_fact
-      changed_when: false
+  # tasks:
+  #   - name: Sort packages
+  #     ansible.utils.update_fact:
+  #       updates:
+  #         - path: configfiles.packages
+  #           value: "{{ configfiles.packages | sort }}"
+  #     register: _updated_fact
+  #     changed_when: false
 
-    - name: Update configfiles
-      ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
-      changed_when: false
+  #   - name: Update configfiles
+  #     ansible.builtin.set_fact:
+  #       configfiles: "{{ _updated_fact.configfiles }}"
+  #     changed_when: false
 
-    - name: Add machine vars to configfiles
-      block:
-        - ansible.utils.update_fact:
-            updates:
-              - path: configfiles.machine
-                value: "{{ machine }}"
-          register: _updated_fact
-          changed_when: false
+  #   - name: Add machine vars to configfiles
+  #     block:
+  #       - ansible.utils.update_fact:
+  #           updates:
+  #             - path: configfiles.machine
+  #               value: "{{ machine }}"
+  #         register: _updated_fact
+  #         changed_when: false
 
-        - name: Set configfiles fact
-          ansible.builtin.set_fact:
-            configfiles: "{{ _updated_fact.configfiles }}"
-          changed_when: false
+  #       - name: Set configfiles fact
+  #         ansible.builtin.set_fact:
+  #           configfiles: "{{ _updated_fact.configfiles }}"
+  #         changed_when: false
 
-    - name: Final configuration
-      ansible.builtin.debug:
-        msg: "{{ configfiles }}"
-        verbosity: 2
+  #   - name: Final configuration
+  #     ansible.builtin.debug:
+  #       msg: "{{ configfiles }}"
+  #       verbosity: 2
 
-    - name: Store final config file information to be used by ../config_files
-      delegate_to: localhost
-      ansible.builtin.copy:
-        dest: "{{ playbook_dir }}/../build/configfiles.json"
-        content: "{{ configfiles | to_nice_json(indent=4) }}"
-      changed_when: false
+  #   - name: Set output
+  #     ansible.builtin.set_fact:
+  #       output:
+  #         data: "{{ configfiles }}"
+
+  #   - name: Store final config file information to be used by ../config_files
+  #     delegate_to: localhost
+  #     ansible.builtin.copy:
+  #       dest: "{{ playbook_dir }}/../build/configfiles.json"
+  #       content: "{{ output | to_nice_json(indent=4) }}"
+  #     changed_when: false
 
 # - name: Run configfiles playbook
 #   ansible.builtin.import_playbook: ../configfiles/build.yaml

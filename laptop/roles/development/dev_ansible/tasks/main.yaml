@@ -1,5 +1,5 @@
 ---
-- name: Ansible Development Environment
+- name: Ansible
   ansible.builtin.debug:
     msg: Building ansible Development Environment
     verbosity: 1
@@ -25,12 +25,13 @@
   ansible.builtin.include_role:
     name: install_group
   vars:
-    group: "{{ machine.development.ansible }}"
+    userid: "{{ system_users[0].id }}"
+    group: "{{ env_info }}"
 
 - name: Clone ansible git repository
   ansible.builtin.git:
     repo: https://github.com/ansible/ansible.git
-    dest: "{{ home }}/development/source/ansible"
+    dest: "~/development/source/ansible"
     version: HEAD  # noqa: git-latest
 
 - name: Ansible | Update configfiles

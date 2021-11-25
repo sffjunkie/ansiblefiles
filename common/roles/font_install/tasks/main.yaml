@@ -49,9 +49,9 @@
 
     - name: Font Install | Calc destination
       ansible.builtin.set_fact:
-        _font_destination: >
-          "{{ '/usr/local/share/fonts' if install == 'system' else"
-          "('~/.local/share/fonts' | expanduser) }}"
+        _font_destination: >-
+          {{ '/usr/local/share/fonts' if install == 'system' else
+          ('~/.local/share/fonts' | expanduser) }}
       changed_when: false
 
     - name: Font Install | Calc file owner

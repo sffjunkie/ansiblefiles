@@ -1,0 +1,27 @@
+---
+- name: Configure git name
+  when: username | length > 0
+  become_user: "{{ userid }}"
+  community.general.git_config:
+    name: user.name
+    scope: global
+    value: "{{ username }}"
+    state: present
+
+- name: Configure git email
+  when: git_info.email | length > 0
+  become_user: "{{ userid }}"
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_info.email }}"
+    state: present
+
+- name: Configure git GPG Key
+  when: git_info.gpg_key | default("", True) | length > 0
+  become_user: "{{ userid }}"
+  community.general.git_config:
+    name: user.signingKey
+    scope: global
+    value: "{{ git_info.gpg_key }}"
+    state: present

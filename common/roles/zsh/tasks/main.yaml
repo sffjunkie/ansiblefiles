@@ -19,24 +19,13 @@
       - "{{ os_family }}.yaml"
       - "default.yaml"
 
-- name: ZSH | listify set_shell_for
-  ansible.builtin.set_fact:
-    _set_shell_for: "{{ set_shell_for | listify }}"
-
-- name: ZSH | Configure user's shell
-  when: _set_shell_for | length > 0
-  ansible.builtin.user:
-    name: "{{ item }}"
-    shell: "{{ zsh_shell }}"
-  loop: "{{ _set_shell_for }}"
-
 - name: ZSH | Update configfiles
   block:
     - name: ZSH | Calc config
       ansible.builtin.set_fact:
         _zsh_config:
           zsh:
-            ZSH_CACHE_DIR: '${XDG_CACHE_HOME:-$HOME/.cache}/zsh'
+            ZSH_CACHE_DIR: "{{ cache_home_replacement_text }}"
             ZDOTDIR': "{{ config_home_replacement_text + '/zsh' }}"
 
     - name: ZSH | Calc new configfiles fact

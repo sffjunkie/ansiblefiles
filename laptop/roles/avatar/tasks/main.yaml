@@ -1,29 +1,29 @@
 ---
-- name: Configure avatar
-  block:
-    - name: Get avatar extension
-      ansible.builtin.set_fact:
-        _avatar_ext: "{{ user.avatar | splitext | last }}"
+- name: Avatar | Get avatar extension
+  ansible.builtin.set_fact:
+    _avatar_ext: "{{ avatar | splitext | last }}"
 
-    - name: Create folders
-      ansible.builtin.file:
-        path: "/var/lib/AccountsService/{{ item }}"
-        state: directory
-        mode: 0755
-        access_time: preserve
-        modification_time: preserve
-      loop:
-        - icons
-        - users
+- name: Avatar | Create folders
+  ansible.builtin.file:
+    path: "/var/lib/AccountsService/{{ directory }}"
+    state: directory
+    mode: 0755
+    access_time: preserve
+    modification_time: preserve
+  loop:
+    - icons
+    - users
+  loop_control:
+    loop_var: directory
 
-    - name: Copy avatar
-      ansible.builtin.copy:
-        src: "{{ user.avatar }}"
-        dest: "/var/lib/AccountsService/icons/{{ userid }}{{ _avatar_ext }}"
-        mode: 0644
+- name: Avatar | Copy
+  ansible.builtin.copy:
+    src: "{{ avatar }}"
+    dest: "/var/lib/AccountsService/icons/{{ userid }}{{ _avatar_ext }}"
+    mode: 0644
 
-    - name: Create accountsservice config for user
-      ansible.builtin.template:
-        src: templates/accountsservice.ini
-        dest: "/var/lib/AccountsService/users/{{ userid }}"
-        mode: 0644
+- name: Avatar | Create accountsservice config for user
+  ansible.builtin.template:
+    src: templates/accountsservice.ini
+    dest: "/var/lib/AccountsService/users/{{ userid }}"
+    mode: 0644

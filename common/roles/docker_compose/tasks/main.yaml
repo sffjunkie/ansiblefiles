@@ -34,14 +34,14 @@
 - name: Existing installation
   block:
     - name: Latest requested
-      when: >
+      when: >-
         docker_compose_version == 'latest' and
         _compose_latest_version.latest_release > _compose_current_version.stdout
       ansible.builtin.set_fact:
         _install_version = _compose_latest_version.latest_release
 
     - name: Not latest version
-      when: >
+      when: >-
         docker_compose_version != 'latest' and
         docker_compose_version > _compose_current_version.stdout
       ansible.builtin.set_fact:
@@ -62,9 +62,9 @@
     - name: Download compose binary
       when: not _compose_exists.stat.exists
       ansible.builtin.uri:
-        url: >
+        url: >-
           https://github.com/docker/compose/releases/download/\
-          "{{ _install_version }}/docker-compose-linux-x86_64"
+          {{ _install_version }}/docker-compose-linux-x86_64
         dest: "{{ _compose_tmp_dir.path }}/docker-compose"
         mode: "+x"
       changed_when: false

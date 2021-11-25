@@ -1,5 +1,8 @@
 ---
-- name: Load default os package list
+- name: Load common package list
+  ansible.builtin.include_vars: vars/common.yaml
+
+- name: Load default base package list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
@@ -8,20 +11,35 @@
         - "{{ os_family }}.yaml"
       paths:
         - "vars"
+  register: _included_os
 
-- name: Load common package list
-  ansible.builtin.include_vars: vars/common.yaml
-
-- name: Ensure base.pip is a list
+- name: Ensure values are lists
   ansible.builtin.set_fact:
-    _base_pip: "{{ base.pip | default([], True) }}"
-    _base_packages: "{{ base.packages | default([], True) }}"
-    _common_pip: "{{ common.pip | default([], True) }}"
-    _common_packages: "{{ common.packages | default([], True) }}"
-    _extra_pip: "{{ extra.pip | default([], True) }}"
-    _extra_packages: "{{ extra.packages | default([], True) }}"
+    _base_pip: >
+      {{ base.pip | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
 
-- name: Update list with common packages
+    _base_packages: >
+      {{ base.packages | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _common_pip: >
+      {{ common.pip | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _common_packages: >
+      {{ common.packages | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _extra_pip: >
+      {{ extra.pip | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _extra_packages: >
+      {{ extra.packages | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+- name: Update list with common and extra packages
   ansible.utils.update_fact:
     updates:
       - path: base.packages

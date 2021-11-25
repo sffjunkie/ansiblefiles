@@ -1,0 +1,14 @@
+---
+- name: User | System | Add user
+  ansible.builtin.include_role:
+    name: user_create
+  vars:
+    user: "{{ item }}"
+  loop: "{{ system_users }}"
+
+- name: User | System | Configure ssh
+  ansible.builtin.include_role:
+    name: user_ssh
+  vars:
+    user: "{{ item }}"
+  loop: "{{ system_users }}"

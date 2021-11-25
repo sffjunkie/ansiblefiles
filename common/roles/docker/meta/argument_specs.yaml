@@ -5,6 +5,7 @@ argument_specs:
     short_description: The main entry point for the docker role.
     options:
       docker_users:
-        type: "elements"
+        type: list
+        elements: str
         required: false
         description: List of users to add to the docker group

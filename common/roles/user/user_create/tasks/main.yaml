@@ -1,0 +1,16 @@
+---
+- name: Ensure user's password is encrypted.
+  include_tasks: ../../../tasks/encrypted_password.yaml
+
+- name: Add user.
+  ansible.builtin.user:
+    name: "{{ user.id }}"
+    password: "{{ user_passwd }}"
+    state: present
+
+- name: Add sudo rights for user.
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ user.id }}"
+    content: "{{ user.id }} {{ sudo_entry_user }}"
+    mode: 0644
+    validate: "visudo -cf %s"

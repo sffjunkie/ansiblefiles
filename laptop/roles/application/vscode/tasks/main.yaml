@@ -27,9 +27,9 @@
 - name: Install extensions
   become_user: "{{ userid }}"
   ansible.builtin.command:
-    cmd: >
-      "code --install-extension '{{ item }}'
-      --user-data-dir {{ config_home }}/Code/User/"
+    cmd: >-
+      code --install-extension '{{ item }}'
+      --user-data-dir $HOME/Code/User/
     creates: "{{ item }}-*"
   loop: "{{ _vscode_extensions }}"
   register: _vscode_extension_install_result

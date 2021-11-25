@@ -10,8 +10,7 @@
     - name: Import configuration
       ansible.builtin.set_fact:
         configfiles: >
-          "{{ lookup('file', playbook_dir + '/../build/configfiles.json') |
-          from_json }}"
+          "{{ lookup('file', playbook_dir + '/../build/configfiles.json') | from_json }}"
 
     - name: Set output directory
       ansible.builtin.set_fact:
@@ -20,7 +19,7 @@
     - name: Display info
       ansible.builtin.debug:
         msg:
-          - "Config files: {{ configfiles }}"
+          - "Config files: {{ configfiles.configs }}"
         verbosity: 1
 
   roles:
@@ -31,40 +30,37 @@
       ansible.builtin.debug:
         msg: Development Configuration
 
-    - name: Go config
-      ansible.builtin.include_tasks: tasks/development/go.yaml
-      when: '"go" in configfiles.configs'
+    # - name: Go config
+    #   ansible.builtin.include_tasks: tasks/development/go.yaml
+    #   when: '"go" in configfiles["configs"]'
 
-  #   - name: Node config
-  #     when: '"node" in config_roles'
-  #     ansible.builtin.include_tasks: tasks/development/node.yaml
+    # - name: Node config
+    #   when: '"node" in config_roles'
+    #   ansible.builtin.include_tasks: tasks/development/node.yaml
 
-  #   - name: Python config
-  #     when: '"python" in config_roles'
-  #     ansible.builtin.include_tasks: tasks/development/python.yaml
+    # - name: Python config
+    #   when: '"python" in config_roles'
+    #   ansible.builtin.include_tasks: tasks/development/python.yaml
 
-  #   - name: Rust config
-  #     when: '"rust" in config_roles'
-  #     ansible.builtin.include_tasks: tasks/development/rust.yaml
+    # - name: Rust config
+    #   when: '"rust" in config_roles'
+    #   ansible.builtin.include_tasks: tasks/development/rust.yaml
 
-  #   - name: Zsh config
-  #     when: '"zsh" in config_roles'
-  #     ansible.builtin.include_tasks: tasks/shell/zsh.yaml
+    # - name: Zsh config
+    #   when: '"zsh" in config_roles'
+    #   ansible.builtin.include_tasks: tasks/shell/zsh.yaml
 
-    - name: Generate scheme colors
-      base16_builder:
-        scheme: "{{ base16.color_scheme }}"
-        template: "{{ base16.templates }}"
-      register: base16_schemes
+    # - name: Generate scheme colors
+    #   base16_builder:
+    #     scheme: "{{ base16.color_scheme }}"
+    #     template: "{{ base16.templates }}"
+    #   register: base16_schemes
 
-  #   # - debug:
-  #   #     var: base16_schemes
+    # - name: Alacritty Config
+    #   when: '"alacritty" in applications'
+    #   ansible.builtin.include_tasks: tasks/application/alacritty.yaml
 
-    - name: Alacritty Config
-      when: '"alacritty" in applications'
-      ansible.builtin.include_tasks: tasks/application/alacritty.yaml
-
-  #   - name: Copy files to output
-  #     ansible.builtin.copy:
-  #       src: files/*
-  #       dest: output/
+    # - name: Copy files to output
+    #   ansible.builtin.copy:
+    #     src: "{{ _configfiles_output_dir }}/*"
+    #     dest: output/

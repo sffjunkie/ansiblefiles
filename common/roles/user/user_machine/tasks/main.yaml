@@ -1,0 +1,64 @@
+---
+- name: User | Create home directories
+  ansible.builtin.include_role:
+    name: user_homedirs
+  vars:
+    userid: "{{ system_users[user_idx].id }}"
+    directories: "{{ item.directory }}"
+  loop: "{{ machine.users }}"
+  loop_control:
+    index_var: user_idx
+
+- name: User | Configure avatar
+  when: item.avatar is defined
+  ansible.builtin.include_role:
+    name: avatar
+  vars:
+    userid: "{{ system_users[user_idx].id }}"
+    avatar: "{{ item.avatar }}"
+  loop: "{{ machine.users }}"
+  loop_control:
+    index_var: user_idx
+
+- name: User | Configure git
+  when: item.git is defined
+  ansible.builtin.include_role:
+    name: user_git
+  vars:
+    userid: "{{ system_users[git_idx].id }}"
+    username: "{{ system_users[git_idx].name }}"
+    git_info: "{{ item.git }}"
+  loop: "{{ machine.users }}"
+  loop_control:
+    index_var: git_idx
+
+- name: User | Configure shell
+  when: item.shell is defined
+  ansible.builtin.include_role:
+    name: user_shell
+  vars:
+    userid: "{{ system_users[shell_idx].id }}"
+    shell: "{{ item.shell }}"
+  loop: "{{ machine.users }}"
+  loop_control:
+    index_var: shell_idx
+
+# TODO: configfiles per user
+  #   - name: User | Add envvars
+  #     block:
+  #       - name: User | Calc new configfiles fact
+  #         ansible.utils.update_fact:
+  #           updates:
+  #             - path: configfiles.envvars
+  #               value: "{{ configfiles.packages | combine(item.envvars) }}"
+  #         register: _updated_fact
+  #         changed_when: false
+
+  #       - name: User | Update configfiles fact
+  #         ansible.builtin.set_fact:
+  #           configfiles: "{{ _updated_fact.configfiles }}"
+  #         changed_when: false
+
+  # loop: "{{ machine.users }}"
+  # loop_control:
+  #   index_var: user_idx

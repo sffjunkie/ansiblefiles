@@ -1,7 +1,7 @@
 ---
 - name: Get base16-shell path
   ansible.builtin.set_fact:
-    base16_shell_path: "{{ local_home }}/base16-shell"
+    base16_shell_path: "$_LOCAL_HOME/base16-shell"
 
 - name: Install base 16 shell
   ansible.builtin.git:

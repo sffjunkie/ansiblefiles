@@ -2,7 +2,7 @@
 argument_specs:
   # roles/myapp/tasks/main.yml entry point
   main:
-    short_description: The main entry point for the docker role.
+    short_description: The main entry point for the docker-compose role.
     options:
       docker_compose_version:
         type: "str"

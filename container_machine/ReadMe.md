@@ -1,6 +1,6 @@
 # container_machine
 
-Installs container management software on a (virtual) machine.
+Installs container management software on a (virtual) machine_config.
 
 * docker
 * docker-compose

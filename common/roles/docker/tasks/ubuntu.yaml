@@ -1,11 +1,11 @@
 # https://docs.docker.com/engine/install/ubuntu/
 ---
-- name: Add Docker GPG apt Key
+- name: Docker | Ubuntu | Add apt GPG key
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add Docker Repository
+- name: Docker | Ubuntu | Add Repository
   ansible.builtin.apt_repository:
     repo: >-
       deb https://download.docker.com/linux/ubuntu

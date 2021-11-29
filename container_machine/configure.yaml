@@ -1,0 +1,19 @@
+---
+- hosts: container_machines
+  become: true
+  vars_files:
+    - ../common/vars/global.yaml
+    - ./vars/main.yaml
+
+  roles:
+    - role: playbook_packages
+
+    - role: docker
+      when: container_engine == 'docker'
+
+    - role: podman
+      vars:
+        use_compose: true
+      when: container_engine == 'podman'
+
+    - docker_compose

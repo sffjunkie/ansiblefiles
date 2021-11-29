@@ -1,0 +1,9 @@
+---
+- name: "Fonts | System | Install"
+  when: location == 'system'
+  ansible.builtin.include_role:
+    name: font_install
+  vars:
+    location: system
+    font_url: "{{ item.url }}"
+  loop: "{{ config.system.fonts }}"

@@ -1,11 +1,22 @@
 ---
-- name: Python Dev
+- name: Development Environments | Python
   ansible.builtin.debug:
     msg: Building Python Development Environment
     verbosity: 1
 
-- name: "Python: Install packages"
+- name: Development Environments | Python | Load default os package list
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - '{{ distribution }}.yaml'
+        - '{{ os_family }}.yaml'
+        - 'all.yaml'
+      paths:
+        - 'packages'
+
+- name: Development Environments | Python | Install
   ansible.builtin.include_role:
     name: install_group
   vars:
-    group: "{{ machine.development.python }}"
+    group: "{{ dev_python_packages }}"

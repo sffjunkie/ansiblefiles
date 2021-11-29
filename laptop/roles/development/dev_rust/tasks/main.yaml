@@ -1,22 +1,25 @@
 ---
-- name: Rust Dev
+- name: Development Environments | Rust
   ansible.builtin.debug:
     msg: Building Rust Development Environment
     verbosity: 1
 
-- name: "Rust | Calculate CARGO_HOME"
+- name: Development Environments | Rust | Set pyenv_root fact
   ansible.builtin.set_fact:
-    _cargo_home: "$_LOCAL_HOME/cargo"
+    cargo_home: "/home/{{ user_id }}/.local/cargo"
+    cargo_home_text: "{{ local_home_text }}/cargo"
 
-- name: "Rust | Calculate cargo bin directory"
+- name: Development Environments | Rust | Calculate cargo bin directory
   ansible.builtin.set_fact:
-    _cargo_bin: "{{ _cargo_home }}/bin"
+    cargo_bin: "{{ cargo_home }}/bin"
+    cargo_bin_text: "{{ cargo_home_text }}/bin"
 
-- name: "Rust | Calculate RUSTUP_HOME"
+- name: Development Environments | Rust | Calculate RUSTUP_HOME
   ansible.builtin.set_fact:
-    _rustup_home: "$_LOCAL_HOME/rust"
+    rustup_home: "/home/{{ user_id }}/.local/rust"
+    rustup_home_text: "{{ local_home_text }}/rust"
 
-- name: Rust | Create temporary directory
+- name: Development Environments | Rust | Create temporary directory
   ansible.builtin.tempfile:
     prefix: rust
     state: directory
@@ -24,67 +27,63 @@
   register: _rust_tmp
   notify: Delete temporary rust directory
 
-- name: Rust | Set tmp directory owner to userid
+- name: Development Environments | Rust | Set tmp directory owner to user_id
   ansible.builtin.file:
     path: "{{ _rust_tmp.path }}"
+    owner: "{{ user_id }}"
+    group: "{{ user_id }}"
     mode: 0755
-    owner: "{{ userid }}"
-    group: "{{ userid }}"
   changed_when: false
 
-- name: Rust | Download install script
-  become_user: "{{ userid }}"
+- name: Development Environments | Rust | Download install script
+  become_user: "{{ user_id }}"
   ansible.builtin.uri:
     url: https://sh.rustup.rs
     dest: "{{ _rust_tmp.path }}/rustup.sh"
-  changed_when: false
-
-- name: Rust | Set install script permissions
-  ansible.builtin.file:
-    path: "{{ _rust_tmp.path }}/rustup.sh"
     mode: 0755
   changed_when: false
 
-- name: Rust | Run install script
-  become_user: "{{ userid }}"
+- name: Development Environments | Rust | Run install script
+  become_user: "{{ user_id }}"
   ansible.builtin.command:
-    cmd: >
-      "bash -c '{{ _rust_tmp.path }}/rustup.sh -y --no-modify-path
-      --default-toolchain {{ machine.development.rust.toolchain }}'"
-    creates: "$_LOCAL_HOME/cargo/env"
-  register: _rust_install
+    cmd: >-
+      bash -c '{{ _rust_tmp.path }}/rustup.sh -y --no-modify-path
+      --default-toolchain {{ env_config.toolchain }}'
+    creates: "{{ cargo_home }}/env"
   environment:
-    CARGO_HOME: "{{ _cargo_home }}"
-    RUSTUP_HOME: "{{ _rustup_home }}"
+    CARGO_HOME: "{{ cargo_home }}"
+    RUSTUP_HOME: "{{ rustup_home }}"
 
-- name: Rust | Delete temporary directory
+- name: Development Environments | Rust | Delete temporary directory
   ansible.builtin.file:
     path: "{{ _rust_tmp.path }}"
     state: absent
   changed_when: false
 
-- name: Rust | Update configfiles
+- name: Development Environments | Rust | Update output_config
   block:
-    - name: Rust | Calc config
+    - name: Development Environments | Rust | Calc config
       ansible.builtin.set_fact:
         _rust_config:
           rust:
-            CARGO_HOME: "{{ _cargo_home | replace(home, '${HOME}') }}"
-            RUSTUP_HOME: "{{ _rustup_home | replace(home, '${HOME}') }}"
+            CARGO_HOME: "{{ cargo_home_text }}"
+            RUSTUP_HOME: "{{ rustup_home_text }}"
 
-    - name: Rust | Calc new configfiles fact
+    - name: Development Environments | Rust | Calc new output_config
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.pathend
-            value: "{{ configfiles.pathend + [_cargo_bin | replace(home, '${HOME}')] }}"
-          - path: configfiles.configs
-            value: "{{ configfiles.configs | combine(_rust_config) }}"
-          - path: configfiles.packages
-            value: "{{ configfiles.packages + ['rust'] }}"
+          - path: "output_config.user[{{ user_idx }}].pathend"
+            value: "{{ output_config.user[user_idx].pathend + [cargo_bin_text] }}"
+
+          - path: "output_config.user[{{ user_idx }}].configs"
+            value: "{{ output_config.user[user_idx].configs | combine(_rust_config) }}"
+
+          - path: "output_config.user[{{ user_idx }}].packages"
+            value: "{{ output_config.user[user_idx].packages + ['rust'] }}"
       register: _updated_fact
       changed_when: false
 
-    - name: Rust | Update configfiles fact
+    - name: Development Environments | Rust | Update output_config
       ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
+        output_config: "{{ _updated_fact.output_config }}"
       changed_when: false

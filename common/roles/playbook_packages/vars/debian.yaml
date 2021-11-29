@@ -1,9 +1,10 @@
 ---
 base:
-  packages:
+  package:
     - apt-transport-https
     - build-essential
     - ca-certificates
+    - debian-keyring
     - pkg-config
     - python3
     - python3-apt

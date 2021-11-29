@@ -1,5 +1,6 @@
 ---
-- name: Install docker
+# https://github.com/jnsh/arc-theme
+- name: Gtk | Theme | Arc | Install Tasks
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:

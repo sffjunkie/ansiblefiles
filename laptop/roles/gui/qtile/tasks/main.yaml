@@ -1,0 +1,49 @@
+---
+- name: QTile | Install qtile os dependencies
+  ansible.builtin.package:
+    name:
+      - libcairo2
+      - libffi-dev
+      - libpangocairo-1.0-0
+      - libxcb-render0-dev
+    state: present
+
+- name: QTile | Install python3 gobject
+  ansible.builtin.import_role:
+    name: python3_gobject
+
+- name: QTile | install pip dependencies
+  ansible.builtin.pip:
+    name:
+      - xcffib
+      - dbus-next
+    state: present
+
+- name: QTile | Install cairocffi with --no-cache-dir
+  ansible.builtin.include_tasks: ./cairocffi.yaml
+
+- name: QTile | Install package
+  ansible.builtin.pip:
+    name: qtile
+    state: present
+
+- name: QTile | Create .desktop file
+  ansible.builtin.copy:
+    src: files/qtile.desktop
+    dest: /usr/share/xsessions/
+    mode: 0644
+
+- name: QTile | Update output_config
+  block:
+    - name: QTile | Calc new output_config
+      ansible.utils.update_fact:
+        updates:
+          - path: output_config.packages
+            value: "{{ output_config.packages + ['qtile'] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: QTile | Update output_config
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false

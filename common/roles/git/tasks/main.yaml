@@ -1,5 +1,5 @@
 ---
-- name: Install git
+- name: Git | Install
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:

@@ -16,15 +16,17 @@
       ansible.builtin.set_fact:
         _bat_aliases: ['cat', 'bat']
 
-    - name: Bat | Calc new configfiles fact
+    - name: Bat | Calc new output_config
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.aliases
-            value: "{{ configfiles.aliases + [_bat_aliases] }}"
+          - path: "output_config.user[{{ user_idx_app }}].aliases"
+            value: >-
+              {{ output_config.user[user_idx_app].aliases +
+              [_bat_aliases] }}
       register: _updated_fact
       changed_when: false
 
-    - name: Bat | Update configfiles fact
+    - name: Bat | Update output_config
       ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
+        output_config: "{{ _updated_fact.output_config }}"
       changed_when: false

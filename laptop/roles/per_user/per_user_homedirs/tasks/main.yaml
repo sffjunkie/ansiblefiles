@@ -1,0 +1,20 @@
+---
+- name: User | HomeDirs | Calc directories to create
+  ansible.builtin.set_fact:
+    _homedirs: >
+      {{ directories.dot | default([], True) +
+      directories.development | default([], True) }}
+
+- name: User | HomeDirs | Create directories in $HOME
+  become_user: "{{ user_id }}"
+  ansible.builtin.file:
+    path: "/home/{{ user_id }}/{{ dd }}"
+    state: directory
+    mode: 0750
+    owner: "{{ user_id }}"
+    group: "{{ user_id }}"
+    access_time: preserve
+    modification_time: preserve
+  loop: "{{ _homedirs }}"
+  loop_control:
+    loop_var: dd

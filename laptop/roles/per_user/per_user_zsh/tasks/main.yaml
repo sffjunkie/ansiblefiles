@@ -1,0 +1,24 @@
+---
+- name: User | ZSH | Update output_config
+  block:
+    - name: User | ZSH | Calc config
+      ansible.builtin.set_fact:
+        _zsh_config:
+          zsh:
+            ZSH_CACHE_DIR: "{{ cache_home_text }}"
+            ZDOTDIR': "{{ config_home_text + '/zsh' }}"
+
+    - name: User | ZSH | Calc new output_config
+      ansible.utils.update_fact:
+        updates:
+          - path: "output_config.user[{{ user_idx_zsh }}].configs"
+            value: >
+              {{ output_config.user[user_idx_zsh].configs |
+              combine(_zsh_config) }}
+      register: _updated_fact
+      changed_when: false
+
+    - name: User | ZSH | Update output_config
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false

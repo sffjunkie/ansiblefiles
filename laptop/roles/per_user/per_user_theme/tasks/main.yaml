@@ -1,0 +1,14 @@
+---
+- name: User | Gtk Theme | Install
+  when: theme_info.gtk | default('') | length > 0
+  ansible.builtin.include_role:
+    name: theme_gtk_install
+  vars:
+    theme_name: "{{ theme_info.gtk }}"
+
+- name: User | Gtk Theme | Set Theme
+  when: theme_info.gtk | default('') | length > 0
+  ansible.builtin.include_role:
+    name: theme_gtk_set_theme
+  vars:
+    theme_name: "{{ theme_info.gtk }}"

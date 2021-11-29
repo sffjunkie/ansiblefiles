@@ -5,6 +5,7 @@
     subtasks:
       - "{{ distribution }}.yaml"
       - "{{ os_family }}.yaml"
+      - "default.yaml"
 
 - name: Docker | Install docker from package manager
   ansible.builtin.package:

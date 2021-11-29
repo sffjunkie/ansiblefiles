@@ -1,5 +1,5 @@
 ---
-- name: Get user_config hash
+- name: Get config.user hash
   ansible.builtin.stat:
     path: "{{ user_config_path }}"
     checksum_algorithm: sha256

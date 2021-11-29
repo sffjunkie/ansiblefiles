@@ -1,0 +1,109 @@
+---
+- name: Exa | Get latest github release
+  community.general.github_release:
+    user: ogham
+    repo: exa
+    action: latest_release
+  register: _exa_latest_version
+
+- name: Exa | Calc filename for musl
+  when: is_musl
+  ansible.builtin.set_fact:
+    _exa_file: >-
+      exa-linux-x86_64-musl-{{ _exa_latest_version.tag }}.zip
+
+- name: Exa | Calc filename for linux
+  when: not is_musl and os == 'linux'
+  ansible.builtin.set_fact:
+    _exa_file: >-
+      exa-linux-x86_64-{{ _exa_latest_version.tag }}.zip
+
+- name: Exa | Calc filename for musl
+  when: os == 'macos'
+  ansible.builtin.set_fact:
+    _exa_file: >-
+      exa-macos-x86_64-{{ _exa_latest_version.tag }}.zip
+
+- name: Exa | Calc URL
+  ansible.builtin.set_fact:
+    _exa_url: "https://github.com/ogham/exa/releases/download/{{ _exa_latest_version.tag }}/{{ _exa_file }}"
+
+- name: Exa | Create temporary directory
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: exa
+  register: _tmp_directory
+  changed_when: false
+
+- name: Exa | Download binary for ubuntu versions <= 20.04
+  ansible.builtin.uri:
+    url: "{{ _exa_url }}"
+    dest: "{{ _tmp_directory.path }}/exa.zip"
+    mode: 0644
+  register: exa_downloaded
+  changed_when: false
+
+- name: Exa | Create directory for files
+  ansible.builtin.file:
+    path: "{{ _tmp_directory.path }}/expanded/"
+    state: directory
+    mode: 0755
+  changed_when: false
+
+- name: Exa | Unarchive
+  when: exa_downloaded.status == 200
+  ansible.builtin.unarchive:
+    src: "{{ _tmp_directory.path }}/exa.zip"
+    dest: "{{ _tmp_directory.path }}/expanded/"
+    remote_src: true
+  changed_when: false
+
+- name: Exa | Copy binary
+  ansible.builtin.copy:
+    src: "{{ _tmp_directory.path }}/expanded/bin/exa"
+    dest: /usr/local/bin/
+    remote_src: true
+    mode: 0755
+
+- name: Exa | Create man page directories
+  ansible.builtin.file:
+    path: "/usr/local/share/man/{{ _man_dir }}"
+    state: directory
+    mode: 0755
+    access_time: preserve
+    modification_time: preserve
+  loop:
+    - man1
+    - man5
+  loop_control:
+    loop_var: _man_dir
+
+- name: Exa | Copy man1 page
+  ansible.builtin.copy:
+    src: "{{ _tmp_directory.path }}/expanded/man/exa.1"
+    dest: "/usr/local/share/man/man1/"
+    remote_src: true
+    mode: 0644
+
+- name: Exa | Copy man5 page
+  ansible.builtin.copy:
+    src: "{{ _tmp_directory.path }}/expanded/man/exa_colors.5"
+    dest: "/usr/local/share/man/man5/"
+    remote_src: true
+    mode: 0644
+
+# FIXME
+# - name: Exa | Find completion
+#   when: config.system.shell == 'zsh'
+#   ansible.builtin.copy:
+#     src: "{{ _tmp_directory.path }}/expanded/completions/exa.zsh"
+#     dest: /usr/local/share/zsh/site-functions/_exa
+#     remote_src: true
+#     mode: 0644
+
+- name: Exa | Remove exa temp directory
+  when: _tmp_directory != ''
+  ansible.builtin.file:
+    path: "{{ _tmp_directory.path }}"
+    state: absent
+  changed_when: false

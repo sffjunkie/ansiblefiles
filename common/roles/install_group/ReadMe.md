@@ -2,24 +2,28 @@
 
 Installs a group of packages.
 
-Should be passed a `group` dictionary which defines what gets installed.
-Under the `group` dictionary can be any of the following keys
+Should be passed a dictionary which defines what gets installed.
+Under the dictionary can be any of the following keys
 
-* `packages`
-* `pypi`
-* `pipx`
-* `git`
-* `npm`
+- `package`
+- `pypi`
+- `pipx`
+- `git`
+- `npm`
 
 These keys contain a list of items to install.
 
-For items under the packages key unless they are overriden they will be installed using the system package manager
+For items under the `package` key unless they are overriden they will be
+installed using the system package manager but by adding an override this can
+be changed to using a Ansible role.
 
-By adding an override this can be changed to using a role.
+[Overrides](#Overrides) are specified by passing as an `overrides` dictionary
+to the `install_group` role
 
-[Overrides](#Overrides) are specified by passing as an `overrides` dictionary to the `install_group` role
+If a key `name` is included in the `group` dictionary then a message will be
+printed to stdout beforfe installing the packages
 
-If a key `name` is included in the `group` dictionary then a message will be printed to stdout beforfe installing the packages
+<a id="Overrides"></a>
 
 ## Overrides
 
@@ -31,31 +35,37 @@ or
 
     <package>.<osfamily_or_distribution>
 
-where `osfamily_or_distribution` is the ansible `ansible_os_family` or `ansible_distribution` fact.
+where `osfamily_or_distribution` is the ansible `ansible_os_family` or
+`ansible_distribution` fact.
 
-Under this key should be a subkey '`install`' that signifies which override method is to be used.
-Currently only the value 'role' is recognized.
+Under this key should be a subkey `install` that signifies which override
+method is to be used. Currently only the value `role` is recognized.
 
 e.g.
 
-* When using the first form, if the key '`alacritty`' is included as an override with an install key of '`role`'
-then a role named 'alacritty' will be used.
+- When using the first form, if the key `alacritty` is included as an
+  override with an install key of `role` then a role named 'alacritty'
+  will be used.
 
-* When using the second form, if the key '`inkscape.ubuntu`' is included then Inkscape will be installed using a role
-on Ubuntu and with the system package manager on other operating systems/distributions.
+- When using the second form, if the key `inkscape.ubuntu` is included
+  then Inkscape will be installed using a role
+  on Ubuntu and with the system package manager on other operating
+  systems/distributions.
 
+<!-- FIXME: install_group; Is this still true? -->
 ## Install location override
 
-The group can also contain a key `location` with a value of either '`user`', '`system`' or '`global`'
-that determines where the package types are installed.
+The group can also contain a key `location` with a value of either `user`,
+`system` or `global` that determines where the package types are installed.
 
 ### `pypi`
 
-For `pypi` if the location override is '`user`' then the '`--user`' flag will be passed to the `pip` command.
-Using the value '`system`' is the same as omitting the key and packages will be installed into
-the global `PYTHONPATH`.
+For `pypi` if the location override is `user` then the `--user` flag will be
+passed to the `pip` command. Using the value `system` is the same as omitting
+the key and packages will be installed into the global `PYTHONPATH`.
 
 ### `npm`
 
-For `npm` if the location override is '`global`' then packages will be installed in the global NPM packages directory.
-An additional override can be specified using the
+For `npm` if the location override is `global` then packages will be
+installed in the global NPM packages directory. An additional override can
+be specified using the <!-- FIXME: install_group; complete this text-->

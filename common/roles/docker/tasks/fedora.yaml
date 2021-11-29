@@ -1,10 +1,10 @@
 # https://docs.docker.com/engine/install/fedora/
 ---
-- name: Install dnf core plugins
+- name: Docker | Fedora | Install dnf core plugins
   ansible.builtin.package:
     name: dnf-plugins-core
 
-- name: Add docker repository
+- name: Docker | Fedora | Add docker repository
   ansible.builtin.yum_repository:
     name: docker-ce
     description: Docker repo

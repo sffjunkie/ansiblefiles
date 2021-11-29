@@ -19,11 +19,11 @@
 - name: Avatar | Copy
   ansible.builtin.copy:
     src: "{{ avatar }}"
-    dest: "/var/lib/AccountsService/icons/{{ userid }}{{ _avatar_ext }}"
+    dest: "/var/lib/AccountsService/icons/{{ user_id }}{{ _avatar_ext }}"
     mode: 0644
 
 - name: Avatar | Create accountsservice config for user
   ansible.builtin.template:
     src: templates/accountsservice.ini
-    dest: "/var/lib/AccountsService/users/{{ userid }}"
+    dest: "/var/lib/AccountsService/users/{{ user_id }}"
     mode: 0644

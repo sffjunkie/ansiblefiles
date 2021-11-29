@@ -1,5 +1,6 @@
 ---
-- hosts: laptop
+# TODO: Replace with laptop
+- hosts: laptops
   become: true
   vars_files:
     - ./vars/install_overrides.yaml
@@ -11,84 +12,67 @@
         msg: "Ansible User: {{ ansible_user }}"
 
   roles:
+    - output_config_user_list
     - playbook_packages
-    # - git
+    - os_packages
+    - git
+    - zsh
+    - user_system
+    - dev_common
+    - user_per_user
+
+    # TODO: Integration with `container_machine` playbook
     # - docker
-    # - user_system
-    # - user_machine
-
-    # Install Development Environments before applications so we have
-    # compilers avaiable to build the applications if needed.
-    # - dev_environments
-
-    # - role: zsh
-    #   when: machine.shell == 'zsh'
-    #   vars:
-    #     set_shell_for: "{{ userid }}"
-
-    # - role: install_group
-    #   vars:
-    #     group: "{{ machine.apps }}"
-    #     overrides: "{{ package_installation_overrides }}"
+    # - docker_compose
 
     # - x11
-    # - role: fonts
-    #   vars:
-    #     fonts: "{{ machine.fonts }}"
-    # - role: arc_theme
+    - system_fonts
 
-    # - role: ohmyzsh
-    #   when: machine.shell == 'zsh' and machine.ohmyzsh is defined
+  tasks:
+    - name: Sort packages
+      ansible.utils.update_fact:
+        updates:
+          - path: output_config.system.packages
+            value: "{{ output_config.system.packages | sort }}"
+      register: _updated_fact
+      changed_when: false
 
-  # tasks:
-  #   - name: Sort packages
-  #     ansible.utils.update_fact:
-  #       updates:
-  #         - path: configfiles.packages
-  #           value: "{{ configfiles.packages | sort }}"
-  #     register: _updated_fact
-  #     changed_when: false
+    - name: Update output_config for system
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false
 
-  #   - name: Update configfiles
-  #     ansible.builtin.set_fact:
-  #       configfiles: "{{ _updated_fact.configfiles }}"
-  #     changed_when: false
+    - name: Sort user packages
+      ansible.utils.update_fact:
+        updates:
+          - path: "output_config.user[{{ user_idx_sort }}].packages"
+            value: "{{ item.packages | sort }}"
+      register: _updated_fact
+      changed_when: false
+      loop: "{{ output_config.user }}"
+      loop_control:
+        index_var: user_idx_sort
 
-  #   - name: Add machine vars to configfiles
-  #     block:
-  #       - ansible.utils.update_fact:
-  #           updates:
-  #             - path: configfiles.machine
-  #               value: "{{ machine }}"
-  #         register: _updated_fact
-  #         changed_when: false
+    - name: Update output_config for user
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.results[0].output_config }}"
+      changed_when: false
 
-  #       - name: Set configfiles fact
-  #         ansible.builtin.set_fact:
-  #           configfiles: "{{ _updated_fact.configfiles }}"
-  #         changed_when: false
+    - name: Final configuration
+      ansible.builtin.debug:
+        msg: "{{ output_config }}"
 
-  #   - name: Final configuration
-  #     ansible.builtin.debug:
-  #       msg: "{{ configfiles }}"
-  #       verbosity: 2
+    - name: Store final config file information to be used by ../config_files
+      delegate_to: localhost
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../build/output_config.json"
+        content: "{{ output_config | to_nice_json(indent=4) }}"
+      changed_when: false
 
-  #   - name: Set output
-  #     ansible.builtin.set_fact:
-  #       output:
-  #         data: "{{ configfiles }}"
-
-  #   - name: Store final config file information to be used by ../config_files
-  #     delegate_to: localhost
-  #     ansible.builtin.copy:
-  #       dest: "{{ playbook_dir }}/../build/configfiles.json"
-  #       content: "{{ output | to_nice_json(indent=4) }}"
-  #     changed_when: false
-
-# - name: Run configfiles playbook
-#   ansible.builtin.import_playbook: ../configfiles/build.yaml
+# - name: Run output_config playbook
+#   ansible.builtin.import_playbook: ../output_config/build.yaml
 #   tags:
-#     - configfiles
+#     - output_config
 
   # - name: Run scriptfiles playbook
   #   ansible.builtin.import_playbook: ../scriptfiles/main.yaml

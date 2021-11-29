@@ -1,0 +1,20 @@
+---
+# - name: Playbook | Load common os package list
+#   ansible.builtin.include_vars: vars/common.yaml
+
+- name: Playbook | Load os specific package list
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ distribution }}.yaml"
+        - "{{ os_family }}.yaml"
+        - "default.yaml"
+      paths:
+        - "vars"
+
+- name: OS Packages | Install os packages
+  ansible.builtin.include_role:
+    name: install_group
+  vars:
+    group: "{{ base }}"

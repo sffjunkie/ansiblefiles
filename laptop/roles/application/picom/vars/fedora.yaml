@@ -1,6 +1,6 @@
 ---
 picom_pre_requisites:
-  packages:
+  package:
     - dbus-devel
     - gcc
     - libconfig-devel

@@ -1,5 +1,5 @@
 ---
-- name: Install OS git
+- name: Git | Default | Install OS version
   ansible.builtin.package:
     name: git
     state: latest

@@ -28,4 +28,10 @@ package_installation_overrides:
 
   vscode:
     install: role
-    vars: "{{ machine.vscode }}"
+    vars: "{{ config.common.vscode }}"
+
+  base16_shell:
+    install: role
+
+  pipewire:
+    install: role

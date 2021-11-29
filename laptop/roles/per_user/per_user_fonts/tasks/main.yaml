@@ -1,0 +1,10 @@
+---
+# TODO: Check that fontconfig is configured to look in ~/.local/share/fonts
+
+- name: "Fonts | User | Install"
+  ansible.builtin.include_role:
+    name: font_install
+  vars:
+    location: user
+    font_url: "{{ item.url }}"
+  loop: "{{ user_font_list }}"

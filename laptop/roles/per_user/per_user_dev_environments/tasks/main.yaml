@@ -1,0 +1,10 @@
+---
+- name: Development Environments | Install
+  when: language.value.enabled | default(true)
+  ansible.builtin.include_role:
+    name: "dev_{{ language.key }}"
+  vars:
+    env_config: "{{ language.value }}"
+  loop: "{{ lookup('dict', dev_envs) }}"
+  loop_control:
+    loop_var: language

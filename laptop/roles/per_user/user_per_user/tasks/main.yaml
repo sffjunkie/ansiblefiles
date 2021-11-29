@@ -1,0 +1,125 @@
+---
+# Ansible can't do loops for blocks so each task in this file needs to loop over
+# the users separately and each needs its own index variable.
+- name: User | Create home directories
+  ansible.builtin.include_role:
+    name: per_user_homedirs
+  vars:
+    user_id: "{{ system_users[user_idx_homedirs].id }}"
+    directories: "{{ item.directory }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_homedirs
+
+- name: User | Avatar
+  when: item.avatar is defined
+  ansible.builtin.include_role:
+    name: avatar
+  vars:
+    user_id: "{{ system_users[user_idx_avatar].id }}"
+    avatar: "{{ item.avatar }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_avatar
+
+- name: User | Git
+  when: item.git is defined
+  ansible.builtin.include_role:
+    name: per_user_git
+  vars:
+    user_id: "{{ system_users[user_idx_git].id }}"
+    username: "{{ system_users[user_idx_git].name }}"
+    git_info: "{{ item.git }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_git
+
+- name: User | Shell
+  when: item.shell is defined
+  ansible.builtin.include_role:
+    name: per_user_shell
+  vars:
+    user_id: "{{ system_users[user_idx_shell].id }}"
+    shell: "{{ item.shell }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_shell
+
+- name: User | ZSH
+  when: item.shell | default('', True) == 'zsh'
+  ansible.builtin.include_role:
+    name: per_user_zsh
+  vars:
+    user_id: "{{ system_users[user_idx_zsh].id }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_zsh
+
+- name: User | Oh-My-ZSH
+  when: item.ohmyzsh is defined
+  ansible.builtin.include_role:
+    name: per_user_ohmyzsh
+  vars:
+    user_id: "{{ system_users[user_idx_ohmyzsh].id }}"
+    ohmyzsh: "{{ item.ohmyzsh }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_ohmyzsh
+
+- name: User | Environment Vars
+  when: item.envvars is defined
+  include_tasks: set_envvars.yaml
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_envvar
+
+# Install Development Environments before applications so we have
+# compilers avaiable to build the applications if needed.
+- name: User | Dev Environments
+  when: item.development.environments is defined
+  ansible.builtin.include_role:
+    name: per_user_dev_environments
+  vars:
+    user_id: "{{ system_users[user_idx_dev_env].id }}"
+    user_idx: "{{ user_idx_dev_env }}"
+    dev_envs: "{{ item.development.environments }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_dev_env
+
+- name: User | Applications
+  when: item.applications is defined
+  ansible.builtin.include_role:
+    name: per_user_applications
+  vars:
+    user_id: "{{ system_users[user_idx_app].id }}"
+    user_idx: "{{ user_idx_app }}"
+    applications: "{{ item.applications }}"
+    overrides: "{{ package_installation_overrides }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_app
+
+- name: User | Fonts
+  when: item.fonts is defined
+  ansible.builtin.include_role:
+    name: per_user_fonts
+  vars:
+    user_id: "{{ system_users[user_idx_fonts].id }}"
+    user_idx: "{{ user_idx_fonts }}"
+    font_list: "{{ item.fonts }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_fonts
+
+- name: User | Theme
+  when: item.ui.theme is defined
+  ansible.builtin.include_role:
+    name: per_user_theme
+  vars:
+    user_id: "{{ system_users[user_idx_theme].id }}"
+    user_idx: "{{ user_idx_theme }}"
+    theme_info: "{{ item.ui.theme }}"
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_idx_theme

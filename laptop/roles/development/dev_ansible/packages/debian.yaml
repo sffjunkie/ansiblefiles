@@ -1,7 +1,8 @@
 ---
-ansible_development_os_packages:
-  - build-essential
-  - libssl-dev
-  - libffi-dev
-  - python-dev
-  - virtualenv
+dev_ansible_packages:
+  os:
+    - build-essential
+    - libssl-dev
+    - libffi-dev
+    - python-dev
+    - virtualenv

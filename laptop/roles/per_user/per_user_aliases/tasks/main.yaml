@@ -1,0 +1,20 @@
+---
+- name: Aliases | Ensure aliases are added as a list of lists
+  ansible.builtin.set_fact:
+    _aliases: "{{ _aliases + [[_alias.key, _alias.value]] }}"
+  loop: "{{ alias_list | dict2items }}"
+  loop_control:
+    loop_var: _alias
+
+- name: Aliases | Update aliases fact
+  ansible.utils.update_fact:
+    updates:
+      - path: "output_config.user[{{ user_idx }}].aliases"
+        value: "{{ output_config.user[user_idx].aliases + _aliases  }}"
+  register: _updated_fact
+  changed_when: false
+
+- name: Aliases | Set output_config
+  ansible.builtin.set_fact:
+    output_config: "{{ _updated_fact.output_config }}"
+  changed_when: false

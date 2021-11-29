@@ -1,0 +1,13 @@
+---
+dev_python_packages:
+  pip:
+    - black
+    - mypy
+    - poetry
+    - pylint
+    - pytest
+    - sphinx
+    - tox
+
+  pipx:
+    - cookiecutter

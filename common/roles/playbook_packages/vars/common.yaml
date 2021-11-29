@@ -1,12 +1,14 @@
 ---
 common:
-  packages:
+  package:
     - autoconf
     - automake
     - git
+    - gnome-keyring
     - unzip
     - xdg-utils
     - zstd
 
-  # pip:
-  #   - pipx
+  pip:
+    - pipx
+    - github3.py

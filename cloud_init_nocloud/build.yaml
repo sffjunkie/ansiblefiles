@@ -43,18 +43,18 @@
         - image
 
   tasks:
-    - name: Extra user_config from file
+    - name: Extra config.user from file
       block:
-        - name: Get extra user_config file name
+        - name: Get extra config.user file name
           ansible.builtin.set_fact:
             _extra_user_config_file_name: extra_user_config[1:]
 
-        - name: Check extra user_config file exists
+        - name: Check extra config.user file exists
           ansible.builtin.stat:
             path: "{{ _extra_user_config_file_name }}"
           register: _extra_user_config_exists
 
-        - name: Get any extra user_config from a file
+        - name: Get any extra config.user from a file
           when: _extra_user_config_exists.stat.exists
           ansible.builtin.set_fact:
             extra_user_config: "{{ lookup('file', _extra_user_config_file_name) }}"

@@ -1,3 +1,3 @@
 # Machine
 
-Configures a (virtual) machine.
+Configures a (virtual) machine_config.

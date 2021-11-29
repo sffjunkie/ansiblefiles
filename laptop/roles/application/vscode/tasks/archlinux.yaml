@@ -1,6 +1,6 @@
 ---
 - name: VSCodium Install | Arch Linux
-  when: machine.vscode.product | lower == 'vscodium'
+  when: config.common.vscode.product | lower == 'vscodium'
   ansible.builtin.package:
     name: vscodium-bin
     state: present

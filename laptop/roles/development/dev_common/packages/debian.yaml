@@ -1,7 +1,10 @@
 ---
-ansible_development_os_packages:
-  - build-essential
-  - libssl-dev
-  - libffi-dev
-  - python-dev
-  - virtualenv
+dev_common_packages:
+  package:
+    - cmake
+    - ninja-build
+    - vagrant
+    - virtualbox
+
+  pip:
+    - meson

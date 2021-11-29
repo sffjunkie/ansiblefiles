@@ -1,5 +1,15 @@
 ---
-- name: Set GTK shell
-  when: machine.gtk_theme | length > 0
+- name: Get current theme
+  become_user: "{{ user_id }}"
   ansible.builtin.command:
-    cmd: gsettings set org.gnome.desktop.interface gtk-theme "{{ gtk_theme }}"
+    cmd: >-
+      gsettings get org.gnome.desktop.interface gtk-theme
+  register: _gtk_current_theme
+  changed_when: false
+
+- name: "User | Gtk Theme | Set theme to {{ theme_name }}"
+  when: '_gtk_current_theme.stdout | trim("''") != theme_name'
+  become_user: "{{ user_id }}"
+  ansible.builtin.command:
+    cmd: >-
+      gsettings set org.gnome.desktop.interface gtk-theme {{ theme_name }}

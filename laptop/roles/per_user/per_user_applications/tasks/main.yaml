@@ -1,0 +1,6 @@
+---
+- name: User | Applications | Install
+  ansible.builtin.include_role:
+    name: install_group
+  vars:
+    group: "{{ applications }}"

@@ -1,0 +1,16 @@
+---
+- name: User | Environment Vars | Update output_config
+  ansible.utils.update_fact:
+    updates:
+      - path: "output_config.user[{{ user_idx_envvar }}].envvars"
+        value: >
+          {{ output_config.user[user_idx_envvar].envvars |
+          combine(item.envvars) }}
+  register: _updated_fact
+  changed_when: false
+
+- name: User | Environment Vars | Set output_config
+  when: "'envvars' in output_config.user[user_idx_envvar]"
+  ansible.builtin.set_fact:
+    output_config: "{{ _updated_fact.output_config }}"
+  changed_when: false

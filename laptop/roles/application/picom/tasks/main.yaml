@@ -43,15 +43,22 @@
 
     - name: Picom | Merge pre-requisites
       ansible.builtin.set_fact:
-        _pre_reqs: >
-          "{{ picom_pre_requisites |
+        _pre_reqs: >-
+          {{ picom_pre_requisites |
           combine(picom_common_pre_requisites,
-          list_merge='keep', recursive=True) }}"
+          list_merge='append', recursive=True) }}
       changed_when: false
+
+    - name: Picom | Debug pre-reqs
+      ansible.builtin.debug:
+        msg:
+          - Picom Pre-requisites
+          - "{{ _pre_reqs }}"
+        verbosity: 1
 
     - name: Picom | Install pre-requisites - os package
       ansible.builtin.package:
-        name: "{{ _pre_reqs.packages }}"
+        name: "{{ _pre_reqs.package }}"
         state: present
 
     - name: Picom | Install pre-requisites - pip

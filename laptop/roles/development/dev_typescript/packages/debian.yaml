@@ -1,0 +1,9 @@
+---
+dev_typescript_packages:
+  os:
+    - "nodejs"
+    - "npm"
+  npm:
+    - "@types/node"
+    - "typescript"
+    - "typedoc"

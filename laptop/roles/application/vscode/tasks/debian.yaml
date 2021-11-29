@@ -1,6 +1,6 @@
 ---
 - name: VSCode Install
-  when: (machine.vscode.product | lower) == 'vscode'
+  when: (config.common.vscode.product | lower) == 'vscode'
   block:
     # https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04
     - name: Add GPG apt Key
@@ -21,7 +21,7 @@
         cache_valid_time: 86400
 
 - name: VSCodium Install
-  when: machine.vscode.product | lower == 'vscodium'
+  when: config.common.vscode.product | lower == 'vscodium'
   block:
     - name: Install snap
       ansible.builtin.command: snap install codium --classic
@@ -29,12 +29,12 @@
     - name: Add alias to codium
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.aliases
-            value: "{{ configfiles.aliases + [['code', 'codium']] }}"
+          - path: output_config.aliases
+            value: "{{ output_config.aliases + [['code', 'codium']] }}"
       register: _updated_fact
       changed_when: false
 
-    - name: Set configfiles fact
+    - name: Set output_config
       ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
+        output_config: "{{ _updated_fact.output_config }}"
       changed_when: false

@@ -1,6 +1,7 @@
 ---
 base:
-  packages:
+  package:
+    - archlinux-keyring
     - base-devel
     - curl
     - python

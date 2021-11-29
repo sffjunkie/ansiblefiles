@@ -14,30 +14,34 @@
 
 - name: Calc config directory
   ansible.builtin.set_fact:
-    _vscode_config_dir: >
-      "{{ (vscode.product | lower == 'vscode') |
-      ternary('Code', 'VSCodium') }}"
+    _vscode_config_dir: >-
+      {{ (config.common.vscode.product | lower == 'vscode') |
+      ternary('Code', 'VSCodium') }}
 
 # Using custom filter plugins
 - name: Get VSCode extension list
   ansible.builtin.set_fact:
-    _vscode_extensions: "{{ vscode | vscode_extension_install_strings }}"
-    _vscode_settings: "{{ vscode | vscode_extension_settings }}"
+    _vscode_extensions: >
+      {{ config.common.vscode | vscode_extension_install_strings }}
+    _vscode_settings: >
+      {{ config.common.vscode | vscode_extension_settings }}
 
 - name: Install extensions
-  become_user: "{{ userid }}"
+  become_user: "{{ user_id }}"
   ansible.builtin.command:
     cmd: >-
-      code --install-extension '{{ item }}'
+      code --install-extension '{{ _vscode_extension_item }}'
       --user-data-dir $HOME/Code/User/
-    creates: "{{ item }}-*"
+    creates: "{{ _vscode_extension_item }}-*"
   loop: "{{ _vscode_extensions }}"
+  loop_control:
+    loop_var: _vscode_extension_item
   register: _vscode_extension_install_result
   changed_when: >
     _vscode_extension_install_result.rc == 0 and
     'already installed' not in _vscode_extension_install_result.stdout
 
-- name: Update configfiles for VS Code
+- name: Update output_config for VS Code
   block:
     - name: Set VS Code information
       ansible.builtin.set_fact:
@@ -45,17 +49,20 @@
           vscode:
             settings: "{{ _vscode_settings }}"
 
-    - name: Add vscode info to configfiles
+    - name: Add vscode info to output_config
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.packages
-            value: "{{ configfiles.packages + ['vscode'] }}"
-          - path: configfiles.configs
-            value: "{{ configfiles.configs | combine(_vscode_config) }}"
+          - path: "output_config.user[{{ user_idx_app }}].packages"
+            value: "{{ output_config.user[user_idx_app].packages + ['vscode'] }}"
+
+          - path: "output_config.user[{{ user_idx_app }}].configs"
+            value: >
+              {{ output_config.user[user_idx_app].configs |
+              combine(_vscode_config) }}
       register: _updated_fact
       changed_when: false
 
-    - name: Set configfiles fact
+    - name: Set output_config
       ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
+        output_config: "{{ _updated_fact.output_config }}"
       changed_when: false

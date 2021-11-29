@@ -1,44 +1,26 @@
 ---
-- name: ZSH
-  ansible.builtin.debug:
-    msg: Building ZSH environment
-    verbosity: 1
-
-- name: Test if installed
-  ansible.builtin.command:
-    cmd: zsh --version
-  register: _zsh_installed
-  changed_when: false
-
-- name: ZSH | Install
-  when: _zsh_installed.rc == 0
-  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
-  vars:
-    subtasks:
-      - "{{ distribution }}.yaml"
-      - "{{ os_family }}.yaml"
-      - "default.yaml"
-
-- name: ZSH | Update configfiles
+- name: Install Zsh
   block:
-    - name: ZSH | Calc config
-      ansible.builtin.set_fact:
-        _zsh_config:
-          zsh:
-            ZSH_CACHE_DIR: "{{ cache_home_replacement_text }}"
-            ZDOTDIR': "{{ config_home_replacement_text + '/zsh' }}"
-
-    - name: ZSH | Calc new configfiles fact
-      ansible.utils.update_fact:
-        updates:
-          - path: configfiles.pathend
-            value: "{{ configfiles.pathend }}"
-          - path: configfiles.configs
-            value: "{{ configfiles.configs | combine(_zsh_config) }}"
-      register: _updated_fact
+    - name: ZSH | Test if installed
+      ansible.builtin.command:
+        cmd: zsh --version
+      register: _zsh_installed
       changed_when: false
+      failed_when: false
 
-    - name: ZSH | Update configfiles fact
-      ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
-      changed_when: false
+    - name: ZSH | Already Installed
+      when: _zsh_installed.rc == 0
+      ansible.builtin.debug:
+        msg: "Skipping: ZSH already installed"
+
+    - name: ZSH | Install
+      when: _zsh_installed.rc != 0
+      ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+      vars:
+        subtasks:
+          - "{{ distribution }}.yaml"
+          - "{{ os_family }}.yaml"
+          - "default.yaml"
+
+  # Install when any user has it set
+  when: "'zsh' in (config.user | map(attribute='shell'))"

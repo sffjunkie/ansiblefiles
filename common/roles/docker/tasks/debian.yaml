@@ -1,20 +1,12 @@
-# https://docs.docker.com/engine/install/ubuntu/
 ---
-- name: Add Docker GPG apt Key
+- name: Docker | Debian | Add apt GPG key
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/debian/gpg
     state: present
 
-- name: Add Docker Repository
+- name: Docker | Debian | Add Docker Repository
   ansible.builtin.apt_repository:
     repo: >-
       deb https://download.docker.com/linux/debian
       {{ ansible_distribution_release }} stable
     state: present
-
-- name: Update apt cache and install pip
-  ansible.builtin.apt:
-    name: python3-pip
-    state: present
-    update_cache: true
-    cache_valid_time: 86400

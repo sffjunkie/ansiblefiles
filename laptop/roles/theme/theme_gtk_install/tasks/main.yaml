@@ -1,0 +1,8 @@
+---
+- name: Gtk Theme | Install | Calc theme role name
+  ansible.builtin.set_fact:
+    _theme_role_name: "theme_{{ theme_name | lower() }}"
+
+- name: "Gtk Theme | Install | Install {{ _theme_role_name }}"
+  ansible.builtin.include_role:
+    name: "{{ _theme_role_name }}"

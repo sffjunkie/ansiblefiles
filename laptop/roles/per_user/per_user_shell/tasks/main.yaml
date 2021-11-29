@@ -1,0 +1,11 @@
+---
+- name: User | Shell | Get shell path  # noqa: command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: "command -v {{ shell }}"
+  register: _shell_path
+  changed_when: false
+
+- name: User | Shell | Set shell
+  ansible.builtin.user:
+    name: "{{ user_id }}"
+    shell: "{{ _shell_path.stdout }}"

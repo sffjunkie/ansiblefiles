@@ -1,0 +1,26 @@
+---
+- name: Ensure output_config.user includes enough entries for the number of users
+  ansible.builtin.set_fact:
+    _user_configs: >
+      {{ _user_configs +
+      [
+        user_config_empty | combine({'id': system_users[user_config_idx].id})
+      ] }}
+  loop: "{{ config.user }}"
+  loop_control:
+    index_var: user_config_idx
+
+- name: Update output_config.users
+  block:
+    - name: Configfiles | Calc new output_config.user fact
+      ansible.utils.update_fact:
+        updates:
+          - path: output_config.user
+            value: "{{ _user_configs }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: User | Update output_config
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false

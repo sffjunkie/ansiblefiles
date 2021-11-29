@@ -1,6 +1,6 @@
 ---
 picom_common_pre_requisites:
-  packages:
+  package:
     - ninja-build
 
   pip:

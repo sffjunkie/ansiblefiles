@@ -1,14 +1,15 @@
 ---
-- name: Ensure user's password is encrypted.
+- name: User | System | Create | Ensure user's password is encrypted.
   include_tasks: ../../../tasks/encrypted_password.yaml
 
-- name: Add user.
+- name: User | System | Create | Add user
   ansible.builtin.user:
     name: "{{ user.id }}"
     password: "{{ user_passwd }}"
     state: present
 
-- name: Add sudo rights for user.
+- name: User | System | Create | Add sudo rights for user
+  when: "user.groups is defined and 'sudo' in user.groups"
   ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ user.id }}"
     content: "{{ user.id }} {{ sudo_entry_user }}"

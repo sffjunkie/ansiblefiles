@@ -22,11 +22,11 @@
 
   tasks:
     - name: Install zsh.
-      when: machine.shell == 'zsh'
+      when: config.system.shell == 'zsh'
       include_role:
         name: zsh
 
     - name: Install oh-my-zsh.
-      when: machine.shell == 'zsh' and machine.ohmyzsh.path | length > 0
+      when: config.system.shell == 'zsh' and config.system.ohmyzsh.path | length > 0
       include_role:
         name: ohmyzsh

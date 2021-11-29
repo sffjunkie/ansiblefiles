@@ -1,40 +1,62 @@
 # yaml-language-server: $schema=./global.yaml
 ---
+# Cache whether command exists on target
+target_commands: {}
+
 # Dictionary describing values for the 'configfiles' playbook to consume.
 # Added to by various roles e.g. ohmyzsh, go
-configfiles:
-  # Additions to the PATH
-  - pathstart: []
-    pathend:
-      - ${HOME}/.local/bin
-
+output_config:
+  # Config common between users
+  common:
+    # Add directory to start of path
+    pathstart: []
+    # Add directory to end of path
+    pathend: []
     # Configuration file values with a key for each role that is generated
     configs: {}
-
     # Environment variables
     envvars: {}
-
-    # List of aliases for the 'configfiles' playbook to create
+    # List of aliases for the 'output_config' playbook to create
     aliases: []
-
+    # List of packages installed systemwide
     packages: []
 
+  system:
+    pathstart: []
+    pathend: []
+    configs: {}
+    envvars: {}
+    aliases: []
+    packages: []
+
+  user: []
+
+user_config_empty:
+  pathstart:
+    - ${HOME}/.local/bin
+  pathend: []
+  configs: {}
+  envvars: {}
+  aliases: []
+  packages: []
+
+
 # Replacement strings to use in config files
-local_home_replacement_text: "${HOME}/.local"
-config_home_replacement_text: "${XDG_CONFIG_HOME:-${HOME}/.config}"
-cache_home_replacement_text: "${XDG_CACHE_HOME:-${HOME}/.cache}"
+local_home_text: "${HOME}/.local"
+config_home_text: "${XDG_CONFIG_HOME:-${HOME}/.config}"
+cache_home_text: "${XDG_CACHE_HOME:-${HOME}/.cache}"
 
 distribution: "{{ ansible_distribution | lower | replace(' ', '') }}"
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
-os: >
-  "{{ 'macos' if os_family == 'darwin'
+os: >-
+  {{ 'macos' if os_family == 'darwin'
   else 'windows' if os_family == 'windows'
-  else 'linux' }}"
-is_musl: >
-  "{{ true if os_family in ['alpine', 'gentoo', 'openwrt']
-  else false }}"
-is_wsl: "{{ lookup('env', 'WSLENV')|default('') != '' }}"
+  else 'linux' }}
+is_musl: >-
+  {{ true if os_family in ['alpine', 'gentoo', 'openwrt']
+  else false }}
+is_wsl: "{{ lookup('env', 'WSLENV') | default('') != '' }}"
 
-motd_dir: >
-  "{{ '/etc/update-motd.d' if distribution == 'ubuntu'
-  else '/etc/motd.d' }}"
+motd_dir: >-
+  {{ '/etc/update-motd.d' if distribution == 'ubuntu'
+  else '/etc/motd.d' }}

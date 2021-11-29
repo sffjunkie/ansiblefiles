@@ -1,7 +1,7 @@
 ---
 - name: Get base16-shell path
   ansible.builtin.set_fact:
-    base16_shell_path: "$_LOCAL_HOME/base16-shell"
+    base16_shell_path: "{{ local_home_text }}/base16-shell"
 
 - name: Install base 16 shell
   ansible.builtin.git:
@@ -14,6 +14,23 @@
     name: base16-shell-preview
     extra_args: --user
 
-- name: Update configfiles fact
-  ansible.builtin.set_fact:
-    configfiles: "{{ configfiles + [['base16', { 'path': base16_shell_path }]] }}"
+- name: Base16 | Update output_config
+  block:
+    - name: Base16 | Calc config
+      ansible.builtin.set_fact:
+        _base16_config:
+          base16_shell:
+            base16_shell: "{{ base16_shell_path }}"
+
+    - name: Base16 | Calc new output_config
+      ansible.utils.update_fact:
+        updates:
+          - path: "output_config.user[{{ user_idx }}].configs"
+            value: "{{ output_config.user[user_idx].configs | combine(_base16_config) }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Base16 | Update output_config
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false

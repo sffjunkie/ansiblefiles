@@ -14,6 +14,6 @@
 
 - name: Update aliases
   ansible.builtin.include_role:
-    name: aliases
+    name: per_user_aliases
   vars:
     alias_list: "{{ _exa_aliases }}"

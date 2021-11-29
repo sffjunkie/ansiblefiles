@@ -1,69 +1,85 @@
 ---
-- name: Go | Development Environment
+- name: Development Environments | Go
   ansible.builtin.debug:
     msg: Building Go Development Environment
     verbosity: 1
 
-- name: Go | Calculate filename prefix with latest version
+- name: >
+    Development Environments | Go |
+    Calculate filename prefix with latest version
   ansible.builtin.set_fact:
-    _go_install_version: "{{ lookup('url', _go_version_url, split_lines=False) }}"
+    _go_install_version: >-
+      {{ lookup('url', _go_version_url, split_lines=False) }}
   changed_when: false
-  when: machine.development.go.version == "latest"
+  when: "env_config.version | default('latest', True) == 'latest'"
 
-- name: Go | Calculate filename prefix with fixed version
+- name: Development Environments | Go | Calculate install path
+  ansible.builtin.set_fact:
+    _go_install_path: >-
+      {{ ('/home/' ~ user_id ~ '/.local') if env_config.location == 'user'
+      else '/usr/local' }}
+
+- name: >
+    Development Environments | Go | Calculate filename prefix with fixed version
   ansible.builtin.set_fact:
     _go_install_version: go{{ version }}
   changed_when: false
-  when: machine.development.go.version != "latest"
+  when: "env_config.version | default('latest', True) != 'latest'"
 
-- name: Go | Try to get current go version installed
+- name: Development Environments | Go | Get current version
   ansible.builtin.command: "{{ _go_bin_path }}/go version"
   register: _go_version
   changed_when: false
   failed_when: false
 
-- name: Go | Set current_version var to the current
+- name: Development Environments | Go | Set current_version var to the current
   ansible.builtin.set_fact:
     _go_current_version: "{{ _go_version.stdout.split(' ')[2] }}"
   changed_when: false
   when: _go_version.rc == 0
 
-- name: "Go | Download and extract the archive {{ _go_archive_name }}"
+- name: Development Environments | Go | Calc go user/group
+  ansible.builtin.set_fact:
+    _go_usergroup: "{{ user_id if env_config.location == 'user' else 'root' }}"
+
+- name: >
+    Development Environments | Go | Download and extract the archive
+    {{ _go_archive_name }}
   when: _go_current_version != _go_install_version
   ansible.builtin.unarchive:
     src: "{{ _go_download_url }}"
     dest: "{{ _go_install_path }}"
     mode: 0755
-    owner: "{{ _go_mode }}"
-    group: "{{ _go_mode }}"
+    owner: "{{ _go_usergroup }}"
+    group: "{{ _go_usergroup }}"
     remote_src: true
 
-- name: "Go | gopath text"
-  when: machine.development.go.location == 'user'
+- name: Development Environments | Go | gopath text
+  when: env_config.location == 'user'
   ansible.builtin.set_fact:
-    _go_install_path: "{{ local_home_replacement_text }}"
+    _go_install_path: "{{ local_home_text }}"
 
-- name: Go | Update configfiles
+- name: Development Environments | Go | Update output_config
   block:
-    - name: Go | Calc config
+    - name: Development Environments | Go | Calc config
       ansible.builtin.set_fact:
         _go_config:
           go:
-            GOPATH: "{{ _go_install_path + '/go' }}"
+            GOPATH: "{{ _go_install_path + '/bin/go' }}"
 
-    - name: Calc new configfiles fact
+    - name: Development Environments | Go | Calc new output_config
       ansible.utils.update_fact:
         updates:
-          - path: configfiles.pathend
-            value: "{{ configfiles.pathend + [_go_bin_path] }}"
-          - path: configfiles.configs
-            value: "{{ configfiles.configs | combine(_go_config) }}"
-          - path: configfiles.packages
-            value: "{{ configfiles.packages + ['go'] }}"
+          - path: "output_config.user[{{ user_idx }}].pathend"
+            value: "{{ output_config.user[user_idx].pathend + [_go_bin_path] }}"
+          - path: "output_config.user[{{ user_idx }}].configs"
+            value: "{{ output_config.user[user_idx].configs | combine(_go_config) }}"
+          - path: "output_config.user[{{ user_idx }}].packages"
+            value: "{{ output_config.user[user_idx].packages + ['go'] }}"
       register: _updated_fact
       changed_when: false
 
-    - name: Update configfiles fact
+    - name: Development Environments | Go | Update output_config
       ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
+        output_config: "{{ _updated_fact.output_config }}"
       changed_when: false

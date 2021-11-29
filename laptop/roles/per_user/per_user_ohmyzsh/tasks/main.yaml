@@ -1,0 +1,53 @@
+---
+- name: Oh-My-Zsh | Calc url
+  ansible.builtin.set_fact:
+    _ohmyzsh_install_script: >-
+      https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+
+- name: Oh-My-Zsh | Run install script
+  become_user: "{{ user_id }}"
+  ansible.builtin.shell:
+    cmd: '/usr/bin/sh -c "$(curl -fsSL {{ _ohmyzsh_install_script }})" "" --unattended'
+    creates: "{{ _ohmyzsh_install_path }}/oh-my-zsh.sh"
+  environment:
+    ZSH: "{{ _ohmyzsh_install_path }}"
+
+- name: Oh-My-Zsh | Install plugins.
+  become_user: "{{ user_id }}"
+  ansible.builtin.git:
+    repo: "https://github.com/zsh-users/{{ _ohmyzsh_plugin.name }}.git"
+    dest: "{{ _ohmyzsh_install_path }}/plugins/{{ _ohmyzsh_plugin.name }}"
+    version: "{{ _ohmyzsh_plugin.version }}"
+  loop:
+    "{{ ohmyzsh.zsh_users_plugins }}"
+  loop_control:
+    loop_var: _ohmyzsh_plugin
+
+- name: Oh-My-Zsh | Update output_config
+  block:
+    - name: Calc user plugin names
+      ansible.builtin.set_fact:
+        _ohmyzsh_user_plugins: >
+          {{ ohmyzsh.zsh_users_plugins | map(attribute='name') | list }}
+
+    - name: Oh-My-Zsh | Calc config
+      ansible.builtin.set_fact:
+        _ohmyzsh_config:
+          ohmyzsh:
+            plugins: "{{ _ohmyzsh_user_plugins }}"
+            ZSH: "{{ _ohmyzsh_install_path|replace('/home/' ~ user_id, '${HOME}') }}"
+
+    - name: Oh-My-Zsh | Calc new output_config
+      ansible.utils.update_fact:
+        updates:
+          - path: "output_config.user[{{ user_idx_ohmyzsh }}].configs"
+            value: >
+              {{ output_config.user[user_idx_ohmyzsh].configs |
+              combine(_ohmyzsh_config) }}
+      register: _updated_fact
+      changed_when: false
+
+    - name: Oh-My-Zsh | Update output_config
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false

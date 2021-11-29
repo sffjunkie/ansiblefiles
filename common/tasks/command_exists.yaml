@@ -1,0 +1,11 @@
+---
+- name: Task | Command exists  # noqa: command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: "command -v {{ command }}"
+  register: _command_path
+  changed_when: false
+
+- name: Task | Update target_commands
+  when: _command_path.rc == 0
+  ansible.utils.set_fact:
+    target_commands: "{{ target_commands | combine({ command: _command_path.stdout }) }}"

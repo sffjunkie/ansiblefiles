@@ -1,5 +1,5 @@
 ---
 _node_install_path: >
-  "'/home/{{ userid }}/.local' if node.install == 'local'
+  "'/home/{{ user_id }}/.local' if node.install == 'local'
   else '/usr/local' }}"
 _node_bin_path: "{{ _node_install_path }}/node/bin"

@@ -1,0 +1,22 @@
+---
+- name: Install xmonad
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
+
+- name: Update output_config for xmonad
+  block:
+    - name: Calc new output_config.packages
+      ansible.utils.update_fact:
+        updates:
+          - path: output_config.packages
+            value: "{{ output_config.packages + ['xmonad'] }}"
+      register: _updated_fact
+      changed_when: false
+
+    - name: Update output_config
+      ansible.builtin.set_fact:
+        output_config: "{{ _updated_fact.output_config }}"
+      changed_when: false

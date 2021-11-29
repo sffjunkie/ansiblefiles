@@ -1,40 +1,51 @@
 ---
-- name: Typescript Dev
+- name: Development Environments | Typescript
   ansible.builtin.debug:
     msg: Building Typescript Development Environment
     verbosity: 1
 
-- name: "Typescript | Install packages"
+- name: Development Environments | Typescript | Load default os package list
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - '{{ distribution }}.yaml'
+        - '{{ os_family }}.yaml'
+        - 'all.yaml'
+      paths:
+        - 'packages'
+
+- name: "Development Environments | Typescript | Install"
   ansible.builtin.include_role:
     name: install_group
   vars:
-    group: "{{ machine.development.typescript }}"
+    group: "{{ dev_typescript_packages }}"
 
-- name: Typescript | Update configfiles
+- name: Development Environments | Typescript | Update output_config
   block:
     - name: Typescript | Calc config
       ansible.builtin.set_fact:
         _ts_config:
           typescript: {}
 
-# TODO: dev_typescript | pathend, configs, envvars
-    - name: Typescript | Calc new configfiles fact
+# TODO: dev_typescript | pathend, configs, envvar
+    - name: Development Environments | Typescript | Calc new output_config
       ansible.utils.update_fact:
         updates:
-#           - path: configfiles.pathend
-#             value: "{{ configfiles.pathend + [_npm_bin_path] }}"
-#           - path: configfiles.configs
-#             value: "{{ configfiles.configs }}"
-#           - path: configfiles.envvars
+#           - path: output_config.pathend
+#             value: "{{ output_config.pathend + [_npm_bin_path] }}"
+#           - path: output_config.configs
+#             value: "{{ output_config.configs }}"
+#           - path: output_config.envvar
 #             value: >
-#               "{{ configfiles.envvars |
+#               "{{ output_config.envvar |
 #               combine({'NPM_PACKAGES': _npm_install_path + '/go'}) }}"
-          - path: configfiles.packages
-            value: "{{ configfiles.packages + ['typescript'] }}"
+          - path: output_config.packages
+            value: "{{ output_config.packages + ['typescript'] }}"
       register: _updated_fact
       changed_when: false
 
-    - name: Typescript | Update configfiles fact
+    - name: Development Environments | Typescript | Update output_config
       ansible.builtin.set_fact:
-        configfiles: "{{ _updated_fact.configfiles }}"
+        output_config: "{{ _updated_fact.output_config }}"
       changed_when: false

@@ -1,5 +1,6 @@
 # Things to do
 
+* [ ] Users and directories - how to pass them around and use ~, $HOME etc.
 * [ ] Laptop playbook
   * [ ] Pipewire support
   * [ ] X11
@@ -13,4 +14,33 @@
 * [ ] VM Node playbook
 * [ ] VM Node playbook
 * [ ] Unifi playbook
-* [ ] Home Autiomation
+* [ ] Home Automation
+
+## qemu-guest-agent
+
+* [ ] If hosted on Proxmox set QEMU Guest Agent Option `--agent`
+
+## Applications
+  * [ ] Oomox
+
+## Fedora
+
+* [ ] pulsemixer is not a package
+
+## Templates
+
+* Stored in a folder
+* Fixed hostname
+* IP address from DHCP
+* Use cloud-init enabled image with cloud-init-nocloud datasource
+* Start VM to apply cloud-init
+* Ensure image is qcow2
+
+
+## HashiCorp Vault
+
+Secrets
+
+## HashiCorp Packer
+
+Any use?

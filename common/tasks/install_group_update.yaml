@@ -1,0 +1,70 @@
+---
+- name: Playbook Packages | Render any unrendered templates and make sure they are lists
+  ansible.builtin.set_fact:
+    _base_package: >
+      {{ base.package | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _base_pip: >
+      {{ base.pip | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _base_pipx: >
+      {{ base.pipx | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _base_npm: >
+      {{ base.npm | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _common_package: >
+      {{ common.package | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _common_pip: >
+      {{ common.pip | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _common_pipx: >
+      {{ common.pipx | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _common_npm: >
+      {{ common.npm | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _extra_package: >
+      {{ extra.package | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _extra_pip: >
+      {{ extra.pip | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _extra_pipx: >
+      {{ extra.pipx | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+
+    _extra_npm: >
+      {{ extra.npm | default([], True) |
+      j2render_list(hostvars[inventory_hostname]) }}
+  changed_when: false
+
+- name: Playbook Packages | Set common and base
+  ansible.utils.update_fact:
+    updates:
+      - path: group_info.package
+        value: "{{ (_base_package + _common_package + _extra_package) | unique }}"
+      - path: group_info.pip
+        value: "{{ (_base_pip + _common_pip + _extra_pip) | unique }}"
+      - path: group_info.pipx
+        value: "{{ (_base_pipx + _common_pipx + _extra_pipx) | unique }}"
+      - path: group_info.npm
+        value: "{{ (_base_npm + _common_npm + _extra_npm) | unique }}"
+  register: _updated_fact
+  changed_when: false
+
+- name: Playbook Packages | Set updated 'base' fact
+  ansible.builtin.set_fact:
+    group_info: "{{ _updated_fact.group_info }}"
+  changed_when: false

@@ -2,7 +2,7 @@
 - hosts: unifi
   become: true
   vars_files:
-    - ../vars/secrets.yaml
+    # - ../vars/secrets.yaml
 
   roles:
     - os_package

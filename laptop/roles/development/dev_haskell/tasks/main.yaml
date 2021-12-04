@@ -56,7 +56,7 @@
         Create dir for ghcup files for systems with /tmp less than 5000MB
       when: _tmp_avail.stdout | int < 5000000
       ansible.builtin.tempfile:
-        path: ~/.cache
+        path: "{{ '~/.cache' | expanduser }}"
         state: directory
       register: _ghcup_tmp_dir
 

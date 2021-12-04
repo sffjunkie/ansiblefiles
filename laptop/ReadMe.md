@@ -69,32 +69,19 @@ The folowing roles are provided here
     * video driver
     * display manager - Currently lightdm
     * window manager - currently [QTile](http://www.qtile.org/)
-<!-- * xdg_user_dirs - Configures XDG user directories -->
 
+## Configuration files
 
-<!--
-system
-    flatpak
+Configuration files are generated in a 2 step process
 
-application
-    alacritty
-    base16-shell
-    bat
-    exa
-    picom
-    vagrant
+1. Information about what to be created and contents of the config are generated
+   by the `laptop` playbook.
 
-development
+2. The `config_files` playbook  uses the information from step 1 and fills in a
+   set of templates to create the actual configuration files
 
-themes
+The data from step 1 is stored in the file `./build/configfiles.json` and the
+configuration files from step 2 in `./build/configfiles`
 
-shell
-    zsh
-    ohmyzsh
-development
-x11
-
-playbook
-    aliases
-    copyconfig
--->
+The templates can be found in a
+[separate repository](https://github.com/sffjunkie/configfiles-templates)

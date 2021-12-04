@@ -1,0 +1,5 @@
+---
+pipewire_with_bluetooth: false
+pipewire_with_pulseaudio: false
+pipewire_with_jack: false
+pipewire_with_alsa: false

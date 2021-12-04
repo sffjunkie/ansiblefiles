@@ -4,7 +4,7 @@
     msg: Building Ansible Development Environment
     verbosity: 1
 
-- name: Development Environments | Ansible | Load default package list
+- name: Development Environments | Ansible | Load os/distribution specific package list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:

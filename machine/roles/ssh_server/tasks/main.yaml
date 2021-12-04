@@ -1,0 +1,16 @@
+---
+- name: SSH Server | Update SSH configuration to be more secure.
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    validate: 'sshd -t -f %s'
+  loop:
+    - regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^PermitRootLogin"
+      line: "PermitRootLogin no"
+    - regexp: "^Port"
+      line: "Port {{ ssh_port }}"
+  notify: restart ssh

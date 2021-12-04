@@ -1,5 +1,0 @@
----
-go_path: ~/.local/go
-zsh:
-  ohmyzsh:
-    path: ~/.local/oh-my-zsh

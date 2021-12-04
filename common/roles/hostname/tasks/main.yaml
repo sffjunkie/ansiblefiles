@@ -1,21 +1,33 @@
 ---
-- name: Get current hostname
+- name: Hostname | Get current hostname
+  # when: os_family == 'ubuntu'
   ansible.builtin.command:
-    cmd: hostnamectl get-hostname
+    cmd: hostname
   register: _hostname_current
   changed_when: false
 
-- name: Update hostname
+# - name: Hostname | Get current hostname | archlinux
+#   when: os_family != 'ubuntu'
+#   ansible.builtin.command:
+#     cmd: hostnamectl hostname
+#   register: _hostname_current
+#   changed_when: false
+
+- name: Hostname | Update hostname
   block:
-    - name: Set hostname
+    - name: Hostname | Set hostname | != archlinux
+      when: os_family != 'archlinux'
       ansible.builtin.command:
         cmd: hostnamectl set-hostname "{{ hostname }}"
 
-    - name: Change /etc/hosts
-      when: os_family == 'debian'
-      ansible.builtin.lineinfile:
+    - name: Hostname | Set hostname | archlinux
+      when: os_family == 'archlinux'
+      ansible.builtin.command:
+        cmd: hostnamectl hostname "{{ hostname }}"
+
+    - name: Hostname | Change /etc/hosts
+      ansible.builtin.template:
+        src: ./templates/hosts.j2
         dest: /etc/hosts
-        regexp: "^127.0.1.1"
-        line: "127.0.1.1 {{ hostname }}"
-        state: present
-  when: _hostname_current.stdout != hostname
+
+  when: hostname | length > 0 and _hostname_current.stdout != hostname

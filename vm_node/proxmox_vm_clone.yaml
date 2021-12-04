@@ -1,0 +1,50 @@
+---
+- hosts: vm_nodes
+  become: true
+  vars_files:
+    - ../common/vars/global.yaml
+
+  pre_tasks:
+    - name: Debug info
+      ansible.builtin.debug:
+        msg:
+          - Cloning Proxmox VM
+          - Host: "{{ inventory_hostname }}"
+          # no break space to get a number without single quotes in the output
+          - Source VMID: "{{ source_vmid + ' ' }}"
+          - Target VMID: "{{ target_vmid + ' ' | default('Not specified') }}"
+          - Target Name: "{{ target_name | default('Not specified') }}"
+      changed_when: false
+
+  tasks:
+    - name: Clone VM
+      community.general.proxmox_kvm:
+        api_user: "{{ proxmox_ssh_user }}@pam"
+        api_password: "{{ proxmox_pass }}"
+        api_host: "{{ host }}"
+        vmid: "{{ source_vmid }}"
+        newid: "{{ target_vmid | default(omit) }}"
+        clone: "{{ target_name }}"
+      register: _proxmox_clone
+
+    - name: Start new VM
+      when: _proxmox_clone.status == "success" and target_vmid is defined
+      community.general.proxmox_kvm:
+        api_user: "{{ proxmox_ssh_user }}@pam"
+        api_password: "{{ proxmox_pass }}"
+        api_host: "{{ host }}"
+        node: "{{ inventory_hostname }}"
+        vmid: "{{ target_vmid }}"
+        state: started
+
+    - name: Pause for startup
+      ansible.builtin.pause:
+          minutes: 2
+
+    # TODO: New VM's ip address
+    # Fixed hostname in template
+
+
+    # - name: Update machine-id
+    #   ansible.builtin.include_role:
+    #     name: machine_id

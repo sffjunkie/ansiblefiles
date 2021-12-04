@@ -1,0 +1,7 @@
+---
+- name: Docker | Install docker from package manager
+  when: os == 'archlinux'
+  ansible.builtin.package:
+    name:
+      - docker
+    state: present

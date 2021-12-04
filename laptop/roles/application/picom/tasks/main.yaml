@@ -28,7 +28,7 @@
 - name: Picom | New build required
   when: _picom_local_version != _picom_remote_version
   block:
-    - name: Load default pre-requisites package list
+    - name: Picom | Load os/distribution specific package list
       ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
       vars:
         params:

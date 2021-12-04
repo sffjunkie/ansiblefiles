@@ -5,7 +5,7 @@
   become_method: sudo
   vars_files:
     - ../common/vars/global.yaml
-    - ../common/vars/secrets.yaml
+    # - ../common/vars/secrets.yaml
     - ./vars/pip.yaml
 
   pre_tasks:
@@ -23,7 +23,7 @@
     - git
 
   tasks:
-    - name: Load os package list
+    - name: Load os/distribution specific package list
       ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
       vars:
         params:
@@ -37,6 +37,7 @@
       ansible.builtin.include_role:
         name: os_package
       vars:
+        # FIXME: This is now wrong
         custom_os_packages: "{{ os_packages }}"
 
     - name: Install pip packages
@@ -48,7 +49,7 @@
     # - name: Copy playbooks
     #   ansible.builtin.git:
     #     repo: https://github.com/sffjunkie/ansiblefiles
-    #     dest: ~/ansible/
+    #     dest: "/home {{ user_id }} /ansible/"
     #     version: develop
 
     - name: "Disable pi user"

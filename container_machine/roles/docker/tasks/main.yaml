@@ -1,0 +1,26 @@
+---
+- name: Docker | Setup docker repository
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
+      - "default.yaml"
+
+- name: Docker | Start docker.socket
+  ansible.builtin.systemd:
+    name: docker.socket
+    state: started
+    enabled: true
+
+- name: Docker | Install Docker module for Python
+  ansible.builtin.pip:
+    name: docker
+
+- name: Docker | Add users to docker group
+  when: docker_users | length > 0
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop: "{{ docker_users }}"

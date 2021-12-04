@@ -1,0 +1,98 @@
+---
+- name: yq | yq | Set installed version to 'uninstalled'
+  ansible.builtin.set_fact:
+    _yq_current_version: uninstalled
+
+- name: yq | Check if yq exists  # noqa: command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: "command -v yq"
+  register: _yq_path
+  changed_when: false
+
+- name: yq | Get current version of yq
+  when: _yq_path.rc == 0
+  ansible.builtin.command:
+    cmd: "{{ _yq_path.stdout }} --version"
+  register: _yq_current_version
+  changed_when: false
+
+- name: yq | Get last element
+  ansible.builtin.set_fact:
+    _yq_current_version: "{{ _yq_current_version | split | last }}"
+
+- name: yq | Get latest release of yq
+  when: yq_version == 'latest'
+  community.general.github_release:
+    user: docker
+    repo: compose
+    action: latest_release
+  register: _yq_latest_version
+  changed_when: false
+
+- name: yq | No installation
+  block:
+    - name: yq | Not installed and Latest requested
+      when: yq_version == 'latest'
+      ansible.builtin.set_fact:
+        _install_version: "{{ _yq_latest_version.tag }}"
+
+    - name: yq | Not installed and Not latest version
+      when: yq_version != 'latest'
+      ansible.builtin.set_fact:
+        _install_version: "{{ yq_version }}"
+  when: _yq_path.rc > 0
+
+
+- name: yq | Existing installation
+  block:
+    - name: yq | Installed and Latest requested
+      when: >-
+        _yq_latest_version.tag > _yq_current_version
+        and yq_version == 'latest'
+      ansible.builtin.set_fact:
+        _install_version: "{{ _yq_latest_version.tag }}"
+
+    - name: yq | Installed and Not latest version
+      when: >-
+        yq_version != 'latest' and
+        yq_version > _yq_current_version
+      ansible.builtin.set_fact:
+        _install_version: "{{ yq_version }}"
+  when: _yq_path.rc == 0
+
+- name: yq | If new version required
+  block:
+    - name: yq | Create temporary directory
+      ansible.builtin.tempfile:
+        prefix: yq
+        state: directory
+      register: _yq_tmp_dir
+      notify:
+        - Delete yq temporary files
+      changed_when: false
+
+    - name: yq | Download compose binary
+      ansible.builtin.uri:
+        url: "https://github.com/mikefarah/yq/releases/download/v{{ _install_version }}/yq_linux_amd64"
+        dest: "{{ _yq_tmp_dir.path }}/yq"
+        mode: "+x"
+      changed_when: false
+
+    - name: yq | Set dest path if existing installation
+      when: _yq_path.rc == 0
+      ansible.builtin.set_fact:
+        _dest_path: "{{ _yq_path.stdout | dirname }}"
+
+    - name: yq | Otherwise use /usr/local/bin
+      when: _yq_path.rc != 0
+      ansible.builtin.set_fact:
+        _dest_path: /usr/local/bin
+
+    - name: yq | Copy compose file
+      ansible.builtin.copy:
+        src: "{{ _yq_tmp_dir.path }}/yq"
+        dest: "{{ _dest_path }}"
+        remote_src: "inventory_hostname == 'localhost' | ternary(omit, true)"
+        mode: preserve
+
+  when: _install_version is defined

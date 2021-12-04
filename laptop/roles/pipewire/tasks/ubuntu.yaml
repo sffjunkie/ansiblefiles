@@ -1,0 +1,22 @@
+---
+- name: Pipewire | Ubuntu | Determine Base Debian version
+  ansible.builtin.slurp:
+    src: /etc/debian_version
+  register: _ubuntu_debian_base
+
+- name: Pipewire | Ubuntu | Set base
+  ansible.builtin.set_fact:
+    _debian_base: "{{ _ubuntu_debian_base.content | b64decode | split('/') | first }}"
+
+- name: Set Buster version
+  when: _debian_base == 'buster'
+  ansible.builtin.set_fact:
+    _debian_version: 10
+
+- name: Set Bullseye version
+  when: _debian_base == 'bullseye'
+  ansible.builtin.set_fact:
+    _debian_version: 11
+
+- name: Include debian tasks
+  ansible.builtin.include_tasks: debian.yaml

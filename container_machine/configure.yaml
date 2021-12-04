@@ -5,6 +5,7 @@
     - ../common/vars/global.yaml
     - ./vars/main.yaml
 
+  # TODO: Dcoker users? configfiles.json?
   roles:
     - role: playbook_packages
 
@@ -12,8 +13,7 @@
       when: container_engine == 'docker'
 
     - role: podman
-      vars:
-        use_compose: true
+      use_compose: true
       when: container_engine == 'podman'
 
     - docker_compose

@@ -2,5 +2,11 @@
     "search.exclude": {
         "**/ansible_collections": true,
         "**/ansible-roles": true
+    },
+    "shellcheck.customArgs": ["-x"],
+    "editor.tokenColorCustomizations": {
+        "[Nord]": {
+            "comments": "#5E81AC"
+        }
     }
 }

@@ -1,6 +1,6 @@
 - name: Arc Theme | Update apt and install
   ansible.builtin.apt:
-    update_cache: true
     name: arc-theme
     state: latest
+    update_cache: true
     cache_valid_time: 86400

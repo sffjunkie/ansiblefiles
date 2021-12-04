@@ -1,5 +1,4 @@
 ---
-# TODO: Replace with laptop
 - hosts: laptops
   become: true
   vars_files:
@@ -13,20 +12,17 @@
 
   roles:
     - output_config_user_list
+    - playbook_repositories
     - playbook_packages
-    - os_packages
-    - git
-    - zsh
-    - user_system
-    - dev_common
-    - user_per_user
-
-    # TODO: Integration with `container_machine` playbook
-    # - docker
-    # - docker_compose
+    # - os_packages
+    # - git
+    # - zsh
+    # - pipewire
+    # - dev_common
+    # - user_per_user
 
     # - x11
-    - system_fonts
+    # - system_fonts
 
   tasks:
     - name: Sort packages
@@ -65,7 +61,7 @@
     - name: Store final config file information to be used by ../config_files
       delegate_to: localhost
       ansible.builtin.copy:
-        dest: "{{ playbook_dir }}/../build/output_config.json"
+        dest: "{{ playbook_dir }}/../build/configfiles.json"
         content: "{{ output_config | to_nice_json(indent=4) }}"
       changed_when: false
 

@@ -1,2 +1,121 @@
 # https://wiki.debian.org/PipeWire
 ---
+- name: Pipewire | Debian | Add apt repository
+  ansible.builtin.apt_key:
+    url: ppa:pipewire-debian/pipewire-upstream
+    state: present
+
+- name: Pipewire | Debian | Install pipewire
+  ansible.builtin.apt:
+    name: pipewire
+    state: present
+
+- name: Set base for Debian (rather than ubuntu)
+  when: os_family == 'debian' and _debian_version == -1
+  ansible.builtin.set_fact:
+    _debian_version: "{{ distribution_major_version }}"
+
+- name: Pipewire | Debian | Buster
+  when: _debian_version == 10
+  ansible.builtin.package:
+    name: libspa-ffmpeg
+
+- name: Pipewire | Debian | Buster | Bluetooth support
+  when: _debian_version == 10 and _pipewire_uses_bluetooth
+  ansible.builtin.package:
+    name: libspa-bluetooth
+    state: present
+
+- name: Pipewire | Debian | Bullseye | Bluetooth support
+  when: _debian_version == 11 and _pipewire_uses_bluetooth
+  ansible.builtin.package:
+    name: libspa-0.2-bluetooth
+    state: present
+
+- name: Pipewire | Debian | Install audio client libraries
+  when: pipewire_with_pulseaudio or pipewire_with_jack or pipewire_with_alsa
+  ansible.builtin.package:
+    name: pipewire-audio-client-libraries
+    state: present
+
+- name: Pipewire | Debian | Check if pulseaudio support already configured
+  ansible.builtin.stat:
+    path: /etc/pipewire/media-session.d/with-pulseaudio
+  register: _pipewire_pulseaudio_enabled
+
+- name: Pipewire | Debian | Enable pulseaudio support
+  when: pipewire_uses_pulseaudio and not _pipewire_pulseaudio_enabled.stat.exists
+  block:
+    - name: Create /etc/pipewire/media-session.d/with-pulseaudio
+      ansible.builtin.file:
+        path: /etc/pipewire/media-session.d/with-pulseaudio
+        state: touch
+
+    - name: Get systemd unit files
+      ansible.builtin.find:
+        paths: /usr/share/doc/pipewire/examples/systemd/user/
+        patterns: pipewire-pulse.*
+      register: _systemd_pulseaudio_files_to_copy
+
+    - name: Copy systemd units
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /etc/systemd/user/
+        remote_src: true
+      loop: "{{ _systemd_pulseaudio_files_to_copy }}"
+
+
+- name: Pipewire | Debian | Check if jack support already configured
+  ansible.builtin.stat:
+    path: /etc/pipewire/media-session.d/with-jack
+  register: _pipewire_jack_enabled
+
+- name: Pipewire | Debian | Enable jack support
+  when: pipewire_uses_jack and not _pipewire_jack_enabled.stat.exists
+  block:
+    - name: Pipewire | Debian | Install jack support
+      ansible.builtin.package:
+        name: libspa-0.2-jack
+        state: present
+
+    - name: Pipewire | Debian | Create /etc/pipewire/media-session.d/with-jack
+      ansible.builtin.file:
+        path: /etc/pipewire/media-session.d/with-jack
+        state: touch
+
+    - name: Pipewire | Debian | Get ldconfig files
+      ansible.builtin.find:
+        paths: /usr/share/doc/pipewire/examples/systemd/user/
+        patterns: /usr/share/doc/pipewire/examples/ld.so.conf.d/pipewire-jack-*.conf
+      register: _systemd_jack_files_to_copy
+
+    - name: Pipewire | Debian | Copy ldconfig files
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /etc/systemd/user/
+        remote_src: true
+      loop: "{{ _systemd_jack_files_to_copy }}"
+
+    - name: Pipewire | Debian | Run ldconfig
+      ansible.builtin.command:
+        cmd: ldconfig
+
+
+- name: Pipewire | Debian | Check if alsa support already configured
+  ansible.builtin.stat:
+    path: /etc/pipewire/media-session.d/with-alsa
+  register: _pipewire_alsa_enabled
+
+- name: Pipewire | Debian | Enable alsa support
+  when: pipewire_uses_jack and not _pipewire_alsa_enabled.stat.exists
+  block:
+    - name: Pipewire | Debian | Create /etc/pipewire/media-session.d/with-alsa
+      ansible.builtin.file:
+        path: /etc/pipewire/media-session.d/with-alsa
+        state: touch
+
+    - name: Pipewire | Debian | Copy Pipewire Alsa config
+      ansible.builtin.copy:
+        src: /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf
+        dest: /etc/alsa/conf.d/
+        remote_src: true

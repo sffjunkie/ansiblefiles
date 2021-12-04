@@ -1,0 +1,4 @@
+- name: Arc Theme | Install os package
+  ansible.builtin.package:
+    name: arc-theme
+    state: latest

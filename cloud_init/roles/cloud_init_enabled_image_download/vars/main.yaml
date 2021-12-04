@@ -1,0 +1,6 @@
+---
+cloud_distribution: ubuntu
+cloud_version:
+  ubuntu: { name: focal }
+  fedora: { name: '34' }
+  debian: { name: bullseye, number: 11 }

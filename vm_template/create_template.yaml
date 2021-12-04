@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - ../common/vars/global.yaml
+    - ../common/vars/secrets.yaml
+
+  pre_tasks:
+    - name: Debug info
+      ansible.builtin.debug:
+        msg:
+          - VM Template
+          - Base image: "{{ base_image }}"
+
+  # roles:
+  #   - cloud_init_enabled_image_download
+  #   - build_cloud_config
+  #   - build_cloud_image

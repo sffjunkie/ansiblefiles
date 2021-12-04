@@ -1,0 +1,8 @@
+---
+- name: Repositories | Add os/distribution specific repositories
+  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
+  vars:
+    subtasks:
+      - "{{ distribution }}.yaml"
+      - "{{ os_family }}.yaml"
+      - "default.yaml"

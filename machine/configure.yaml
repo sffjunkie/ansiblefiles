@@ -7,27 +7,10 @@
 
   roles:
     - role: firewall
-      vars:
-        custom_ports:
-          - rule: allow
-            port: "{{ ssh_port | default(default_ssh_port, True) }}"
-            proto: tcp
-
-    - name: Configure ssh server.
-      role: ssh
-      vars:
-        custom_ports:
-          ssh: "{{ ssh_port }}"
-
-    - name: Add users.
-      role: user_add
-      vars:
-        users: "{{ users }}"
-
-    - name: Configure ssh for users.
-      role: user_ssh
-      vars:
-        users: "{{ users }}"
+      custom_ports:
+        - rule: allow
+          port: "{{ ssh_port | default(default_ssh_port, True) }}"
+          proto: tcp
 
     - name: Configure SELinux
       role: selinux

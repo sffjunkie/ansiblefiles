@@ -1,0 +1,16 @@
+---
+- name: User | System | Users
+  when: user_list | length > 0
+  ansible.builtin.include_role:
+    name: user_create
+  vars:
+    user: "{{ item }}"
+  loop: "{{ user_list }}"
+
+- name: User | System | SSH
+  when: user_list | length > 0
+  ansible.builtin.include_role:
+    name: user_ssh
+  vars:
+    user: "{{ item }}"
+  loop: "{{ user_list }}"

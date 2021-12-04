@@ -1,8 +1,8 @@
 ---
-- name: Playbook | Load common os package list
+- name: Playbook Packages | Load common package list
   ansible.builtin.include_vars: vars/common.yaml
 
-- name: Playbook | Load base os package list
+- name: Playbook Packages | Load os/distribution specific package list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
@@ -12,50 +12,12 @@
       paths:
         - "vars"
 
-- name: Playbook | Render any unrendered templates
-  ansible.builtin.set_fact:
-    _base_pip: >
-      {{ base.pip | default([], True) |
-      j2render_list(hostvars[inventory_hostname]) }}
+# Merge common (common.yaml), base (vars/*.yaml) and extra (passed into role)
+- name: Update install_group info
+  ansible.builtin.include_tasks: "{{ common_tasks_directory }}/install_group_update.yaml"
 
-    _base_os: >
-      {{ base.package | default([], True) |
-      j2render_list(hostvars[inventory_hostname]) }}
-
-    _common_pip: >
-      {{ common.pip | default([], True) |
-      j2render_list(hostvars[inventory_hostname]) }}
-
-    _common_os: >
-      {{ common.package | default([], True) |
-      j2render_list(hostvars[inventory_hostname]) }}
-
-    _extra_pip: >
-      {{ extra.pip | default([], True) |
-      j2render_list(hostvars[inventory_hostname]) }}
-
-    _extra_os: >
-      {{ extra.package | default([], True) |
-      j2render_list(hostvars[inventory_hostname]) }}
-  changed_when: false
-
-- name: Playbook | Add common and extra packages
-  ansible.utils.update_fact:
-    updates:
-      - path: base.package
-        value: "{{ (_base_os + _common_os + _extra_os) | unique }}"
-      - path: base.pip
-        value: "{{ (_base_pip + _common_pip + _extra_pip) | unique }}"
-  register: _updated_fact
-  changed_when: false
-
-- name: Playbook | Set updated 'base' fact
-  ansible.builtin.set_fact:
-    base: "{{ _updated_fact.base }}"
-  changed_when: false
-
-- name: Playbook | Install base items
+- name: Playbook Packages | Install group
   ansible.builtin.include_role:
     name: install_group
   vars:
-    group: "{{ base }}"
+    group: "{{ group_info }}"

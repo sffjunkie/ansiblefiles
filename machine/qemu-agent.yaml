@@ -7,8 +7,17 @@
         name: qemu-guest-agent
         state: present
 
+    - name: Enable service
+      ansible.builtin.systemd:
+        name: qemu-guest-agent
+        enabled: true
+      register: _qemu_install
+
+    - name: Reboot
+      when: _qemu_install.changed
+      ansible.builtin.reboot:
+
     - name: Start service
       ansible.builtin.systemd:
         name: qemu-guest-agent
         state: started
-        daemon_reload: true

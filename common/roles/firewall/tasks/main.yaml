@@ -1,7 +1,68 @@
 ---
-- name: Firewall | Configure OS firewall
-  ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
-  vars:
-    subtasks:
-      - "{{ distribution }}.yaml"
-      - "{{ os_family }}.yaml"
+- name: Firewall | Debian UFW
+  when: os_family == 'debian'
+  block:
+    - name: UFW | Ensure ufw is installed.
+      ansible.builtin.package:
+        name: ufw
+        state: present
+
+    - name: UFW | Default firewall rules
+      community.general.ufw:
+        policy: "{{ item.policy }}"
+        direction: "{{ item.direction }}"
+      loop:
+        - direction: incoming
+          policy: "{{ default_incoming_rule }}"
+        - direction: outgoing
+          policy: "{{ default_outgoing_rule }}"
+
+    - name: UFW | Standard firewall rules
+      community.general.ufw:
+        rule: "{{ item.rule }}"
+        port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+      loop: "{{ default_ports }}"
+
+    - name: UFW | Custom firewall rules
+      community.general.ufw:
+        rule: "{{ item.rule }}"
+        port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+      loop: "{{ custom_ports }}"
+
+    - name: UFW | Check if enabled
+      ansible.builtin.command:
+        cmd: ufw status
+      register: ufw_check
+      changed_when: false
+
+    - name: UFW | Enable
+      when: "'inactive' in ufw_check.stdout"
+      community.general.ufw:
+        state: enabled
+
+    - name: UFW | Reload rules
+      when: "not 'inactive' in ufw_check.stdout"
+      community.general.ufw:
+        state: reloaded
+
+- name: Firewall | SELinux
+  when: ansible_selinux.status == 'enabled'
+  block:
+    # Use secure and encrypted communication.
+    - name: Firewall | SELinux | Allow sshd to listen on the new tcp port
+      community.general.seport:
+        ports: "{{ ssh_port }}"
+        proto: tcp
+        setype: ssh_port_t
+        state: present
+      when: ansible_selinux.status == 'enabled'
+
+    # Use secure and encrypted communication.
+    - name: Firewall | SELinux | Disable default ssh port
+      community.general.seport:
+        ports: "22"
+        proto: tcp
+        setype: ssh_port_t
+        state: absent

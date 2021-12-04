@@ -1,8 +1,17 @@
 ---
-- name: Oh-My-Zsh | Calc url
+- name: Oh-My-Zsh | Set install vars
+  become_user: "{{ user_id }}"
   ansible.builtin.set_fact:
     _ohmyzsh_install_script: >-
       https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+
+    _ohmyzsh_install_prefix: >-
+      {{ '~/.local' | expanduser if ohmyzsh.location == 'user' else
+      '/usr/local' }}
+
+- name: Oh-My-Zsh | Set install path
+  ansible.builtin.set_fact:
+    _ohmyzsh_install_path: "{{ _ohmyzsh_install_prefix }}/oh-my-zsh"
 
 - name: Oh-My-Zsh | Run install script
   become_user: "{{ user_id }}"

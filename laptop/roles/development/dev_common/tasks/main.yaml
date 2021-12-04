@@ -1,7 +1,7 @@
 ---
 - name: Dev | Common Development Environment
   block:
-    - name: Dev | Common | Load default os package list
+    - name: Dev | Common | Load os/distribution specific package list
       ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
       vars:
         params:

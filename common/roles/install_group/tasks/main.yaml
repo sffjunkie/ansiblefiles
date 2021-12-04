@@ -13,7 +13,7 @@
 - name: Install Group | Calc become_user
   ansible.builtin.set_fact:
     _install_group_as_user: >-
-      {{ system_users[user_idx].id
+      {{ users_common[user_idx].id
       if (group.location is defined and group.location == 'user') }}
 
 - name: Install Group | Calc package overides by name

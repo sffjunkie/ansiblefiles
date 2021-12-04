@@ -1,10 +1,38 @@
 ---
-# vars -
-#   for_pulseaudio: false
-#   for_alsa: false
-#   for_jack: false
+- name: Pipewire | Check if any users require pipewire
+  ansible.builtin.set_fact:
+    _uses_pipewire_list: "{{ config.user | map(attribute='audio') }}"
 
-- name: Pipewire | OS Install
+- name: Pipewire | Get list showing whether a user needs compatability
+  ansible.builtin.set_fact:
+    _pipewire_bluetooth: >-
+      {{ config.user | map(attribute='audio.pipewire.with_bluetooth') }}
+
+    _pipewire_pulseaudio: >-
+      {{ config.user | map(attribute='audio.pipewire.with_pulseaudio') }}
+
+    _pipewire_jack: >-
+      {{ config.user | map(attribute='audio.pipewire.with_jack') }}
+
+    _pipewire_alsa: >-
+      {{ config.user | map(attribute='audio.pipewire.with_alsa') }}
+
+- name: Pipewire | Get whether compatability required to be enabled
+  ansible.builtin.set_fact:
+    _pipewire_uses_bluetooth: >-
+      {{ 'True' in _pipewire_bluetooth }}
+
+    _pipewire_uses_pulseaudio: >-
+      {{ 'True' in _pipewire_pulseaudio }}
+
+    _pipewire_uses_jack: >-
+      {{ 'True' in _pipewire_jack }}
+
+    _pipewire_uses_alsa: >-
+      {{ 'True' in _pipewire_alsa }}
+
+- name: Pipewire | Install os/distribution specific packages
+  when: "'pipewire' in _uses_pipewire_list"
   ansible.builtin.include_tasks: "{{ lookup('first_found', subtasks) }}"
   vars:
     subtasks:

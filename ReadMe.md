@@ -2,20 +2,19 @@
 
 * backup - Backup data from servers and laptop
 * restore - Restore data to servers and laptop
-* cloud_image - Builds a basic cloud-init nocloud data-source image
+* cloud_image_nocloud - Builds a basic cloud-init nocloud data-source image
 * common - Common roles, plugins and vars
-* config_files - Generates laptop configuration files
-* container_machine - Configures a machine to manage containers i.e. docker/podman
+* config_files - Generates configuration files to be copied to the laptop
+* container_machine - Configures a machine to manage containers i.e.
+  docker/podman
 * home_automation - Configures the home automation machine
 * laptop - Configures the laptop
-* machine - Common configuration for VMs
-* roles - Common roles
+* machine - Common configuration for machines; either physical or virtual
 * script_files - Bash/ZSH scripts to be copied to the laptop
 * service_files - Creates the files needed to startup a service
 * unifi - Configures a Unifi controller VM
 * vars - Common ansible variable files
 * vm_node - Configures a node to host virtual machines (currently Proxmox)
-* service_files - Files to recreate a service
 
 ## Future
 
@@ -25,7 +24,6 @@
 ## License
 
 These ansible files are under the MIT license
-
 
 ## Required Packages
 

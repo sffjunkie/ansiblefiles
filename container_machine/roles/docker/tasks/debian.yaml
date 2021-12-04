@@ -1,0 +1,15 @@
+---
+- name: Docker | Debian | Add apt GPG key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+- name: Docker | Debian | Add Docker Repository
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb https://download.docker.com/linux/debian
+      {{ ansible_distribution_release }} stable
+    state: present
+
+- name: Docker | Install docker from package manager
+  ansible.builtin.include_tasks: install_docker.yaml

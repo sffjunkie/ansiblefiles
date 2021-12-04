@@ -1,0 +1,55 @@
+---
+- name: Get version to download
+  ansible.builtin.set_fact:
+    name: "{{ cloud_version[cloud_distribution].name }}"
+    version: >-
+      {{ cloud_version[cloud_distribution].version |
+      default(cloud_version[cloud_distribution].name) }}"
+
+- name: Set Ubuntu cloud image url
+  when: cloud_distribution == 'ubuntu'
+  ansible.builtin.set_fact:
+    _image_url: "https://cloud-images.ubuntu.com/{{ name }}/current/{{ version }}-server-cloudimg-amd64.img"  # noqa: line-length
+
+- name: Set Fedora cloud image url
+  when: cloud_distribution == 'fedora'
+  ansible.builtin.set_fact:
+    _image_url: "https://download.fedoraproject.org/pub/fedora/linux/releases/{{ name }}/Cloud/x86_64/images/Fedora-Cloud-Base-{{ version }}-1.2.x86_64.qcow2"  # noqa: line-length
+
+- name: Set Debian cloud image url
+  when: cloud_distribution == 'debian'
+  ansible.builtin.set_fact:
+    _image_url: "https://cloud.debian.org/images/cloud/{{ name }}/latest/debian-{{ version }}-generic-amd64.qcow2"  # noqa: line-length
+
+- name: Set main disk image filename
+  ansible.builtin.set_fact:
+    disk_image_main: "{{ '~/images/' | expanduser }}{{ cloud_distribution }}-{{ version }}-cloud-init-enabled{{ disk_image_extension }}"  # noqa: line-length
+
+- name: Create target directory
+  delegate_to: localhost
+  become: false
+  ansible.builtin.file:
+    path: "{{ '~/images/' | expanduser }}"
+    state: directory
+    mode: 0700
+    access_time: preserve
+    modification_time: preserve
+
+- name: Download cloud image
+  delegate_to: localhost
+  become: false
+  ansible.builtin.uri:
+    url: "{{ _image_url }}"
+    dest: "{{ disk_image_main }}"
+    mode: 0644
+    status_code: [200, 304]
+    creates: "{{ disk_image_main }}"
+
+# - name: Copy cloud image
+#   ansible.builtin.copy:
+#     src: "{{ disk_image_main }}"
+#     dest: "{{ disk_image_main }}"
+#     mode: 0600
+
+# https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.0/x86_64/product-downloads
+# https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64.qcow2

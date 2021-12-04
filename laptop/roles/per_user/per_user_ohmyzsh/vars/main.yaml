@@ -1,4 +1,0 @@
----
-_ohmyzsh_install_prefix: >-
-  {{ '~/.local' if ohmyzsh.location == 'user' else '/usr/local' }}
-_ohmyzsh_install_path: "{{ _ohmyzsh_install_prefix }}/oh-my-zsh"

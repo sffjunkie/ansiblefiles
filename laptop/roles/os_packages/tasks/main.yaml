@@ -1,8 +1,8 @@
 ---
-# - name: Playbook | Load common os package list
-#   ansible.builtin.include_vars: vars/common.yaml
+- name: Playbook | Load common package list
+  ansible.builtin.include_vars: vars/common.yaml
 
-- name: Playbook | Load os specific package list
+- name: Playbook | Load os/distribution specific package list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
@@ -13,8 +13,11 @@
       paths:
         - "vars"
 
+- name: Update install_group info
+  ansible.builtin.include_tasks: "{{ common_tasks_directory }}/install_group_update.yaml"
+
 - name: OS Packages | Install os packages
   ansible.builtin.include_role:
     name: install_group
   vars:
-    group: "{{ base }}"
+    group: "{{ group_info }}"

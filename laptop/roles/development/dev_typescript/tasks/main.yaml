@@ -4,7 +4,7 @@
     msg: Building Typescript Development Environment
     verbosity: 1
 
-- name: Development Environments | Typescript | Load default os package list
+- name: Development Environments | Typescript | Load os/distribution specific package list
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:

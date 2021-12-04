@@ -60,3 +60,5 @@ is_wsl: "{{ lookup('env', 'WSLENV') | default('') != '' }}"
 motd_dir: >-
   {{ '/etc/update-motd.d' if distribution == 'ubuntu'
   else '/etc/motd.d' }}
+
+common_tasks_directory: "{{ playbook_dir }}/../common/tasks"

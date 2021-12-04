@@ -1,5 +1,6 @@
 ---
 - name: Backup | Postgres | Get Postgresql version
+  become_user: postgres
   community.postgresql.postgresql_info:
     filter: version
   register: _pg_server_version
@@ -11,6 +12,7 @@
       postgresql_version: "{{ _pg_server_version.full }}"
 
 - name: Backup | Postgres | Create backup directory
+  become_user: "{{ db_backup_user }}"
   ansible.builtin.tempfile:
     prefix: postgresql
     state: directory
@@ -20,19 +22,22 @@
   changed_when: false
 
 - name: Backup | Postgres | Backup databases
+  become_user: "{{ db_backup_user }}"
   block:
     - name: Backup | Postgres | Create .pgpass file
       ansible.builtin.copy:
-        path: "~/.pgpass"
+        path: "{{ '~/.pgpass' | expanduser }}"
         state: present
         content: "{{ host }}:*:{{ item.name }}:{{ item.username }}:{{ item.password }}"
         mode: 0640
         force: true
+      loop: "{{ backup_databases }}"
 
     - name: Debug
       ansible.builtin.debug:
         msg: "Backing up PostgreSQL database {{ item.name }}"
         verbosity: 1
+      loop: "{{ backup_databases }}"
 
     - name: Backup | Postgres | Dump database
       ansible.builtin.shell:
@@ -40,6 +45,7 @@
           "pg_dump --host=127.0.0.1 --username={{ item.username }} {{ item.name }} >"
           "{{ _pg_tmp_dir.path }}/pgdump/{{ item.name }}.dump"
       changed_when: true
+      loop: "{{ backup_databases }}"
 
     - name: Backup | Postgres | Copy dump to destination
       ansible.builtin.copy:
@@ -47,5 +53,4 @@
         src: "{{ _pg_tmp_dir.path }}/pgdump/{{ item.name }}.dump"
         dest: "{{ dest }}"
         mode: 0644
-
-  loop: "{{ backup_databases }}"
+      loop: "{{ backup_databases }}"

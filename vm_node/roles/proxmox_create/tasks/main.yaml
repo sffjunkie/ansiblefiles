@@ -1,0 +1,183 @@
+---
+# disk_image_cloud_path = ../cloud-image/images/
+# disk_image_cloud_init - either local:cloudinit
+
+- name: Check disk_image_cloud_init is set
+  ansible.builtin.assert:
+    that: disk_image_cloud_init != ''
+
+# region Main Drive Image
+- name: Download main cloud disk image
+  when: disk_image_main == ''
+  ansible.builtin.include_role:
+    name: cloud_image_download
+  vars:
+    version: "{{ cloud_version[cloud_distribution] }}"
+  # Sets fact 'disk_image_main' = path to disk image on remote host ~/images/...
+
+- name: Get image format
+  ansible.builtin.command:
+    cmd: >
+      qemu-img info --output json
+      "{{ disk_image_main }}"
+      | jq --raw-output .format
+  register: _img_format
+  changed_when: false
+
+# - name: Convert image
+#   when: _img_format != vm_image_format
+
+- name: Copy disk_image_main
+  when: disk_image_main == ''
+  block:
+    - name: Copy image
+      ansible.builtin.copy:
+        src: "{{ vm_disk_image_base }}"
+        dest: "{{ '~/images/' | expanduser }}"
+        mode: preserve
+
+- name: Requested disk Size
+  ansible.builtin.set_fact:
+    vm_disk_size_number: >
+      vm_disk_size | upper | replace('M', '') |
+      replace('MB', '') | replace('G', '') |
+      replace('GB', '') | float
+    vm_disk_size_units: vm_disk_size | regex_replace('\d+\.\d+', '')
+
+- name: Convert disk size GB to MB
+  when: (vm_disk_size_units[0] | upper) == 'G'
+  ansible.builtin.set_fact:
+    vm_disk_size: (vm_disk_size_number * 1024) | int
+
+- name: Actual Disk Size
+  ansible.builtin.command:
+    cmd: "qemu-img info --output=json {{ disk_image_main }}"
+    chdir: "{{ '~/images/' | expanduser }}"
+  register: _main_image_qemu
+  changed_when: false
+
+- name: Get current disk size in MB
+  ansible.builtin.set_fact:
+    _main_image_disk_size: >
+      "{{ (_main_image_qemu.stdout | from_json |
+      extract('virtual-size')) / (1024 * 1024) }}"
+
+- name: Copy disk image to temporary file
+  ansible.builtin.copy:
+    src: "{{ disk_image_main }}"
+    dest: {{ '~/images/tmp.qcow2' | expanduser }}
+    remote_src: true
+    mode: preserve
+
+- name: Resize image
+  when: vm_disk_size > _main_image_disk_size
+  block:
+    - name: Calc additional disk size in MB
+      ansible.builtin.set_fact:
+        _main_image_additional_space: vm_disk_size - _main_image_disk_size
+
+    - name: Resize disk image
+      when: _main_image_additional_space > 0
+      ansible.builtin.command:
+        cmd: >-
+          qemu-img resize {{ '~/images/tmp.qcow2' | expanduser }}
+          "{{ _main_image_additional_space }}M"
+
+- name: Get storage info
+  ansible.builtin.command:
+    cmd: "pvesm list --content images --vmid {{ vm_id }} local-lvm"
+  register: _local_lvm_images
+  changed_when: false
+
+- name: Import main disk into local-lvm  # noqa: no-changed-when
+  ansible.builtin.command:
+    cmd: >-
+      qm importdisk {{ vm_id }} {{ '~/images/tmp.qcow2' | expanduser }}
+      local-lvm
+  register: _import_main_disk
+
+# unused0:local-lvm:vm-9000-disk-0
+- name: Calc main disk name
+  ansible.builtin.set_fact:
+    disk_image_main: >
+      "local-lvm: {{ _import_main_disk.stdout | split(':') | last }}"
+
+- name: Delete temporary image file
+  ansible.builtin.file:
+    path: "{{ '~/images/tmp.qcow2' | expanduser }}"
+    state: absent
+# endregion
+
+
+# region Custom Cloud Init Drive Image
+- name: Configure custom cloud init image
+  when: disk_image_cloud_init != 'local:cloudinit'
+  block:
+    - name: Copy cloud init image
+      ansible.builtin.copy:
+        src: "../cloud-image/images/{{ disk_image_cloud_init }}"
+        dest: "{{ '~/images/' | expanduser }}"
+        mode: preserve
+
+    - name: Import cloud init image
+      ansible.builtin.command:
+        cmd: >-
+          qm importdisk
+          {{ vm_id }}
+          {{ '~/images/' | expanduser }}{{ disk_image_cloud_init }}
+          {{ storage_cloud_init }}
+      register: _import_cloud_init_disk
+
+    - name: Calc cloud init disk name
+      ansible.builtin.set_fact:
+        disk_image_cloud_init: >
+          local-lvm:
+          "{{ _import_cloud_init_disk.stdout | split(':') | last }}"
+# endregion
+
+
+# region Standard Proxmox Cloud Init Drive Image
+# - name: Set cicustom if using local:cloudinit
+#   when: disk_image_cloud_init == 'local:cloudinit'
+#   ansible.builtin.copy:
+# endregion
+
+
+# region Calculate Memory
+- name: Get vm_memory_max number and units
+  ansible.builtin.set_fact:
+    vm_memory_max_number: >
+      vm_memory_max | upper | replace('M', '') | replace('MB', '')
+      | replace('G', '') | replace('GB', '') | float
+    vm_memory_max_units: vm_memory_max | regex_replace('\d+\.\d+', '')
+
+- name: Convert memory GB to MB
+  when: vm_memory_max_units[0] == 'G'
+  ansible.builtin.set_fact:
+    vm_memory_max: (vm_memory_max_number * 1024) | int
+# endregion
+
+- name: Create VM
+  community.general.proxmox_kvm:
+    name: "{{ vm_name }}"
+    vmid: "{{ vm_id | default(omit, True) }}"
+    net:
+      net0: "{{ vm_net.net0 | default(omit, True) }}"
+      net1: "{{ vm_net.net1 | default(omit, True) }}"
+      net2: "{{ vm_net.net2 | default(omit, True) }}"
+      net3: "{{ vm_net.net3 | default(omit, True) }}"
+    ipconfig: "{{ vm_ip }}"
+    sockets: "{{ vm_cpu_count }}"
+    cores: "{{ vm_core_count }}"
+    scsihw: virtio-scsi-pci
+    scsi0: "local-lvm:{{ disk_image_main }}"
+    ide:
+      ide2: "local-lvm:{{ disk_image_cloud_init }}"
+    boot: c
+    bootdisk: scsi0
+    serial:
+      serial0: socket
+    vga: serial0
+
+# # Turn into a template
+# qm template {{ vm_id }}

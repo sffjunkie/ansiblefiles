@@ -5,7 +5,7 @@
   ansible.builtin.include_role:
     name: per_user_homedirs
   vars:
-    user_id: "{{ system_users[user_idx_homedirs].id }}"
+    user_id: "{{ users_common[user_idx_homedirs].id }}"
     directories: "{{ item.directory }}"
   loop: "{{ config.user }}"
   loop_control:
@@ -16,7 +16,7 @@
   ansible.builtin.include_role:
     name: avatar
   vars:
-    user_id: "{{ system_users[user_idx_avatar].id }}"
+    user_id: "{{ users_common[user_idx_avatar].id }}"
     avatar: "{{ item.avatar }}"
   loop: "{{ config.user }}"
   loop_control:
@@ -27,8 +27,8 @@
   ansible.builtin.include_role:
     name: per_user_git
   vars:
-    user_id: "{{ system_users[user_idx_git].id }}"
-    username: "{{ system_users[user_idx_git].name }}"
+    user_id: "{{ users_common[user_idx_git].id }}"
+    username: "{{ users_common[user_idx_git].name }}"
     git_info: "{{ item.git }}"
   loop: "{{ config.user }}"
   loop_control:
@@ -39,7 +39,7 @@
   ansible.builtin.include_role:
     name: per_user_shell
   vars:
-    user_id: "{{ system_users[user_idx_shell].id }}"
+    user_id: "{{ users_common[user_idx_shell].id }}"
     shell: "{{ item.shell }}"
   loop: "{{ config.user }}"
   loop_control:
@@ -50,7 +50,7 @@
   ansible.builtin.include_role:
     name: per_user_zsh
   vars:
-    user_id: "{{ system_users[user_idx_zsh].id }}"
+    user_id: "{{ users_common[user_idx_zsh].id }}"
   loop: "{{ config.user }}"
   loop_control:
     index_var: user_idx_zsh
@@ -60,7 +60,7 @@
   ansible.builtin.include_role:
     name: per_user_ohmyzsh
   vars:
-    user_id: "{{ system_users[user_idx_ohmyzsh].id }}"
+    user_id: "{{ users_common[user_idx_ohmyzsh].id }}"
     ohmyzsh: "{{ item.ohmyzsh }}"
   loop: "{{ config.user }}"
   loop_control:
@@ -80,32 +80,32 @@
   ansible.builtin.include_role:
     name: per_user_dev_environments
   vars:
-    user_id: "{{ system_users[user_idx_dev_env].id }}"
+    user_id: "{{ users_common[user_idx_dev_env].id }}"
     user_idx: "{{ user_idx_dev_env }}"
     dev_envs: "{{ item.development.environments }}"
   loop: "{{ config.user }}"
   loop_control:
     index_var: user_idx_dev_env
 
-- name: User | Applications
-  when: item.applications is defined
-  ansible.builtin.include_role:
-    name: per_user_applications
-  vars:
-    user_id: "{{ system_users[user_idx_app].id }}"
-    user_idx: "{{ user_idx_app }}"
-    applications: "{{ item.applications }}"
-    overrides: "{{ package_installation_overrides }}"
-  loop: "{{ config.user }}"
-  loop_control:
-    index_var: user_idx_app
+# - name: User | Applications
+#   when: item.applications is defined
+#   ansible.builtin.include_role:
+#     name: per_user_applications
+#   vars:
+#     user_id: "{{ users_common[user_idx_app].id }}"
+#     user_idx: "{{ user_idx_app }}"
+#     applications: "{{ item.applications }}"
+#     overrides: "{{ package_installation_overrides }}"
+#   loop: "{{ config.user }}"
+#   loop_control:
+#     index_var: user_idx_app
 
 - name: User | Fonts
   when: item.fonts is defined
   ansible.builtin.include_role:
     name: per_user_fonts
   vars:
-    user_id: "{{ system_users[user_idx_fonts].id }}"
+    user_id: "{{ users_common[user_idx_fonts].id }}"
     user_idx: "{{ user_idx_fonts }}"
     font_list: "{{ item.fonts }}"
   loop: "{{ config.user }}"
@@ -117,7 +117,7 @@
   ansible.builtin.include_role:
     name: per_user_theme
   vars:
-    user_id: "{{ system_users[user_idx_theme].id }}"
+    user_id: "{{ users_common[user_idx_theme].id }}"
     user_idx: "{{ user_idx_theme }}"
     theme_info: "{{ item.ui.theme }}"
   loop: "{{ config.user }}"

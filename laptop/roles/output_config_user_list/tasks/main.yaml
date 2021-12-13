@@ -4,7 +4,7 @@
     _user_configs: >
       {{ _user_configs +
       [
-        user_config_empty | combine({'id': users_common[user_config_idx].id})
+        user_config_empty | combine({'id': system_users[user_config_idx].id})
       ] }}
   loop: "{{ config.user }}"
   loop_control:

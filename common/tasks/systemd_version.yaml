@@ -1,0 +1,10 @@
+---
+- name: Systemd | Get version info
+  ansible.builtin.command:
+    cmd: systemctl --version
+  register: _systemd_info
+  changed_when: false
+
+- name: Systemd | Get version
+  ansible.builtin.set_fact:
+    systemd_version: "{{ _systemd_info.stdout_lines[0].split()[1] | int }}"

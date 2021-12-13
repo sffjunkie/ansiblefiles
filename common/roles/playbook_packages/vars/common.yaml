@@ -5,7 +5,6 @@ common:
     - automake
     - git
     - gnome-keyring
-    - sfdisk
     - unzip
     - xdg-utils
     - zstd

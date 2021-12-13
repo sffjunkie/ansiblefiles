@@ -13,7 +13,16 @@
     mode: 0700
   changed_when: false
 
+- name: Check if already installed
+  ansible.builtin.command:
+    cmd: "{{ _tmp_directory.path }}/PVEDiscordDark.sh status"
+    chdir: "{{ _tmp_directory.path }}"
+  register: _darkmode_check_result
+  changed_when: false
+  failed_when: false
+
 - name: Run darkmode script
+  when: _darkmode_check_result.rc == 1
   ansible.builtin.command:
     cmd: "{{ _tmp_directory.path }}/PVEDiscordDark.sh install"
     chdir: "{{ _tmp_directory.path }}"

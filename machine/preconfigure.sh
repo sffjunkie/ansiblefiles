@@ -1,5 +1,8 @@
 #!/bin/bash
 
+INVENTORY=../inventory
+SECRETS=./vars/secrets.yaml
+
 source ../common/script/functions.sh
 
 [ ! -t 1 ] && NO_COLOR=1
@@ -14,7 +17,11 @@ help() {
     echo
     echo "options:"
     echo "  -h | --help       Show this help text"
+    echo "  -i | --inventory  Path to the ansible inventory (default ${INVENTORY})"
+    echo "                    (or set the INVENTORY environment variable when"
+    echo "                    calling this script)"
     echo "  -l | --limit      Limit to a subset of hosts matching a pattern"
+    echo "  -s | --secrets    File to load secrets from (default ${SECRETS})"
     echo "  -u | --users      File containing additional users to create"
     echo "  -V | --version    Display version information"
     echo "  --no-color        Don't use colored output"
@@ -22,7 +29,7 @@ help() {
     echo "                    calling this script)"
 }
 
-TEMP=$(getopt --options 'hl:v' --longoptions 'help,limit:,verbose' -- "$@")
+TEMP=$(getopt --options 'hi:l:s:u:v' --longoptions 'help,inventory:,limit:,secrets:,users:,verbose' -- "$@")
 
 if [[ ${#} -eq 0 ]]; then
     help
@@ -36,10 +43,14 @@ declare -a arglist
 limit=
 user_file=
 verbose=0
+inventory="${INVENTORY}"
+secrets="${SECRETS}"
 while true ; do
     case "$1" in
         -h|--help) help; exit 0 ;;
+        -i|--inventory) inventory=$2; shift; shift ;;
         -l|--limit) limit=$2; shift; shift ;;
+        -s|--secrets) secrets=$2; shift; shift ;;
         -u|--user-file) user_file=$2; shift; shift ;;
         -v|--verbose) verbose=( "$verbose" + 1 ); shift ;;
         -V|--version) echo "${_script} version ${_version}" ; exit 0 ;;
@@ -49,9 +60,10 @@ while true ; do
 done
 
 [ -n "${limit}" ] && arglist+=("--limit=${limit}")
-[ -n "${user_file}" ] && arglist+=("-e user_file=${user_file}")
+[ -n "${user_file}" ] && arglist+=("-e users_file=${user_file}")
 
 ansible-playbook preconfigure.yaml \
-    -i ../inventory \
+    --inventory "${inventory}" \
+    -e "@${secrets}" \
     "${arglist[@]}" \
     "$@"

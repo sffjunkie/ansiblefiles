@@ -85,11 +85,11 @@
       register: _include_secrets
       failed_when: false
 
-    - name: Assert user_default exists if user_data.use_default is true
+    - name: Assert default_user exists if user_data.use_default is true
       assert:
         that: >
           not user_data.use_default or
-          (user_data.use_default and user_default is defined)
+          (user_data.use_default and default_user is defined)
       changed_when: false
 
     - name: Set default _config_name_str

@@ -1,11 +1,17 @@
 ---
+- name: Generate any missing ssh host keys
+  ansible.builtin.command:
+    cmd: ssh-keygen -A
+  register: _keygen
+  changed_when: "'generating new host keys' in _keygen.stdout"
+
 - name: SSH Server | Update SSH configuration to be more secure.
   ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
     state: present
-    validate: 'sshd -t -f %s'
+    validate: "sshd -t -f %s"
   loop:
     - regexp: "^PasswordAuthentication"
       line: "PasswordAuthentication no"
@@ -13,4 +19,6 @@
       line: "PermitRootLogin no"
     - regexp: "^Port"
       line: "Port {{ ssh_port }}"
+    - regexp: "^PubkeyAuthentication no"
+      line: "PubkeyAuthentication yes"
   notify: restart ssh

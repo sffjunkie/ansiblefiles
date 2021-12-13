@@ -1,16 +1,22 @@
 ---
-- name: User | System | Users
-  when: user_list | length > 0
+- name: System | User | Create
+  when: users.keys() | length > 0
   ansible.builtin.include_role:
     name: user_create
   vars:
-    user: "{{ item }}"
-  loop: "{{ user_list }}"
+    user_id: "{{ _user_create.key }}"
+    user_info: "{{ _user_create.value }}"
+  loop: "{{ lookup('dict', users) }}"
+  loop_control:
+    loop_var: _user_create
 
-- name: User | System | SSH
-  when: user_list | length > 0
+- name: System | User | SSH
+  when: users.keys() | length > 0
   ansible.builtin.include_role:
     name: user_ssh
   vars:
-    user: "{{ item }}"
-  loop: "{{ user_list }}"
+    user_id: "{{ _user_ssh.key }}"
+    user_info: "{{ _user_ssh.value }}"
+  loop: "{{ lookup('dict', users) }}"
+  loop_control:
+    loop_var: _user_ssh

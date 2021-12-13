@@ -14,6 +14,9 @@
     - output_config_user_list
     - playbook_repositories
     - playbook_packages
+      extra:
+        package:
+          - sfdisk
     # - os_packages
     # - git
     # - zsh

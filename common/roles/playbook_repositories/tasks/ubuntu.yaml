@@ -1,0 +1,5 @@
+---
+- name: Add celluloid repository
+  ansible.builtin.apt_repository:
+    name: ppa:xuzhen666/gnome-mpv
+    state: present

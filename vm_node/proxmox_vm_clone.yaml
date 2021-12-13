@@ -44,7 +44,17 @@
     # TODO: New VM's ip address
     # Fixed hostname in template
 
+    # Don't think MAC address can be used. Leave here for now
+    # - name: Get MAC address
+    #   ansible.builtin.shell:
+    #     cmd: >-
+    #       qm config {{ target_vmid }} |
+    #       awk -F ":" "{ print $2 }" |
+    #       awk -F "," "{ print $1 }" |
+    #       awk -F "=" "{ print $2 }"
+    #   register: _new_mac_address
 
-    # - name: Update machine-id
-    #   ansible.builtin.include_role:
-    #     name: machine_id
+
+    - name: Update machine-id
+      ansible.builtin.include_role:
+        name: machine_id

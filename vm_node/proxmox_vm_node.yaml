@@ -1,5 +1,4 @@
 ---
-# TODO: Change hosts to vmhosts
 - hosts: vm_nodes
   become: true
   vars_files:
@@ -14,3 +13,4 @@
           - requests
     - proxmox_no_valid_subscription
     - proxmox_darkmode
+    - proxmox_vzdump

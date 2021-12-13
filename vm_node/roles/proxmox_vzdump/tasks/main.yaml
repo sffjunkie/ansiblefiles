@@ -1,0 +1,13 @@
+---
+- name: Copy vzdump hook script
+  ansible.builtin.copy:
+    src: "files/vzdump-hook.sh"
+    dest: /usr/local/bin/
+    mode: +x
+
+- name: Configure vzdump hook script
+  ansible.builtin.lineinfile:
+    dest: /etc/vzdump.conf
+    regexp: "^script: "
+    line: "script: /usr/local/bin/vzdump-hook.sh"
+    state: present

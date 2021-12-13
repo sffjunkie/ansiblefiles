@@ -5,11 +5,6 @@
     - ../common/vars/global.yaml
 
   roles:
-    - role: update
-
-    - name: Firewaall
-      ansible.builtin.include_role:
-        firewall
-
-    - name: Configure SELinux
-      role: selinux
+    - firewall
+    - selinux
+    - update

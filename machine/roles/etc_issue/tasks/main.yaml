@@ -1,0 +1,48 @@
+---
+- name: System | Issue | Load contents
+  ansible.builtin.set_fact:
+    _etc_issue: "{{ lookup('file', playbook_dir ~ '/files/etc_issue', rstrip=False) }}"
+
+- name: System | Issue | Check if symlink
+  ansible.builtin.stat:
+    path: /etc/issue
+  register: _etc_issue_symlink
+
+- name: System | Issue | Calc target file for symlink
+  when: _etc_issue_symlink.stat.islnk
+  ansible.builtin.set_fact:
+    _etc_issue_target: "{{ _etc_issue_symlink.stat.lnk_source }}"
+
+- name: System | Issue | Calc target file for regular file
+  when: "not _etc_issue_symlink.stat.islnk"
+  ansible.builtin.set_fact:
+    _etc_issue_target: /etc/issue
+
+- name: System | Issue | set /etc/issue
+  ansible.builtin.copy:
+    dest: "{{ _etc_issue_target }}"
+    content: "{{ _etc_issue }}"
+
+- name: System | Issue.net | Check if symlink
+  ansible.builtin.stat:
+    path: /etc/issue.net
+  register: _etc_issue_net_symlink
+
+- name: System | Issue.net | Update if exists
+  block:
+    - name: System | Issue.net | Calc target file for symlink
+      when: _etc_issue_net_symlink.stat.islnk
+      ansible.builtin.set_fact:
+        _etc_issue_net_target: "{{ _etc_issue_net_symlink.stat.lnk_source }}"
+
+    - name: System | Issue.net | Calc target file for regular file
+      when: not _etc_issue_net_symlink.stat.islnk
+      ansible.builtin.set_fact:
+        _etc_issue_net_target: /etc/issue.net
+
+    - name: System | Issue.net | set /etc/issue.net
+      ansible.builtin.copy:
+        dest: "{{ _etc_issue_net_target }}"
+        content: "{{ _etc_issue }}"
+
+  when: _etc_issue_net_symlink.stat.exists

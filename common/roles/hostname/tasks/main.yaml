@@ -1,27 +1,31 @@
 ---
+# - name: Hostname | Get Systemd version
+#   ansible.builtin.include_tasks: >-
+#     {{ common_tasks_directory }}/systemd_version.yaml
+
 - name: Hostname | Get current hostname
-  # when: os_family == 'ubuntu'
+  when: os_family != 'archlinux'
   ansible.builtin.command:
     cmd: hostname
   register: _hostname_current
   changed_when: false
 
-# - name: Hostname | Get current hostname | archlinux
-#   when: os_family != 'ubuntu'
-#   ansible.builtin.command:
-#     cmd: hostnamectl hostname
-#   register: _hostname_current
-#   changed_when: false
+- name: Hostname | Get current hostname | archlinux
+  when: os_family == 'archlinux'
+  ansible.builtin.command:
+    cmd: hostnamectl hostname
+  register: _hostname_current
+  changed_when: false
 
 - name: Hostname | Update hostname
   block:
     - name: Hostname | Set hostname | != archlinux
-      when: os_family != 'archlinux'
+      when: os_family == 'ubuntu'
       ansible.builtin.command:
         cmd: hostnamectl set-hostname "{{ hostname }}"
 
-    - name: Hostname | Set hostname | archlinux
-      when: os_family == 'archlinux'
+    - name: Hostname | Set hostname | != archlinux
+      when: os_family != 'ubuntu'
       ansible.builtin.command:
         cmd: hostnamectl hostname "{{ hostname }}"
 

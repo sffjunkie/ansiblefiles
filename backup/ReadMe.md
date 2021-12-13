@@ -10,14 +10,13 @@ Backs up data from
 
 ## Targets
 
-* OneDrive - Via TrueNAS NFS mount
-* Google Drive - Via TrueNAS NFS mount
+* OneDrive - Via TrueNAS NFS mount or rclone
+* Google Drive - Via TrueNAS NFS mount or rclone
 * TrueNAS - NFS mount
 * Offsite - Backup server
 * USB HD
 
 * Encrypt before uploading
-    * veracrypt
 
 
 ## Services to backup
@@ -42,3 +41,6 @@ Backs up data from
 * Videos
 * Service files
 * Service data
+
+/home/development
+~/.local/share/gnupg/

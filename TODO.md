@@ -1,6 +1,8 @@
 # Things to do
 
-* [ ] Users and directories - how to pass them around and use ~, $HOME etc.
+* Users and directories
+  * [x] Switch to dictionary for definition (currently a list)
+  * [ ] How to pass them around and use ~, $HOME etc.
 * [ ] Laptop playbook
   * [ ] Pipewire support
   * [ ] X11
@@ -40,6 +42,7 @@
 ## HashiCorp Vault
 
 Secrets
+SSH keys
 
 ## HashiCorp Packer
 

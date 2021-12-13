@@ -9,6 +9,7 @@
       files:
         - "{{ distribution }}.yaml"
         - "{{ os_family }}.yaml"
+        - "default.yaml"
       paths:
         - "vars"
 

@@ -1,16 +1,5 @@
 ---
-# TODO: Change hosts to vmhosts
-- hosts: vm_nodes
+- hosts: machines
   become: true
   vars_files:
     - ../common/vars/global.yaml
-
-  roles:
-    - role: firewall
-      custom_ports:
-        - rule: allow
-          port: "{{ ssh_port | default(default_ssh_port, True) }}"
-          proto: tcp
-
-    - name: Configure SELinux
-      role: selinux

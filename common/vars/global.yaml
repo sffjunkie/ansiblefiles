@@ -47,7 +47,9 @@ config_home_text: "${XDG_CONFIG_HOME:-${HOME}/.config}"
 cache_home_text: "${XDG_CACHE_HOME:-${HOME}/.cache}"
 
 distribution: "{{ ansible_distribution | lower | replace(' ', '') }}"
+
 os_family: "{{ ansible_os_family | lower | replace(' ', '') }}"
+
 os: >-
   {{ 'macos' if os_family == 'darwin'
   else 'windows' if os_family == 'windows'

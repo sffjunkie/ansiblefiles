@@ -1,34 +1,34 @@
-# This playbook needs to be run as the 'user_default'
+# This playbook needs to be run as the 'default_user'
 ---
 - hosts: machines
   become: true
-  become_user: "{{ user_default.id }}"
   vars_files:
     - ../common/vars/global.yaml
+    - ./vars/secrets.yaml
 
   pre_tasks:
-    - name: Set default users_cli
+    - name: Convert default_user to something we can merge with system_users
+      ansible.builtin.set_fact:
+        _default_user: "{{ _default_user | default({}) | combine({ item.key: item.value }) }}"
+      loop:
+        - { key: "{{ default_user.id }}", value: "{{ default_user }}" }
+
+    - name: Set default cli_users
       when: not users_file is defined
       ansible.builtin.set_fact:
-        users_cli: []
+        _cli_users: {}
 
     - name: Load user file
       when: users_file is defined and users_file | length > 0
       ansible.builtin.set_fact:
-        users_cli: "{{ lookup('file', user_file }}"
+        _cli_users: "{{ lookup('file', users_file) | from_yaml }}"
 
     - name: Load user file
       ansible.builtin.set_fact:
-        users: "{{ [user_default] + users_common + users_cli }}"
+        users: "{{ _default_user | combine(system_users, _cli_users) }}"
 
-    - name: Show user list
-      ansible.builtin.debug:
-        msg:
-          - Creating users
-          - "{{ users }}"
-
-  # roles:
-  #   - hostname
-  #   - ssh_server
-  #   - role: user_system
-  #     user_list: "{{ users }}"
+  roles:
+    - hostname
+    - ssh_server
+    - user_system
+    - etc_issue

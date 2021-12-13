@@ -1,0 +1,73 @@
+---
+- name: User | System | Create | Check if login disabled
+  ansible.builtin.set_fact:
+    _user_can_login: "{{ user_info.login | default(true) == true }}"
+  changed_when: false
+
+- name: User | System | Create | User can login
+  block:
+    - name: User | System | Create | Set empty _nologin_path
+      ansible.builtin.set_fact:
+        _nologin_path: ""
+      changed_when: false
+
+    - name: User | System | Create | Check if password is encrypted
+      ansible.builtin.set_fact:
+        _encrypted: "{{ user_info.password is match('\\$\\d\\$rounds\\=') }}"
+      changed_when: false
+
+    - name: Encrypted Password | Calc hashed password
+      delegate_to: localhost
+      when: not _encrypted
+      ansible.builtin.shell:
+        cmd: >-
+          echo "{{ user_info.password }}" |
+          mkpasswd --method=SHA-512 --rounds=4096 --stdin
+      register: _passwd
+      changed_when: false
+
+    - name: Encrypted Password | Get already hashed passwd
+      when: not _encrypted
+      ansible.builtin.set_fact:
+        _user_passwd: "{{ _passwd.stdout }}"
+      changed_when: false
+
+    - name: Encrypted Password | Set user_passwd fact
+      when: _encrypted
+      ansible.builtin.set_fact:
+        _user_passwd: "{{ user_info.password }}"
+      changed_when: false
+  when: _user_can_login
+
+- name: User | System | Create | User cannot login
+  block:
+    - name: User | System | Create | Get nologin path
+      ansible.builtin.shell:
+        cmd: command -v nologin
+      register: _nologin_path_command
+      changed_when: false
+
+    - name: User | System | Create | Set _nologin_path and _user_passwd
+      ansible.builtin.set_fact:
+        _nologin_path: "{{ _nologin_path_command.stdout }}"
+        _user_passwd: ""
+      changed_when: false
+  when: not _user_can_login
+
+- name: "User | System | Create | Add user {{ user_id }}"
+  ansible.builtin.user:
+    name: "{{ user_id }}"
+    password: "{{ _user_can_login | ternary(_user_passwd, omit) }}"
+    shell: "{{ _user_can_login | ternary(omit, _nologin_path) }}"
+    create_home: "{{ _user_can_login | ternary(true, false) }}"
+    state: present
+
+- name: User | System | Create | Add sudo rights for user
+  when: >
+    user.sudo | default(false, True) == true and
+    user_info.login | default(true) == false
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ user_id }}"
+    content: "{{ user_id }} ALL=(ALL:ALL) ALL"
+    mode: 0644
+    validate: "visudo -cf %s"

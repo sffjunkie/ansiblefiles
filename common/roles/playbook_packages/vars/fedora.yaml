@@ -6,5 +6,6 @@ base:
     - python3-pip
     - python3-dnf
     - python3-wheel
+    - systemd-networkd
     - yum-utils
     - "@development-tools"

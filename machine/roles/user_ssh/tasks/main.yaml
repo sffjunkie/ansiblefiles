@@ -1,0 +1,41 @@
+---
+- name: User | SSH | Check if login disabled
+  ansible.builtin.set_fact:
+    _user_can_login: "{{ user_info.login | default(true) == true }}"
+  changed_when: false
+
+- name: User | SSH | Configure SSH if user can login
+  block:
+    - name: User | SSH | Create and set permissions for .ssh directory
+      ansible.builtin.file:
+        path: "/home/{{ user_id }}/.ssh"
+        mode: 0700
+        state: directory
+        owner: "{{ user_id }}"
+        group: "{{ user_id }}"
+        access_time: preserve
+        modification_time: preserve
+
+    - name: User | SSH | Create authorized_keys file
+      ansible.builtin.file:
+        path: "/home/{{ user_id }}/.ssh/authorized_keys"
+        state: touch
+        mode: 0644
+        owner: "{{ user_id }}"
+        group: "{{ user_id }}"
+        access_time: preserve
+        modification_time: preserve
+
+    - name: User | SSH | Get content
+      when: user_info.ssh_public_key is defined
+      ansible.builtin.set_fact:
+        pub_content: "{{ user_info.ssh_public_key }}"
+      changed_when: false
+
+    - name: User | SSH | Add id to authorized_keys
+      ansible.builtin.lineinfile:
+        dest: /home/{{ user_id }}/.ssh/authorized_keys
+        regexp: "^{{ pub_content }}"
+        line: "{{ pub_content }}"
+        state: present
+  when: _user_can_login

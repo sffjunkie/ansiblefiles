@@ -1,13 +1,8 @@
 #!/bin/bash
-
 source ../common/script/functions.sh
 
 INVENTORY="../inventory"
 CONFIG_NAME=""
-
-[ ! -t 1 ] && NO_COLOR=1
-[ "$TERM" == "dumb" ] && NO_COLOR=1
-
 
 _version="0.1.0"
 
@@ -34,7 +29,8 @@ help() {
     echo
     echo "Options:"
     echo "  -h | --help       Show this help text"
-    echo "  -c | --config     Name used in the output config and image file names"
+    echo
+    echo "  -n | --name     Name used in the output config and image file names"
     echo "  -d | --date       Use date in the output config and image file names"
     echo "  -i | --inventory  Path to the ansible inventory (default ${INVENTORY})"
     echo "                    (or set the INVENTORY environment variable when"
@@ -47,6 +43,8 @@ help() {
     echo "  --no-color        Don't use colored output"
     echo "                    (or set the NO_COLOR environment variable when"
     echo "                    calling this script)"
+    echo "  --force-color     Force the use of colored output"
+    echo "                    (overrides the NO_COLOR environment variable)"
     echo
     echo "Extra user/meta configuration can either be a yaml string or a"
     echo "the name of a file preceeded with an '@' symbol that contains yaml"
@@ -54,9 +52,8 @@ help() {
     exit 0
 }
 
-[ "$#" -eq 0 ] && help
-
-TEMP=$(getopt --options 'hc:di:u:m:vV' --longoptions 'help,config:,date,inventory:,user:,meta:,verbose,no-color,version' -- "$@")
+TEMP=$(getopt --options 'hn:di:u:m:vV' \
+    --longoptions 'help,name:,date,inventory:,user:,meta:,no-color,force-color,verbose,version' -- "$@")
 eval set -- "${TEMP}"
 
 config_name="$CONFIG_NAME"
@@ -68,31 +65,41 @@ verbose=0
 while true ; do
     case "$1" in
         -h|--help) show_help=1; shift ;;
+
         -c|--config) config_name=$2; shift; shift ;;
         -d|--date) use_date="true"; shift ;;
         -i|--inventory) inventory=$2; shift; shift ;;
         -u|--user) user_config=$2; shift; shift ;;
         -m|--meta) meta_config=$2; shift; shift ;;
-        -v|--verbose) verbose=( "$verbose" + 1 ); shift ;;
-        -V|--version) echo "build.sh version ${_version}" ; exit 0 ;;
+
+        -v|--verbose) (( verbose="$verbose" + 1 )); shift ;;
+        -V|--version) script; echo " version ${_version}" ; exit 0 ;;
         --no-color) NO_COLOR=1; shift ;;
+        --force-color) FORCE_COLOR=1; shift ;;
         *) shift; break ;;
     esac
 done
 
-[[ $show_help -eq 1 ]] && help
+COLOR=1
+[[ ! -t 1 ]] && COLOR=0
+[[ "${TERM}" == "dumb" ]] && COLOR=0
+
+[[ -n "${NO_COLOR}" ]] && COLOR=0
+[[ -n "${FORCE_COLOR}" ]] && COLOR=1
+
+[[ "$#" -eq 0 || ${show_help} -eq 1 ]] && help
 
 info "Using defaults: config_name=${config_name}, inventory=${inventory}" 2
 
 hostname="$1"
 shift
-[ -z "$hostname" ] && error "No hostname provided"
+[[ -z "$hostname" ]] && error "No hostname provided"
 
 target="$1"
 shift
-[ -z "$target" ] && error "No target machine provided"
-msg="target is one of config, image or copy are you missing a correct target"
-[ "$target" == "config" ] || [ "$target" == "image" ] || [ "$target" == "copy" ] && warning "$msg"
+[[ -z "$target" ]] && error "No target machine provided"
+msg="target should be one of config, image or copy, are you missing a correct target"
+[[ "$target" == "config" || "$target" == "image" || "$target" == "copy" ]] && warning "$msg"
 # if ! ansible-inventory --inventory="$inventory" --host="$hostname" &> /dev/null; then
 #     error "Unable to find machine '$target' in the inventory."
 # fi
@@ -110,10 +117,9 @@ shift
 info "Building configuration for '${hostname}' on host '${target}'"
 info "Running stage '${stage:-all}'"
 
-exit 0
-
-declare -a arglist
-[ -n "$config_name" ] && arglist+=("-e cli_config_name=$config_name")
+declare -a arg_list
+[[ -n "${config_name}" ]] && arg_list+=("-e cli_config_name=$config_name")
+[[ $verbose != 0 ]] && arg_list+=("-e verbose=${verbose}")
 
 case "$stage" in
     config)
@@ -123,7 +129,7 @@ case "$stage" in
         -e cli_hostname="$hostname" \
         -e extra_user_config="$user_config" \
         -e extra_meta_config="$meta_config" \
-        "${arglist[@]}" \
+        "${arg_list[@]}" \
         "$@" \
         --skip-tags=image,copy
     ;;
@@ -132,7 +138,7 @@ case "$stage" in
         ansible-playbook build.yaml \
         --inventory="${inventory}" \
         -e cli_use_date="$use_date" \
-        "${arglist[@]}" \
+        "${arg_list[@]}" \
         "$@" \
         --skip-tags=config,copy
     ;;
@@ -141,7 +147,7 @@ case "$stage" in
         ansible-playbook build.yaml \
         --inventory="${inventory}" \
         -e cli_use_date="$use_date" \
-        "${arglist[@]}" \
+        "${arg_list[@]}" \
         "$@" \
         --skip-tags=config,image
     ;;
@@ -153,8 +159,7 @@ case "$stage" in
         -e cli_hostname="$hostname" \
         -e extra_user_config="$user_config" \
         -e extra_meta_config="$meta_config" \
-        "${arglist[@]}" \
+        "${arg_list[@]}" \
         "$@"
     ;;
 esac
-exit 0

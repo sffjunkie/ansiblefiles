@@ -1,0 +1,5 @@
+[Match]
+Name={{ network.netdev }}
+
+[Network]
+DHCP=yes

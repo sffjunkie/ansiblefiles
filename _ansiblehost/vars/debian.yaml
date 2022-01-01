@@ -1,6 +1,0 @@
----
-os_packages:
-  - ansible
-  - sshpass
-  - unattended-upgrades
-  - zsh

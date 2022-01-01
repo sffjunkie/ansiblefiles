@@ -1,0 +1,10 @@
+---
+- name: Unattended-Upgrades | Install
+  ansible.builtin.package:
+    name: unattended-upgrades
+    state: present
+
+- name: Unattended-Upgrades |  Configure
+  ansible.builtin.script: |
+    echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+    dpkg-reconfigure -f noninteractive unattended-upgrades

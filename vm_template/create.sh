@@ -1,18 +1,11 @@
 #!/bin/bash
-
 source ../common/script/functions.sh
 
 INVENTORY=../inventory
 
-[ ! -t 1 ] && NO_COLOR=1
-[ "$TERM" == "dumb" ] && NO_COLOR=1
-
 _version="0.1.0"
 
-declare -a extra_arg_list
-declare -a errors
 os_names=( debian fedora ubuntu )
-
 
 help() {
     # If not a tty
@@ -33,16 +26,18 @@ help() {
     echo
     echo "options:"
     echo "  -h | --help       Show this help text"
+    echo
     echo "  -r | --release    Release version to download (default: latest)"
     echo
     echo "  -V | --version    Display version information"
     echo "  --no-color        Don't use colored output"
     echo "                    (or set the NO_COLOR environment variable when"
     echo "                    calling this script)"
+    echo "  --force-color     Force the use of colored output"
+    echo "                    (overrides the NO_COLOR environment variable)"
     echo
     exit 0
 }
-
 
 build_info() {
     # If not a tty
@@ -52,8 +47,8 @@ build_info() {
     echo
 }
 
-
-TEMP=$(getopt --options 'hi:n:t:sV' --longoptions 'help,inventory:,name:,target:,start,version,no-color' -- "$@")
+TEMP=$(getopt --options 'hi:n:t:sV' \
+    --longoptions 'help,inventory:,name:,target:,start,version,no-color,force-color' -- "$@")
 eval set -- "${TEMP}"
 
 inventory="${INVENTORY}"
@@ -61,21 +56,31 @@ name=
 while true ; do
     case "$1" in
         -h|--help) show_help=1; shift ;;
+
         -i|--inventory) inventory=$2; shift; shift ;;
-        -o|--output) output=$2; shift; shift ;;
-        -V|--version) echo "${_script} version ${_version}" ; exit 0 ;;
-        --no-color) NO_COLOR=1; shift ;;
+
+        -V|--version) script; echo " version ${_version}" ; exit 0 ;;
+        --no-color) NO_COLOR=0; shift ;;
+        --force-color) FORCE_COLOR=1; shift ;;
         *) shift; break ;;
     esac
 done
 
-[[ $show_help -eq 1 ]] && help
+COLOR=1
+[[ ! -t 1 ]] && COLOR=0
+[[ "${TERM}" == "dumb" ]] && COLOR=0
+
+[[ -n "${NO_COLOR}" ]] && COLOR=0
+[[ -n "${FORCE_COLOR}" ]] && COLOR=1
+
+[[ "$#" -eq 0 || ${show_help} -eq 1 ]] && help
 
 os="$1"
 shift
 name="$1"
 shift
 
+declare -a errors
 _names=$(printf '%s' "${os_names[0]}"; printf ', %s' "${os_names[@]:1}")
 [[ ! "${os_names[*]}" =~ \s*${os}\s* ]] && errors+=("Invalid os ${os}. Must be one of; ${_names}")
 
@@ -89,9 +94,6 @@ fi
 
 build_info
 
-exit 0
-
 ansible-playbook create_template.yaml \
     --inventory="${inventory}" \
-    "${extra_arg_list[@]}" \
     "$@"

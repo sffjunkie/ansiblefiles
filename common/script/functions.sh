@@ -1,40 +1,45 @@
 #!/bin/bash
 
+
+script() {
+    _script=$(basename "$0")
+    _error=$1
+    [[ ${COLOR} == 1 && ${_error} != 1 ]] && tput setaf 2
+    [[ ${COLOR} == 1 && ${_error} == 1 ]] && tput setaf 1
+    echo -n "${_script} "
+    [[ ${COLOR} == 1 ]] && tput sgr0
+}
+
+
 error() {
-    [ -z "${NO_COLOR}" ] && tput setaf 1
-    echo -n "Error:" 1>&2
-    [ -z "${NO_COLOR}" ] && tput sgr0
+    [[ ${COLOR} == 1 ]] && tput setaf 1
+    echo -n "$(script 1)" 1>&2
+    [[ ${COLOR} == 1 ]] && tput setaf 1
+    echo -n "error:" 1>&2
+    [[ ${COLOR} == 1 ]] && tput sgr0
     echo " $1" 1>&2
 }
 
 
 warning() {
-    [ -z "${NO_COLOR}" ] && tput setaf 3
-    echo -n "Warning:" 1>&2
-    [ -z "${NO_COLOR}" ] && tput sgr0
+    [[ ${COLOR} == 1 ]] && tput setaf 3
+    echo -n "warning:" 1>&2
+    [[ ${COLOR} == 1 ]] && tput sgr0
     echo " $1" 1>&2
 }
 
 
 info() {
     [ "$VERBOSE" -lt "${2:-1}" ] && return
-    [ -z "${NO_COLOR}" ] && tput setaf 6
-    echo -n "Info:" 1>&2
-    [ -z "${NO_COLOR}" ] && tput sgr0
+    [[ ${COLOR} == 1 ]] && tput setaf 6
+    echo -n "info:" 1>&2
+    [[ ${COLOR} == 1 ]] && tput sgr0
     echo " $1" 1>&2
 }
 
 
 param(){
-    [ -z "${NO_COLOR}" ] && tput setaf 6
+    [[ ${COLOR} == 1 ]] && tput setaf 6
     echo -n "$1"
-    [ -z "${NO_COLOR}" ] && tput sgr0
-}
-
-
-script() {
-    _script=$(basename "$0")
-    [ -z "${NO_COLOR}" ] && tput setaf 2
-    echo -n "${_script} "
-    [ -z "${NO_COLOR}" ] && tput sgr0
+    [[ ${COLOR} == 1 ]] && tput sgr0
 }

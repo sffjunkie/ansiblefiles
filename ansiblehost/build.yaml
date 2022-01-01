@@ -2,25 +2,11 @@
 ---
 - hosts: ansible
   become: true
-  become_method: sudo
   vars_files:
     - ../common/vars/global.yaml
-    # - ../common/vars/secrets.yaml
-    - ./vars/pip.yaml
-
-  pre_tasks:
-    - name: Debug
-      ansible.builtin.debug:
-        msg:
-          - "Computed stats"
-          - "  Shell: {{ shell }}"
-          - "  Distribution: {{ distribution }}"
-          - "  OS Family: {{ os_family }}"
-          - "  Architecture: {{ ansible_architecture }}"
-        verbosity: 1
 
   roles:
-    - git
+    - playbook_packages
 
   tasks:
     - name: Load os/distribution specific package list
@@ -33,18 +19,11 @@
           paths:
             - 'vars'
 
-    - name: Install OS packages
+    - name: Install packages required by playbook
       ansible.builtin.include_role:
-        name: os_package
+        name: playbook_packages
       vars:
-        # FIXME: This is now wrong
-        custom_os_packages: "{{ os_packages }}"
-
-    - name: Install pip packages
-      ansible.builtin.include_role:
-        name: pip_package
-      vars:
-        package_list: "{{ pip_packages }}"
+        group_info: "{{ base }}"
 
     # - name: Copy playbooks
     #   ansible.builtin.git:

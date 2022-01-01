@@ -1,0 +1,25 @@
+---
+- name: Network | iwd | Install
+  ansible.builtin.package:
+    name:
+      - iwd
+    state: present
+
+- name: Network | iwd | Set iwd to use systemd-resolved
+  ansible.builtin.copy:
+    src: iwd_main.conf
+    dest: /etc/iwd/main.conf
+
+- name: Network | iwd | Start iwd service
+  ansible.builtin.systemd:
+    name: iwd
+    state: started
+    enabled: true
+
+- name: Network | iwd | Connect
+  ansible.builtin.command:
+    cmd: >
+      iwctl --passphrase {{ wifi.passphrase }}
+      station {{ wifi.device }}
+      connect "{{ wifi.ssid }}"
+  register: _wifi_connection

@@ -1,0 +1,13 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens18:
+      dhcp4: no
+      addresses:
+        - {{ ipv4 }}/{{ cidr_block }}
+      gateway4: {{ gateway4 }}
+      nameservers:
+        addresses:
+          - {{ dns4 }}
+          - 8.8.8.8

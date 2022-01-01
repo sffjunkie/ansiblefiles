@@ -21,7 +21,7 @@ fi
 
 eval set -- "${TEMP}"
 
-declare -a arglist
+declare -a arg_list
 
 limit=
 while true ; do
@@ -32,10 +32,10 @@ while true ; do
     esac
 done
 
-[ -n "${limit}" ] && arglist+=("--limit=${limit}")
+[ -n "${limit}" ] && arg_list+=("--limit=${limit}")
 
 ansible-playbook postconfigure.yaml \
     -i ../inventory \
-    "${arglist[@]}" \
+    "${arg_list[@]}" \
     "$@"
     # -e @../common/vars/secrets.yaml

@@ -1,0 +1,31 @@
+---
+- name: Network | Merge network info
+  ansible.builtin.set_fact:
+    _network_info: "{{ _network_common | combine(network) }}"
+  changed_when: false
+
+- name: Network | Start systemd-networkd.service
+  ansible.builtin.systemd:
+    name: systemd-networkd.service
+    state: started
+    enabled: true
+
+- name: Network | Setup Wifi
+  ansible.builtin.include_tasks: iwd.yaml
+  when: "_network_info.type == 'wifi'"
+
+- name: Network | Static IP
+  when: "_network_info.ip == 'static'"
+  ansible.builtin.template:
+    src: systemd-static.network
+    dest: "/etc/systemd/system/network/{{ _network_info.netdev }}.network"
+  vars:
+    network: _network_info
+
+- name: Network | DHCP IP
+  when: "_network_info.ip == 'dhcp'"
+  ansible.builtin.template:
+    src: systemd-dhcp.network
+    dest: "/etc/systemd/system/network/{{ _network_info.netdev }}.network"
+  vars:
+    network: _network_info

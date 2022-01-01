@@ -1,0 +1,15 @@
+// man 5 systemd.network
+[Match]
+Name={{ network.netdev }}
+
+[Address]
+Address={{ network.ipv4 }}/{{ network.cidr_block }}
+
+[Network]
+{% for ip in network.namservers %}
+DNS={{ ip }}
+{% endfor %}
+Domains={{ network.domain }}
+
+[Route]
+Gateway={{ network.gateway4 }}

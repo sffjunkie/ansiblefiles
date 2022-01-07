@@ -65,7 +65,7 @@
 - name: Copy disk image to temporary file
   ansible.builtin.copy:
     src: "{{ disk_image_main }}"
-    dest: {{ '~/images/tmp.qcow2' | expanduser }}
+    dest: "{{ '~/images/tmp.qcow2' | expanduser }}"
     remote_src: true
     mode: preserve
 

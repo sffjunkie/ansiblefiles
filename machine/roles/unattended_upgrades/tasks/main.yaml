@@ -6,5 +6,7 @@
 
 - name: Unattended-Upgrades |  Configure
   ansible.builtin.script: |
-    echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+    echo unattended-upgrades \
+        unattended-upgrades/enable_auto_updates boolean true | \
+        debconf-set-selections
     dpkg-reconfigure -f noninteractive unattended-upgrades

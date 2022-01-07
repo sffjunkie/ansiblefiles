@@ -68,7 +68,9 @@
           ansible.utils.update_fact:
             updates:
               - path: output_config.user[{{ user_idx }}].packages
-                value: "{{ (output_config.user[user_idx].packages + _packages) | unique }}"
+                value: >
+                  {{ (output_config.user[user_idx].packages + _packages)
+                  | unique }}
           register: _updated_fact
           changed_when: false
 

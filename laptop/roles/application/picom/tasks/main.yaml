@@ -1,7 +1,10 @@
 ---
 - name: Picom | Get remote repository version
   ansible.builtin.command:
-    cmd: "git ls-remote {{ picom_git_repo }} {{ picom_git_tag }}"  # noqa: command-instead-of-module line-length
+    cmd: >  # noqa: command-instead-of-module
+      git ls-remote
+      {{ picom_git_repo }}
+      {{ picom_git_tag }}
   register: _picom_remote_version
   changed_when: false
 

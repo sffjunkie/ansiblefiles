@@ -19,6 +19,9 @@ meta_data:
     renderer: networkd
     ethernets:
       ens18:  # default proxmox ethernet device
-        dhcp4: "hostvars['localhost']['network']['dhcp4']"
-        gateway4: "{{ hostvars['localhost']['network']['gateway4'] }}"
+        dhcp4: "hostvars['localhost']['network']['dhcp4'] | default(false)"
+        dhcp6: "hostvars['localhost']['network']['dhcp6'] | default(false)"
+        routes:
+          - to: default
+            via: "{{ hostvars['localhost']['network']['gateway4'] }}"
         nameservers: "{{ hostvars['localhost']['network']['nameservers'] }}"

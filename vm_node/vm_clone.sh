@@ -7,7 +7,6 @@ _version="0.1.0"
 
 declare -a errors
 
-
 help() {
     # If not a tty
     [ ! -t 1 ] && exit 1

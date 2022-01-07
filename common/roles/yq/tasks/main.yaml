@@ -73,7 +73,10 @@
 
     - name: yq | Download compose binary
       ansible.builtin.uri:
-        url: "https://github.com/mikefarah/yq/releases/download/v{{ _install_version }}/yq_linux_amd64"
+        url: >-
+          https://github.com/mikefarah/yq/releases/download/v{{
+          _install_version
+          }}/yq_linux_amd64"
         dest: "{{ _yq_tmp_dir.path }}/yq"
         mode: "+x"
       changed_when: false

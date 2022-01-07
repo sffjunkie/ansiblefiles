@@ -1,9 +1,10 @@
+---
 network:
   version: 2
   renderer: networkd
   ethernets:
     ens18:
-      dhcp4: no
+      dhcp4: false
       addresses:
         - {{ ipv4 }}/{{ cidr_block }}
       gateway4: {{ gateway4 }}

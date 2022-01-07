@@ -1,3 +1,4 @@
+---
 - name: Get image info
   ansible.builtin.command: qemu-img info --output=json "{{ img }}"
   register: _img_info

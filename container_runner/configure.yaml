@@ -15,5 +15,5 @@
     - role: podman
       when: container_engine == 'podman'
 
-    - docker_compose
+    - role: docker_compose
       when: use_compose == true

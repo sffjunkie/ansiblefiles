@@ -1,3 +1,4 @@
+---
 - name: Delete yq temporary files
   ansible.builtin.file:
     name: "{{ _yq_tmp_dir.path }}"

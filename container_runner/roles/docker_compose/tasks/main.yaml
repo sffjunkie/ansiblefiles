@@ -79,7 +79,10 @@
 
     - name: docker-compose | Download compose binary
       ansible.builtin.uri:
-        url: "https://github.com/docker/compose/releases/download/{{ _install_version }}/docker-compose-linux-x86_64"
+        url: >-
+          https://github.com/docker/compose/releases/download/{{
+          _install_version
+          }}/docker-compose-linux-x86_64
         dest: "{{ _compose_tmp_dir.path }}/docker-compose"
         mode: "+x"
       changed_when: false

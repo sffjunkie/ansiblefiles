@@ -1,3 +1,4 @@
+---
 - name: Delete temporary files
   ansible.builtin.file:
     name: "{{ _pg_tmp_dir.path }}"

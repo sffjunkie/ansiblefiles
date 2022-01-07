@@ -6,12 +6,12 @@
     - ../common/vars/global.yaml
 
   roles:
-    - proxmox_configure_apt_sources
+    - configure_apt_sources
     - role: playbook_packages
       extra:
         pip:
           - proxmoxer
           - requests
-    - proxmox_no_valid_subscription
-    - proxmox_darkmode
-    - proxmox_vzdump
+    - no_valid_subscription
+    - darkmode
+    - vzdump_config

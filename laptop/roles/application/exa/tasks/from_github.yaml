@@ -26,7 +26,12 @@
 
 - name: Exa | Calc URL
   ansible.builtin.set_fact:
-    _exa_url: "https://github.com/ogham/exa/releases/download/{{ _exa_latest_version.tag }}/{{ _exa_file }}"
+    _exa_url: >-
+      https://github.com/ogham/exa/releases/download/{{
+      _exa_latest_version.tag
+      }}/{{
+      _exa_file
+      }}"
 
 - name: Exa | Create temporary directory
   ansible.builtin.tempfile:

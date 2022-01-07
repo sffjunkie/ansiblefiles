@@ -1,3 +1,4 @@
+---
 - name: Delete docker-compose temporary files
   ansible.builtin.file:
     name: "{{ _compose_tmp_dir.path }}"

@@ -1,3 +1,4 @@
+---
 - name: Font Install | Delete temporary files
   ansible.builtin.file:
     name: "{{ _font_tmp_dir }}"

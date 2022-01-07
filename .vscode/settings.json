@@ -8,5 +8,6 @@
         "[Nord]": {
             "comments": "#5E81AC"
         }
-    }
+    },
+    "python.linting.pylintEnabled": true
 }

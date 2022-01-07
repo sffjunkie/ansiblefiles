@@ -9,7 +9,10 @@
   pre_tasks:
     - name: Convert default_user to something we can merge with system_users
       ansible.builtin.set_fact:
-        _default_user: "{{ _default_user | default({}) | combine({ item.key: item.value }) }}"
+        _default_user: >
+          {{ _default_user
+          | default({})
+          | combine({ item.key: item.value }) }}
       loop:
         - { key: "{{ default_user.id }}", value: "{{ default_user }}" }
 

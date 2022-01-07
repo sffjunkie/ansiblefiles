@@ -40,7 +40,7 @@
 
     - name: Pause for startup
       ansible.builtin.pause:
-          minutes: 2
+        minutes: 2
 
     # TODO: New VM's ip address
     # Fixed hostname in template

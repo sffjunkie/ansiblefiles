@@ -1,3 +1,0 @@
-# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
-# qm set <VMID> --agent 1
----

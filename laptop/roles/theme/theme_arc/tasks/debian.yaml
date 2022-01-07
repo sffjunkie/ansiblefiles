@@ -1,3 +1,4 @@
+---
 - name: Arc Theme | Update apt and install
   ansible.builtin.apt:
     name: arc-theme

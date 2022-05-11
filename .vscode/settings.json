@@ -9,5 +9,8 @@
             "comments": "#5E81AC"
         }
     },
-    "python.linting.pylintEnabled": true
+    "python.linting.pylintEnabled": true,
+    "files.associations": {
+        "*.yaml": "home-assistant"
+    }
 }

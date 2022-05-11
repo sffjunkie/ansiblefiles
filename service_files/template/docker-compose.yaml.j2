@@ -1,25 +1,26 @@
 services:
-  {{ service }}:
-    container_name: {{ service }}
-    image: {{ image }}
+  {{ machine.service }}:
+    container_name: {{ machine.service }}
+    image: {{ machine.image }}
     restart: unless-stopped
-    volumes: {{ volumes }}
+    network_mode: host
 
     ports:
-{% for port in ports %}
-      - 'port'
+{% for port in machine.ports %}
+      - '{{ port.from }}:{{ port.to }}'
 {% endfor %}
 
     volumes:
-{% for volume in bind_volumes %}
-      - type: bind
-        source: {{ network.source }}
-        target: {{ network.target }}
+{% for volume in machine.volumes %}
+      - type: {{ volume.type }}
+        source: {{ volume.source }}
+        target: {{ volume.target }}
+        read_only: {{ volume.read_only | default(omit) }}
 {% end for %}
 
-{% if external_networks %}
+{% if machine.external_networks %}
 networks:
-{% for network in networks %}
+{% for network in machine.networks %}
   {{ network }}:
     external: true
 {% end for %}

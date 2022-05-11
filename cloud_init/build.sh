@@ -37,8 +37,8 @@ help() {
     echo "                    calling this script)"
     echo "  -u | --user       Extra user configuration"
     echo "  -m | --meta       Extra meta configuration"
-    echo "  -v | --verbose    Display information about the script"
     echo
+    echo "  -v | --verbose    Display information about the script"
     echo "  -V | --version    Display version information"
     echo "  --no-color        Don't use colored output"
     echo "                    (or set the NO_COLOR environment variable when"

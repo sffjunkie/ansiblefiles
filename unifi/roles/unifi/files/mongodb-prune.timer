@@ -1,0 +1,10 @@
+[Unit]
+Description=Prunes the Unifi mongodb database
+Requires=mongodb-prune.service
+
+[Timer]
+Unit=mongodb-prune.service
+OnCalendar=Mon *-*-* 01:00:00
+
+[Install]
+WantedBy=timers.target

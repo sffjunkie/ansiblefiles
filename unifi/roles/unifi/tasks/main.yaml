@@ -1,22 +1,50 @@
 ---
-- name: Add repository
-  ansible.builtin.apt_repository:
-    repo: deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse
+- name: Unifi | Install pre-requisites
+  ansible.builtin.package:
+    name:
+      - ca-certificates
+      - apt-transport-https
     state: present
 
-- name: Add Unifi apt Key
+- name: Unifi | Add repository
+  ansible.builtin.apt_repository:
+    repo: deb https://www.ui.com/downloads/unifi/debian stable ubiquiti
+    state: present
+
+- name: Unifi | Add apt Key
   ansible.builtin.apt_key:
     url: "https://dl.ui.com/unifi/unifi-repo.gpg"
     state: present
 
-- name: Install
+- name: Unifi | Install
   ansible.builtin.package:
     name: unifi
     update_cache: true
     cache_valid_time: 86400
 
-- name: Start Unifi controller
+- name: Unifi | Start controller
   ansible.builtin.systemd:
     name: unifi
+    state: started
+    enabled: true
+
+- name: Unifi | Copy mongodb prune script
+  ansible.builtin.copy:
+    src: mongo_prune_js.js
+    dest: /var/lib/unifi/
+
+- name: Unifi | Copy db prune timer unit file
+  ansible.builtin.copy:
+    src: mongodb-prune.timer
+    dest: /etc/systemd/system/
+
+- name: Unifi | Copy db prune service unit file
+  ansible.builtin.copy:
+    src: mongodb-prune.service
+    dest: /etc/systemd/system/
+
+- name: Unifi | Start db prune timer
+  anisble.builtin.systemd:
+    name: mongodb-prune.timer
     state: started
     enabled: true

@@ -40,3 +40,17 @@
     * plex - TrueNAS jail
     * syncthing - TrueNAS jail
     * transmission - TrueNAS jail
+
+
+service description to docker-compose.yaml
+
+
+
+- pass straight through
+
+  - volumes
+  - ports
+
+- process
+  - image
+    - tag=latest = lookup tag number and add to requirements.yaml

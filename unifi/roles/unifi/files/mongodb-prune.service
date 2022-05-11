@@ -1,0 +1,10 @@
+[Unit]
+Description=Prunes the Unifi mongodb database
+Wants=mongodb-prune.timer
+
+[Service]
+Type=oneshot
+ExecStart=mongo --port 27117 < /var/lib/unifi/mongo_prune_js.js
+
+[Install]
+WantedBy=multi-user.target

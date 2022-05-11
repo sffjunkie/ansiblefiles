@@ -2,7 +2,7 @@
 # https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
 - name: Add Mongo apt key
   ansible.builtin.apt_key:
-    url: "https://www.mongodb.org/static/pgp/server-4.4.asc"
+    url: https://www.mongodb.org/static/pgp/server-4.4.asc
     state: present
 
 - name: Add MongoDB repository
@@ -14,12 +14,12 @@
     state: present
 
 - name: Install MongoDB
-  ansible.builtin.apt:
-    name: "mongodb-org"
+  ansible.builtin.package:
+    name: mongodb-org
     state: present
 
 - name: Start MongoDB
-  ansible.builtin.syatemd:
+  ansible.builtin.systemd:
     name: mongodb
     state: started
     enabled: true
